@@ -12,7 +12,7 @@ return [
         'uploads' => __DIR__ . '/../data/uploads'
     ],
     'app' => [
-        'index_name' => 'prodmais_cientifica', // Nome do índice no Elasticsearch
-        'version' => '1.0.0'
+        'index_name' => 'prodmais_umc', // Nome do índice no Elasticsearch (UMC)
+        'version' => '2.0.0'
     ]
 ];

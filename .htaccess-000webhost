@@ -1,0 +1,38 @@
+# .htaccess for 000webhost
+# Redirect to public folder while maintaining clean URLs
+
+RewriteEngine On
+RewriteBase /
+
+# Redirect root to public folder
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ public/$1 [L]
+
+# Allow direct access to public folder
+RewriteRule ^public/(.*)$ public/$1 [L]
+
+# PHP Settings
+php_value upload_max_filesize 20M
+php_value post_max_size 20M
+php_value max_execution_time 300
+php_value memory_limit 256M
+
+# Security
+<Files .htaccess>
+    order allow,deny
+    deny from all
+</Files>
+
+<Files config.php>
+    order allow,deny
+    deny from all
+</Files>
+
+# Disable directory browsing
+Options -Indexes
+
+# Error pages
+ErrorDocument 404 /public/index.php
+ErrorDocument 500 /public/index.php

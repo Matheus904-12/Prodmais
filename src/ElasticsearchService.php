@@ -169,7 +169,7 @@ class ElasticsearchService
             $must_query[] = [
                 'multi_match' => [
                     'query' => $filters['q'],
-                    'fields' => ['title^2', 'researcher_name', 'journal', 'event_name', 'book_title', 'publisher'],
+                    'fields' => ['titulo^2', 'autores', 'periodico', 'nome_evento', 'nome_livro', 'editora'],
                     'type' => 'best_fields',
                     'fuzziness' => 'AUTO'
                 ]
@@ -181,45 +181,33 @@ class ElasticsearchService
 
         // As seleções dos dropdowns vão na cláusula de filtro
         if (!empty($filters['type'])) {
-            $filter_query[] = ['term' => ['type' => $filters['type']]];
+            $filter_query[] = ['term' => ['tipo.keyword' => $filters['type']]];
         }
         if (!empty($filters['subtype'])) {
-            $filter_query[] = ['term' => ['subtype' => $filters['subtype']]];
+            $filter_query[] = ['term' => ['natureza.keyword' => $filters['subtype']]];
         }
         if (!empty($filters['year'])) {
-            $filter_query[] = ['term' => ['year' => $filters['year']]];
+            $filter_query[] = ['term' => ['ano' => $filters['year']]];
         }
         if (!empty($filters['institution'])) {
-            $filter_query[] = ['match' => ['institution' => $filters['institution']]];
+            $filter_query[] = ['match' => ['instituicao' => $filters['institution']]];
         }
         if (!empty($filters['language'])) {
-            $filter_query[] = ['term' => ['language' => $filters['language']]];
+            $filter_query[] = ['term' => ['idioma.keyword' => $filters['language']]];
         }
         if (!empty($filters['area'])) {
             $filter_query[] = [
-                'nested' => [
-                    'path' => 'areas',
-                    'query' => [
-                        'bool' => [
-                            'should' => [
-                                ['match' => ['areas.grande_area' => $filters['area']]],
-                                ['match' => ['areas.area' => $filters['area']]],
-                                ['match' => ['areas.sub_area' => $filters['area']]]
-                            ]
-                        ]
-                    ]
+                'match' => [
+                    'area_concentracao' => $filters['area']
                 ]
             ];
         }
         if (!empty($filters['author'])) {
             $filter_query[] = [
-                'nested' => [
-                    'path' => 'authors',
-                    'query' => [
-                        'multi_match' => [
-                            'query' => $filters['author'],
-                            'fields' => ['authors.name', 'authors.citation_name']
-                        ]
+                'match' => [
+                    'autores' => [
+                        'query' => $filters['author'],
+                        'operator' => 'and'
                     ]
                 ]
             ];
@@ -227,12 +215,12 @@ class ElasticsearchService
 
         // Filtro por range de anos
         if (!empty($filters['year_from']) || !empty($filters['year_to'])) {
-            $range_filter = ['range' => ['year' => []]];
+            $range_filter = ['range' => ['ano' => []]];
             if (!empty($filters['year_from'])) {
-                $range_filter['range']['year']['gte'] = (int)$filters['year_from'];
+                $range_filter['range']['ano']['gte'] = (int)$filters['year_from'];
             }
             if (!empty($filters['year_to'])) {
-                $range_filter['range']['year']['lte'] = (int)$filters['year_to'];
+                $range_filter['range']['ano']['lte'] = (int)$filters['year_to'];
             }
             $filter_query[] = $range_filter;
         }
@@ -242,7 +230,7 @@ class ElasticsearchService
             'body'  => [
                 'size' => $size,
                 'sort' => [
-                    ['year' => ['order' => 'desc']],
+                    ['ano' => ['order' => 'desc']],
                     ['_score' => ['order' => 'desc']]
                 ],
                 'query' => [
@@ -253,8 +241,8 @@ class ElasticsearchService
                 ],
                 'highlight' => [
                     'fields' => [
-                        'title' => new \stdClass(),
-                        'researcher_name' => new \stdClass()
+                        'titulo' => new \stdClass(),
+                        'autores' => new \stdClass()
                     ]
                 ]
             ]
@@ -271,17 +259,18 @@ class ElasticsearchService
         
         $filter_query = [];
 
+        
         // Aplicar os mesmos filtros da busca principal
         if (!empty($filters['type'])) {
-            $filter_query[] = ['term' => ['type' => $filters['type']]];
+            $filter_query[] = ['term' => ['tipo.keyword' => $filters['type']]];
         }
         if (!empty($filters['year'])) {
-            $filter_query[] = ['term' => ['year' => $filters['year']]];
+            $filter_query[] = ['term' => ['ano' => $filters['year']]];
         }
         if (!empty($filters['institution'])) {
-            $filter_query[] = ['match' => ['institution' => $filters['institution']]];
+            $filter_query[] = ['match' => ['instituicao' => $filters['institution']]];
         }
-
+        
         $params = [
             'index' => $indexName,
             'body' => [
@@ -294,45 +283,32 @@ class ElasticsearchService
                 'aggs' => [
                     'by_type' => [
                         'terms' => [
-                            'field' => 'type',
+                            'field' => 'tipo.keyword',
                             'size' => 20
                         ]
                     ],
                     'by_year' => [
                         'terms' => [
-                            'field' => 'year',
+                            'field' => 'ano',
                             'size' => 20,
                             'order' => ['_key' => 'desc']
                         ]
                     ],
                     'by_institution' => [
                         'terms' => [
-                            'field' => 'institution.keyword',
+                            'field' => 'instituicao.keyword',
                             'size' => 10
                         ]
                     ],
                     'by_language' => [
                         'terms' => [
-                            'field' => 'language',
+                            'field' => 'idioma.keyword',
                             'size' => 10
-                        ]
-                    ],
-                    'by_areas' => [
-                        'nested' => [
-                            'path' => 'areas'
-                        ],
-                        'aggs' => [
-                            'area_breakdown' => [
-                                'terms' => [
-                                    'field' => 'areas.grande_area',
-                                    'size' => 10
-                                ]
-                            ]
                         ]
                     ],
                     'year_stats' => [
                         'stats' => [
-                            'field' => 'year'
+                            'field' => 'ano'
                         ]
                     ]
                 ]

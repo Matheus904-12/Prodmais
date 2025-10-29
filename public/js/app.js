@@ -159,7 +159,10 @@ document.addEventListener('DOMContentLoaded', () => {
             elements.loadingIndicator.style.display = 'none';
 
             if (data.hits && data.hits.hits.length > 0) {
-                appState.currentResults = data.hits.hits.map(hit => hit._source);
+                appState.currentResults = data.hits.hits.map(hit => ({
+                    ...hit._source,
+                    _id: hit._id
+                }));
                 displayResults(data.hits.hits);
                 elements.resultsSummary.textContent = `Exibindo ${data.hits.hits.length} de ${data.hits.total.value} resultados.`;
             } else {
@@ -181,26 +184,28 @@ document.addEventListener('DOMContentLoaded', () => {
             const doc = hit._source;
             const row = document.createElement('tr');
             
-            // Destacar termos de busca se houver highlight
-            const title = hit.highlight?.title?.[0] || doc.title;
-            const researcher = hit.highlight?.researcher_name?.[0] || doc.researcher_name;
+            // Mapear campos em português para inglês (compatibilidade)
+            const title = doc.titulo || doc.title || 'undefined';
+            const year = doc.ano || doc.year || 'undefined';
+            const type = doc.tipo || doc.type || 'undefined';
+            const researcher = doc.autores || doc.researcher_name || doc.authors || 'undefined';
             
             // Determinar veículo de publicação
-            const venue = doc.journal || doc.event_name || doc.book_title || doc.publisher || 'N/A';
+            const venue = doc.periodico || doc.journal || doc.nome_evento || doc.event_name || doc.titulo_livro || doc.book_title || doc.editora || doc.publisher || 'N/A';
             
             row.innerHTML = `
                 <td>
                     <strong>${title}</strong>
-                    ${doc.subtype ? `<br><small class="text-muted">${doc.subtype}</small>` : ''}
+                    ${doc.natureza || doc.subtype ? `<br><small class="text-muted">${doc.natureza || doc.subtype}</small>` : ''}
                 </td>
                 <td>${researcher}</td>
-                <td>${doc.year}</td>
+                <td>${year}</td>
                 <td>
-                    <span class="badge bg-primary">${doc.type}</span>
+                    <span class="badge bg-primary">${type}</span>
                 </td>
                 <td>
                     ${venue}
-                    ${doc.language ? `<br><small class="text-muted">Idioma: ${doc.language}</small>` : ''}
+                    ${doc.idioma || doc.language ? `<br><small class="text-muted">Idioma: ${doc.idioma || doc.language}</small>` : ''}
                 </td>
                 <td>
                     <div class="btn-group-vertical btn-group-sm">
@@ -210,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${doc.open_access_url ? `<a href="${doc.open_access_url}" target="_blank" class="btn btn-outline-success btn-sm">
                             <i class="bi bi-unlock"></i> Acesso Aberto
                         </a>` : ''}
-                        <button class="btn btn-outline-info btn-sm" onclick="showDetails('${doc.id}')">
+                        <button class="btn btn-outline-info btn-sm" onclick="showDetails('${doc._id || hit._id}')">
                             <i class="bi bi-info-circle"></i> Detalhes
                         </button>
                     </div>
@@ -477,10 +482,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Funções globais para callbacks
     window.showDetails = function(id) {
-        const production = appState.currentResults.find(p => p.id === id);
+        const production = appState.currentResults.find(p => (p._id === id || p.id === id));
         if (production) {
             // Criar modal com detalhes
             showProductionModal(production);
+        } else {
+            console.error('Produção não encontrada:', id);
         }
     };
 
@@ -504,20 +511,28 @@ document.addEventListener('DOMContentLoaded', () => {
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body">
-                            <h6><strong>${production.title}</strong></h6>
-                            <p><strong>Autor:</strong> ${production.researcher_name}</p>
-                            <p><strong>Ano:</strong> ${production.year}</p>
-                            <p><strong>Tipo:</strong> ${production.type}${production.subtype ? ` (${production.subtype})` : ''}</p>
-                            ${production.journal ? `<p><strong>Revista:</strong> ${production.journal}</p>` : ''}
-                            ${production.event_name ? `<p><strong>Evento:</strong> ${production.event_name}</p>` : ''}
-                            ${production.publisher ? `<p><strong>Editora:</strong> ${production.publisher}</p>` : ''}
+                            <h6><strong>${production.titulo || production.title || 'Sem título'}</strong></h6>
+                            <p><strong>Autor(es):</strong> ${production.autores || production.researcher_name || production.authors || 'N/A'}</p>
+                            <p><strong>Ano:</strong> ${production.ano || production.year || 'N/A'}</p>
+                            <p><strong>Tipo:</strong> ${production.tipo || production.type || 'N/A'}${production.natureza || production.subtype ? ` (${production.natureza || production.subtype})` : ''}</p>
+                            ${production.periodico || production.journal ? `<p><strong>Revista:</strong> ${production.periodico || production.journal}</p>` : ''}
+                            ${production.nome_evento || production.event_name ? `<p><strong>Evento:</strong> ${production.nome_evento || production.event_name}</p>` : ''}
+                            ${production.editora || production.publisher ? `<p><strong>Editora:</strong> ${production.editora || production.publisher}</p>` : ''}
+                            ${production.issn ? `<p><strong>ISSN:</strong> ${production.issn}</p>` : ''}
+                            ${production.isbn ? `<p><strong>ISBN:</strong> ${production.isbn}</p>` : ''}
+                            ${production.volume ? `<p><strong>Volume:</strong> ${production.volume}</p>` : ''}
+                            ${production.pagina_inicial ? `<p><strong>Páginas:</strong> ${production.pagina_inicial}${production.pagina_final ? `-${production.pagina_final}` : ''}</p>` : ''}
                             ${production.doi ? `<p><strong>DOI:</strong> <a href="https://doi.org/${production.doi}" target="_blank">${production.doi}</a></p>` : ''}
-                            ${production.institution ? `<p><strong>Instituição:</strong> ${production.institution}</p>` : ''}
-                            ${production.language ? `<p><strong>Idioma:</strong> ${production.language}</p>` : ''}
-                            ${production.cited_by_count ? `<p><strong>Citações:</strong> ${production.cited_by_count}</p>` : ''}
+                            ${production.ppg ? `<p><strong>PPG:</strong> ${production.ppg}</p>` : ''}
+                            ${production.area_concentracao ? `<p><strong>Área:</strong> ${production.area_concentracao}</p>` : ''}
+                            ${production.instituicao || production.institution ? `<p><strong>Instituição:</strong> ${production.instituicao || production.institution}</p>` : ''}
+                            ${production.idioma || production.language ? `<p><strong>Idioma:</strong> ${production.idioma || production.language}</p>` : ''}
+                            ${production.citacoes || production.cited_by_count ? `<p><strong>Citações:</strong> ${production.citacoes || production.cited_by_count}</p>` : ''}
+                            ${production.lattesID ? `<p><strong>Lattes ID:</strong> ${production.lattesID}</p>` : ''}
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                            ${production.doi ? `<a href="https://doi.org/${production.doi}" target="_blank" class="btn btn-primary">Abrir DOI</a>` : ''}
                         </div>
                     </div>
                 </div>
