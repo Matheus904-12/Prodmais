@@ -11,26 +11,28 @@ require_once __DIR__ . '/../config/config_umc.php';
 require_once __DIR__ . '/UmcFunctions.php';
 
 class LattesImporter {
-    
     private $client;
     private $index_cv;
     private $index;
     private $index_projetos;
     private $ppg_default = null;
     private $campus_default = 'Mogi das Cruzes';
-    
+    private $dbService = null;
     // Configurações de memória para currículos extensos
     private $max_execution_time = 600; // 10 minutos
     private $memory_limit = '512M';
-    
     public function __construct() {
-        global $index_cv, $index, $index_projetos;
-        
+        global $index_cv, $index, $index_projetos, $config;
         $this->client = getElasticsearchClient();
         $this->index_cv = $index_cv;
         $this->index = $index;
         $this->index_projetos = $index_projetos;
-        
+        // Banco relacional
+        try {
+            $this->dbService = new \DatabaseService($config ?? []);
+        } catch (\Exception $e) {
+            $this->dbService = null;
+        }
         // Configurar limites para currículos extensos
         set_time_limit($this->max_execution_time);
         ini_set('memory_limit', $this->memory_limit);
@@ -86,6 +88,42 @@ class LattesImporter {
         // Indexar no Elasticsearch
         echo "💾 Indexando no Elasticsearch...\n";
         
+        // Banco relacional: salvar pesquisador
+        $db_pesq_id = null;
+        if ($this->dbService) {
+            try {
+                $db_pesq_id = $this->dbService->addPesquisador($pesquisador);
+                echo "💾 Pesquisador salvo no banco relacional (ID: $db_pesq_id)\n";
+            } catch (\Exception $e) {
+                echo "⚠️ Erro ao salvar pesquisador no banco relacional: " . $e->getMessage() . "\n";
+            }
+        }
+        // Banco relacional: salvar produções
+        $db_prod_count = 0;
+        if ($this->dbService && !empty($producoes['items'])) {
+            foreach ($producoes['items'] as $prod) {
+                try {
+                    $this->dbService->addProducao($prod);
+                    $db_prod_count++;
+                } catch (\Exception $e) {
+                    echo "⚠️ Erro ao salvar produção no banco relacional: " . $e->getMessage() . "\n";
+                }
+            }
+            echo "💾 $db_prod_count produções salvas no banco relacional\n";
+        }
+        // Banco relacional: salvar projetos
+        $db_proj_count = 0;
+        if ($this->dbService && !empty($projetos['items'])) {
+            foreach ($projetos['items'] as $proj) {
+                try {
+                    $this->dbService->addProjeto($proj);
+                    $db_proj_count++;
+                } catch (\Exception $e) {
+                    echo "⚠️ Erro ao salvar projeto no banco relacional: " . $e->getMessage() . "\n";
+                }
+            }
+            echo "💾 $db_proj_count projetos salvos no banco relacional\n";
+        }
         $result = [
             'pesquisador_nome' => $pesquisador['nome_completo'],
             'lattesID' => $pesquisador['lattesID'],

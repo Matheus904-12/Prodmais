@@ -13,10 +13,9 @@ use Elastic\Elasticsearch\ClientBuilder;
 $client = getElasticsearchClient();
 $pesquisadores = [];
 $total_pesquisadores = 0;
-
 if ($client !== null) {
     try {
-        // Buscar todos os CVs cadastrados
+        // Buscar todos os CVs cadastrados (Elasticsearch)
         $params = [
             'index' => 'prodmais_umc_cv',
             'body' => [
@@ -29,15 +28,24 @@ if ($client !== null) {
                 ]
             ]
         ];
-        
         $response = $client->search($params);
         $total_pesquisadores = $response['hits']['total']['value'];
-        
         foreach ($response['hits']['hits'] as $hit) {
             $pesquisadores[] = $hit['_source'];
         }
     } catch (Exception $e) {
         error_log("Erro ao buscar pesquisadores: " . $e->getMessage());
+    }
+}
+if ($client === null || empty($pesquisadores)) {
+    // Buscar do banco relacional (SQLite)
+    try {
+        require_once __DIR__ . '/../src/DatabaseService.php';
+        $dbService = new DatabaseService($config ?? []);
+    $pesquisadores = $dbService->getPesquisadores();
+    $total_pesquisadores = count($pesquisadores);
+    } catch (Exception $e) {
+        error_log("Erro ao buscar pesquisadores no banco relacional: " . $e->getMessage());
     }
 }
 ?>

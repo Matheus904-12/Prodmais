@@ -20,6 +20,9 @@ require_once(__DIR__ . '/ExportService.php');
 require_once(__DIR__ . '/LogService.php');
 require_once(__DIR__ . '/Anonymizer.php');
 
+// Carregar camada relacional
+require_once(__DIR__ . '/DatabaseService.php');
+
 /* Load Elasticsearch Client */
 use Elastic\Elasticsearch\ClientBuilder;
 
@@ -393,11 +396,18 @@ function isDebugMode() {
     return $debug_mode ?? false;
 }
 
+
 /**
- * Inicializar Elasticsearch na primeira execução
+ * Inicializar Elasticsearch e banco relacional na primeira execução
  */
 if (php_sapi_name() !== 'cli') {
     initializeElasticsearchIndexes();
+    // Inicializa banco relacional (SQLite por padrão)
+    try {
+        $dbService = new DatabaseService($config ?? []);
+    } catch (Exception $e) {
+        error_log('Erro ao inicializar banco relacional: ' . $e->getMessage());
+    }
 }
 
 /**
