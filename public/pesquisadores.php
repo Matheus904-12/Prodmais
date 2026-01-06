@@ -13,9 +13,9 @@ use Elastic\Elasticsearch\ClientBuilder;
 $client = getElasticsearchClient();
 $pesquisadores = [];
 $total_pesquisadores = 0;
+
 if ($client !== null) {
     try {
-        // Buscar todos os CVs cadastrados (Elasticsearch)
         $params = [
             'index' => 'prodmais_umc_cv',
             'body' => [
@@ -37,13 +37,13 @@ if ($client !== null) {
         error_log("Erro ao buscar pesquisadores: " . $e->getMessage());
     }
 }
+
 if ($client === null || empty($pesquisadores)) {
-    // Buscar do banco relacional (SQLite)
     try {
         require_once __DIR__ . '/../src/DatabaseService.php';
         $dbService = new DatabaseService($config ?? []);
-    $pesquisadores = $dbService->getPesquisadores();
-    $total_pesquisadores = count($pesquisadores);
+        $pesquisadores = $dbService->getPesquisadores();
+        $total_pesquisadores = count($pesquisadores);
     } catch (Exception $e) {
         error_log("Erro ao buscar pesquisadores no banco relacional: " . $e->getMessage());
     }
@@ -56,143 +56,39 @@ if ($client === null || empty($pesquisadores)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pesquisadores - <?php echo $branch; ?></title>
     
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- CSS customizado UMC -->
+    <!-- CSS Elegante Profissional -->
+    <link rel="stylesheet" href="/css/prodmais-elegant.css">
     <link rel="stylesheet" href="/css/umc-theme.css">
-    <link rel="stylesheet" href="/css/style.css">
     
     <style>
         body {
-            font-family: 'Roboto', sans-serif;
-            background: #f5f5f5;
-        }
-
-        .nav-item {
-        padding-left: 15px;
-        }
-
-        .page-header {
-            background: var(--umc-gradient-primary);
-            color: white;
-            padding: 60px 0 40px;
-            margin-top: -56px;
-            padding-top: 116px;
-        }
-        
-        .researcher-card {
-            background: white;
-            border-radius: 10px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: var(--umc-shadow-md);
-            transition: var(--umc-transition);
-            border-left: 4px solid var(--umc-azul-royal);
-        }
-        
-        .researcher-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--umc-shadow-lg);
-            border-left-color: var(--umc-azul-claro);
-        }
-        
-        .researcher-photo {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--umc-azul-royal);
-        }
-        
-        .researcher-name {
-            color: var(--umc-azul-royal);
-            font-weight: 600;
-            font-size: 1.3rem;
-            margin-bottom: 5px;
-        }
-        
-        .researcher-ppg {
-            background: var(--umc-azul-royal);
-            color: white;
-            padding: 3px 12px;
-            border-radius: 15px;
-            font-size: 0.85rem;
-            display: inline-block;
-            margin-right: 5px;
-            margin-bottom: 5px;
-        }
-        
-        .researcher-stats {
-            display: flex;
-            gap: 20px;
-            margin-top: 15px;
-        }
-        
-        .stat-item {
-            text-align: center;
-        }
-        
-        .stat-item .number {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--umc-azul-royal);
-        }
-        
-        .stat-item .label {
-            font-size: 0.85rem;
-            color: #666;
-        }
-        
-        .search-researchers {
-            background: white;
-            border-radius: 50px;
-            padding: 10px 20px;
-            box-shadow: var(--umc-shadow-md);
-            margin-bottom: 30px;
-        }
-        
-        .filter-badges {
-            margin-bottom: 20px;
-        }
-        
-        .filter-badge {
-            background: #e9ecef;
-            padding: 8px 15px;
-            border-radius: 20px;
-            margin-right: 10px;
-            margin-bottom: 10px;
-            display: inline-block;
-            cursor: pointer;
-            transition: var(--umc-transition);
-        }
-        
-        .filter-badge:hover,
-        .filter-badge.active {
-            background: var(--umc-azul-royal);
-            color: white;
+            font-family: 'Inter', sans-serif;
         }
     </style>
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light navbar-umc fixed-top">
+<!-- Navbar Elegante -->
+<nav class="navbar navbar-expand-lg navbar-elegant">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="/">
             <img src="https://upload.wikimedia.org/wikipedia/commons/0/03/Logo_umc1.png" 
                  alt="UMC Logo" 
-                 height="50" 
-                 class="me-3"
+                 height="45" 
+                 class="me-2"
                  onerror="this.style.display='none'">
-            <div>
-                <strong style="font-size: 1.8rem; color: var(--umc-azul-claro); margin-left: 8px;">Prodmais</strong>
-            </div>
+            <strong style="font-size: 1.5rem; background: linear-gradient(135deg, #1a56db, #0369a1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Prodmais</strong>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
@@ -200,196 +96,177 @@ if ($client === null || empty($pesquisadores)) {
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link active" href="/index_umc.php"><i class="fas fa-home"></i> Início</a>
+                    <a class="nav-link-elegant" href="/index_umc.php"><i class="fas fa-home me-1"></i> Início</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/pesquisadores.php"><i class="fas fa-users"></i> Pesquisadores</a>
+                    <a class="nav-link-elegant active" href="/pesquisadores.php"><i class="fas fa-users me-1"></i> Pesquisadores</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/ppgs.php"><i class="fas fa-university"></i> PPGs</a>
+                    <a class="nav-link-elegant" href="/ppgs.php"><i class="fas fa-university me-1"></i> PPGs</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/projetos.php"><i class="fas fa-project-diagram"></i> Projetos</a>
+                    <a class="nav-link-elegant" href="/projetos.php"><i class="fas fa-project-diagram me-1"></i> Projetos</a>
                 </li>
                 <?php if ($mostrar_link_dashboard): ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="/dashboard.php"><i class="fas fa-chart-line"></i> Dashboard</a>
+                    <a class="nav-link-elegant" href="/dashboard.php"><i class="fas fa-chart-line me-1"></i> Dashboard</a>
                 </li>
                 <?php endif; ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="/login.php"><i class="fas fa-cog"></i> Admin</a>
+                    <a class="nav-link-elegant" href="/login.php"><i class="fas fa-cog me-1"></i> Admin</a>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
 
-<!-- Page Header -->
-<section class="page-header hero-umc">
-    <div class="container text-center">
-        <h1 class="display-4 fw-bold mb-3">
-            <br>
-            <i class="fas fa-users me-3"></i> Pesquisadores
-        </h1>
-        <p class="lead">Conheça os pesquisadores dos Programas de Pós-Graduação da UMC</p>
+<!-- Hero Section Ultra Elegante -->
+<section style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%); padding: 4rem 0 3rem; position: relative; overflow: hidden;">
+    <!-- Background decorativo -->
+    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.1;">
+        <div style="position: absolute; top: 20%; left: 10%; width: 300px; height: 300px; background: white; border-radius: 50%; filter: blur(80px);"></div>
+        <div style="position: absolute; bottom: 20%; right: 10%; width: 400px; height: 400px; background: white; border-radius: 50%; filter: blur(100px);"></div>
+    </div>
+    
+    <div class="container" style="position: relative; z-index: 1;">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-10 fade-in-up">
+                <div style="margin-bottom: 1.5rem;">
+                    <span style="background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); padding: 0.5rem 1.5rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 500; color: white; border: 1px solid rgba(255,255,255,0.3);">
+                        <i class="fas fa-users" style="margin-right: 0.5rem;"></i>
+                        <?php echo number_format($total_pesquisadores); ?> Pesquisadores Cadastrados
+                    </span>
+                </div>
+                
+                <h1 style="font-size: 3.5rem; font-weight: 900; margin-bottom: 1rem; color: white; line-height: 1.2; letter-spacing: -0.02em;">
+                    <i class="fas fa-users me-3"></i>Pesquisadores
+                </h1>
+                <p style="font-size: 1.25rem; color: rgba(255,255,255,0.95); margin-bottom: 0; max-width: 700px; margin-left: auto; margin-right: auto; line-height: 1.6; font-weight: 400;">
+                    Conheça os pesquisadores dos Programas de Pós-Graduação da UMC
+                </p>
+            </div>
+        </div>
     </div>
 </section>
 
-<!-- Main Content -->
-<div class="container my-5">
-    
-    <!-- Search Box -->
-    <div class="search-researchers">
-        <div class="input-group">
-            <span class="input-group-text bg-transparent border-0">
-                <i class="fas fa-search text-muted"></i>
-            </span>
-            <input type="text" id="searchInput" class="form-control border-0" 
-                   placeholder="Buscar por nome, área de pesquisa ou PPG...">
-        </div>
-    </div>
-    
-    <!-- Filter Badges -->
-    <div class="filter-badges">
-        <span class="filter-badge active" data-ppg="all">
-            <i class="fas fa-users"></i> Todos (<?php echo $total_pesquisadores; ?>)
-        </span>
-        <?php foreach ($ppgs_umc as $ppg): ?>
-        <span class="filter-badge" data-ppg="<?php echo htmlspecialchars($ppg['nome']); ?>">
-            <?php echo isset($ppg['sigla']) ? $ppg['sigla'] : $ppg['nome']; ?>
-        </span>
-        <?php endforeach; ?>
-    </div>
-    
-    <!-- Researchers List -->
-    <div id="researchersList">
+<!-- Pesquisadores Section -->
+<section class="py-5" style="background: var(--gray-100);">
+    <div class="container">
         <?php if (empty($pesquisadores)): ?>
-        <div class="alert alert-info">
-            <i class="fas fa-info-circle"></i> 
-            Nenhum pesquisador cadastrado ainda. 
-            <a href="/importar_lattes.php">Clique aqui para importar currículos Lattes</a>.
+        <div class="alert alert-info glass-effect" role="alert">
+            <i class="fas fa-info-circle me-2"></i> 
+            Nenhum pesquisador encontrado. Importe currículos Lattes para visualizar.
         </div>
         <?php else: ?>
-            <?php foreach ($pesquisadores as $pesq): ?>
-            <div class="researcher-card" data-ppg="<?php echo htmlspecialchars($pesq['ppg'] ?? ''); ?>">
-                <div class="row align-items-center">
-                    <div class="col-auto">
-                        <?php if (!empty($pesq['foto_url'])): ?>
-                        <img src="<?php echo htmlspecialchars($pesq['foto_url']); ?>" 
-                             alt="<?php echo htmlspecialchars($pesq['nome_completo'] ?? 'Pesquisador'); ?>" 
-                             class="researcher-photo"
-                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <?php endif; ?>
-                        <div class="researcher-photo bg-secondary d-flex align-items-center justify-content-center" 
-                             style="<?php echo !empty($pesq['foto_url']) ? 'display:none;' : ''; ?>">
-                            <i class="fas fa-user fa-2x text-white"></i>
+        <div class="row g-4">
+            <?php foreach ($pesquisadores as $index => $p): 
+                $nome = $p['nome_completo'] ?? 'Nome não informado';
+                $orcid = $p['orcid'] ?? '';
+                $lattes = $p['id_lattes'] ?? '';
+                $ultima_atualizacao = $p['data_atualizacao_cv'] ?? '';
+            ?>
+            <div class="col-lg-6 fade-in-up" style="animation-delay: <?php echo ($index * 0.05); ?>s;">
+                <div style="background: white; border-radius: 12px; padding: 1.25rem; border: 1px solid var(--gray-200); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05);"
+                     onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(99, 102, 241, 0.12)'; this.style.borderColor='rgb(99, 102, 241)';"
+                     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.05)'; this.style.borderColor='var(--gray-200)';">
+                    
+                    <!-- Decorative gradient bar -->
+                    <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(135deg, #6366f1, #8b5cf6, #a855f7);"></div>
+                    
+                    <div style="display: flex; align-items: start; gap: 1rem; margin-bottom: 1rem;">
+                        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; color: white; box-shadow: 0 4px 8px rgba(99, 102, 241, 0.25); flex-shrink: 0;">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <div style="flex: 1; min-width: 0;">
+                            <h3 style="margin: 0 0 0.5rem 0; font-size: 1.125rem; font-weight: 700; color: var(--gray-900); line-height: 1.3;">
+                                <?php echo htmlspecialchars($nome); ?>
+                            </h3>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.375rem;">
+                                <span style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 0.25rem 0.625rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                    <i class="fas fa-id-card"></i><?php echo !empty($lattes) ? 'Lattes' : 'Pesquisador'; ?>
+                                </span>
+                                <?php if (!empty($orcid)): ?>
+                                <span style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 0.25rem 0.625rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                    <i class="fab fa-orcid"></i>ORCID
+                                </span>
+                                <?php endif; ?>
+                                <span style="background: var(--gray-100); color: var(--gray-700); padding: 0.25rem 0.625rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                    <i class="fas fa-university" style="color: #6366f1;"></i>UMC
+                                </span>
+                            </div>
                         </div>
                     </div>
-                    <div class="col">
-                        <h3 class="researcher-name"><?php echo $pesq['nome_completo'] ?? 'Nome não informado'; ?></h3>
-                        
-                        <?php if (!empty($pesq['ppg'])): ?>
-                        <span class="researcher-ppg">
-                            <?php 
-                            // Buscar informações do PPG
-                            $ppg_info = array_filter($ppgs_umc, fn($p) => $p['nome'] === $pesq['ppg']);
-                            if (!empty($ppg_info)) {
-                                $ppg_data = reset($ppg_info);
-                                echo isset($ppg_data['sigla']) ? $ppg_data['sigla'] : $pesq['ppg'];
-                            } else {
-                                echo $pesq['ppg'];
-                            }
-                            ?>
-                        </span>
-                        <?php endif; ?>
-                        
-                        <?php if (!empty($pesq['area_concentracao'])): ?>
-                        <span class="researcher-ppg" style="background: var(--umc-azul-claro);">
-                            <?php echo $pesq['area_concentracao']; ?>
-                        </span>
-                        <?php endif; ?>
-                        
-                        <div class="researcher-stats">
-                            <div class="stat-item">
-                                <div class="number"><?php echo $pesq['total_producoes'] ?? 0; ?></div>
-                                <div class="label">Produções</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="number"><?php echo $pesq['total_projetos'] ?? 0; ?></div>
-                                <div class="label">Projetos</div>
-                            </div>
-                            <?php if (!empty($pesq['lattesID'])): ?>
-                            <div class="stat-item">
-                                <a href="http://lattes.cnpq.br/<?php echo $pesq['lattesID']; ?>" target="_blank" class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-external-link-alt"></i> Lattes
-                                </a>
-                            </div>
-                            <?php endif; ?>
-                            <?php if (!empty($pesq['orcidID'])): ?>
-                            <div class="stat-item">
-                                <a href="<?php echo $pesq['orcidID']; ?>" target="_blank" class="btn btn-sm btn-outline-success">
-                                    <i class="fab fa-orcid"></i> ORCID
-                                </a>
-                            </div>
-                            <?php endif; ?>
-                        </div>
+                    
+                    <?php if (!empty($ultima_atualizacao)): ?>
+                    <div style="background: var(--gray-50); border-left: 2px solid #6366f1; padding: 0.5rem 0.75rem; border-radius: 6px; margin-bottom: 1rem;">
+                        <p style="color: var(--gray-600); font-size: 0.813rem; margin: 0; display: flex; align-items: center; gap: 0.375rem;">
+                            <i class="fas fa-clock" style="color: #6366f1; font-size: 0.75rem;"></i>
+                            Atualizado em <?php echo date('d/m/Y', strtotime($ultima_atualizacao)); ?>
+                        </p>
                     </div>
-                    <div class="col-auto">
-                        <a href="/result?pesquisador=<?php echo urlencode($pesq['nome_completo']); ?>" class="btn btn-umc-primary">
-                            <i class="fas fa-search"></i> Ver Produções
+                    <?php endif; ?>
+                    
+                    <div style="display: flex; gap: 0.5rem;">
+                        <a href="/result.php?pesquisador=<?php echo urlencode($nome); ?>" 
+                           style="flex: 1; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 0.625rem 1rem; border-radius: 8px; font-weight: 600; font-size: 0.875rem; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 0.375rem; transition: all 0.3s ease; border: none;"
+                           onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 4px 12px rgba(99, 102, 241, 0.3)';"
+                           onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">
+                            <i class="fas fa-search"></i>Ver Produções
                         </a>
+                        <?php if (!empty($orcid)): ?>
+                        <a href="https://orcid.org/<?php echo htmlspecialchars($orcid); ?>" target="_blank" 
+                           style="background: #a6ce39; color: white; padding: 0.625rem 1rem; border-radius: 8px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; transition: all 0.3s ease; box-shadow: 0 2px 6px rgba(166, 206, 57, 0.25);"
+                           onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 4px 12px rgba(166, 206, 57, 0.4)';"
+                           onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 2px 6px rgba(166, 206, 57, 0.25)';">
+                            <i class="fab fa-orcid" style="font-size: 1.125rem;"></i>
+                        </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
             <?php endforeach; ?>
+        </div>
         <?php endif; ?>
     </div>
-</div>
+</section>
 
-<!-- Footer -->
-<footer class="footer-umc">
-    <div class="container text-center">
-        <p class="mb-0">&copy; <?php echo date('Y'); ?> <?php echo $instituicao; ?> - PIVIC 2025</p>
-        <p class="small" style="opacity: 0.7; margin-top: 10px;">
-            Desenvolvido com <i class="fas fa-heart" style="color: var(--umc-azul-royal);"></i> seguindo conformidade LGPD e padrões CAPES
-        </p>
+<!-- Footer Elegante -->
+<footer class="footer-elegant">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <h5><?php echo $instituicao; ?></h5>
+                <p style="color: var(--gray-400); line-height: 1.6;"><?php echo $branch_description; ?></p>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h5>Links Úteis</h5>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 0.5rem;"><a href="<?php echo $privacy_policy_url; ?>">Política de Privacidade</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="<?php echo $terms_of_use_url; ?>">Termos de Uso</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/sobre">Sobre</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h5>Integrações</h5>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: #10b981;"></i> Plataforma Lattes</li>
+                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: #10b981;"></i> ORCID</li>
+                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: #10b981;"></i> OpenAlex</li>
+                </ul>
+            </div>
+        </div>
+        <hr style="border-color: var(--gray-700); margin: 2rem 0;">
+        <div class="text-center">
+            <p class="mb-1">&copy; <?php echo date('Y'); ?> <?php echo $instituicao; ?> - PIVIC 2025</p>
+            <p style="font-size: 0.875rem; color: var(--gray-500);">
+                Desenvolvido com excelência seguindo conformidade LGPD e padrões CAPES
+            </p>
+        </div>
     </div>
 </footer>
 
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-// Busca em tempo real
-document.getElementById('searchInput').addEventListener('input', function(e) {
-    const searchTerm = e.target.value.toLowerCase();
-    const cards = document.querySelectorAll('.researcher-card');
-    
-    cards.forEach(card => {
-        const text = card.textContent.toLowerCase();
-        card.style.display = text.includes(searchTerm) ? 'block' : 'none';
-    });
-});
-
-// Filtro por PPG
-document.querySelectorAll('.filter-badge').forEach(badge => {
-    badge.addEventListener('click', function() {
-        // Remove active de todos
-        document.querySelectorAll('.filter-badge').forEach(b => b.classList.remove('active'));
-        // Adiciona active no clicado
-        this.classList.add('active');
-        
-        const ppgFilter = this.dataset.ppg;
-        const cards = document.querySelectorAll('.researcher-card');
-        
-        cards.forEach(card => {
-            if (ppgFilter === 'all' || card.dataset.ppg === ppgFilter) {
-                card.style.display = 'block';
-            } else {
-                card.style.display = 'none';
-            }
-        });
-    });
-});
-</script>
 
 </body>
 </html>

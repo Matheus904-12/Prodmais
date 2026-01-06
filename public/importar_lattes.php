@@ -70,17 +70,18 @@ $ppgs = getAllPPGs();
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="/css/umc-theme.css" rel="stylesheet">
+    <link href="/css/prodmais-elegant.css" rel="stylesheet">
 
     <style>
         body {
             padding-top: 80px;
-            font-family: 'Roboto', sans-serif;
-            background-color: #f8f9fa;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--gray-100);
         }
 
         .nav-item {
@@ -88,27 +89,47 @@ $ppgs = getAllPPGs();
         }
 
         .upload-zone {
-            border: 3px dashed #ccc;
-            border-radius: 10px;
-            padding: 40px;
+            border: 3px dashed var(--gray-300);
+            border-radius: 16px;
+            padding: 3rem;
             text-align: center;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             cursor: pointer;
             background: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-zone::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         .upload-zone:hover {
-            border-color: var(--umc-azul-claro);
-            background: #f0f7ff;
+            border-color: #6366f1;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.15);
+        }
+
+        .upload-zone:hover::before {
+            opacity: 1;
         }
 
         .upload-zone.dragover {
-            border-color: var(--umc-azul-claro);
-            background: #f0f7ff;
+            border-color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.05);
+            transform: scale(1.02);
         }
 
         .upload-zone i {
-            color: var(--umc-azul-claro);
+            color: #6366f1;
         }
 
         .result-card {
@@ -171,11 +192,35 @@ $ppgs = getAllPPGs();
         }
 
         .page-header {
-            background: linear-gradient(135deg, var(--umc-azul-royal) 0%, var(--umc-azul-claro) 100%);
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
             color: white;
-            padding: 40px 0;
-            margin-bottom: 40px;
-            border-radius: 0 0 20px 20px;
+            padding: 4rem 0 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 10%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            filter: blur(80px);
+        }
+
+        .page-header::after {
+            content: '';
+            position: absolute;
+            bottom: 20%;
+            right: 10%;
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            filter: blur(100px);
         }
 
         .page-header h1 {
@@ -185,22 +230,23 @@ $ppgs = getAllPPGs();
 
         .card-umc-custom {
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
-            border: none;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--gray-200);
             overflow: hidden;
         }
 
         .card-header-umc {
-            background: linear-gradient(135deg, var(--umc-azul-royal) 0%, var(--umc-azul-claro) 100%);
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
             color: white;
-            padding: 25px;
+            padding: 1.75rem 2rem;
             border: none;
         }
 
         .card-header-umc h4 {
             margin: 0;
-            font-weight: 600;
+            font-weight: 800;
+            font-size: 1.25rem;
         }
 
         .card-umc mt-4 {

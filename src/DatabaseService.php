@@ -1,7 +1,3 @@
-    public function getPesquisadores() {
-        $stmt = $this->pdo->query("SELECT * FROM pesquisadores ORDER BY nome ASC");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
 <?php
 /**
  * DatabaseService - Persistência relacional para dados do sistema
@@ -150,5 +146,20 @@ class DatabaseService {
             $dados['doi'] ?? ''
         ]);
     }
-    // ... Métodos de consulta e atualização podem ser adicionados conforme necessário ...
+    
+    // Métodos de consulta
+    public function getPesquisadores() {
+        $stmt = $this->pdo->query("SELECT * FROM pesquisadores ORDER BY nome ASC");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function getProjetos() {
+        $stmt = $this->pdo->query("SELECT * FROM projetos ORDER BY ano_inicio DESC");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function getProducoes() {
+        $stmt = $this->pdo->query("SELECT * FROM producoes ORDER BY ano DESC, titulo ASC");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

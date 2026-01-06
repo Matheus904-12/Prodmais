@@ -692,4 +692,43 @@ class ElasticsearchService
             ]
         ];
     }
+    
+    /**
+     * Indexar documento único
+     */
+    public function indexDocument($index, $id, $document)
+    {
+        if ($this->fallbackMode) {
+            return ['result' => 'skipped'];
+        }
+        
+        $params = [
+            'index' => $index,
+            'id' => $id,
+            'body' => $document
+        ];
+        
+        return $this->client->index($params);
+    }
+    
+    /**
+     * Indexar projetos de pesquisa
+     */
+    public function indexProjects($projects, $indexName = 'prodmais_umc_projetos')
+    {
+        if ($this->fallbackMode) {
+            return 0;
+        }
+        
+        $indexed = 0;
+        foreach ($projects as $project) {
+            try {
+                $this->indexDocument($indexName, $project['id'], $project);
+                $indexed++;
+            } catch (\Exception $e) {
+                error_log("Erro ao indexar projeto: " . $e->getMessage());
+            }
+        }
+        return $indexed;
+    }
 }

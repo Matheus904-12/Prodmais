@@ -57,6 +57,72 @@ class LattesParser
         return $productions;
     }
 
+    /**
+     * Extrair projetos de pesquisa do currículo Lattes
+     */
+    public function parseProjects(string $xmlFilePath): array
+    {
+        if (!file_exists($xmlFilePath)) {
+            throw new \Exception("Arquivo XML não encontrado: {$xmlFilePath}");
+        }
+
+        $xml = simplexml_load_file($xmlFilePath);
+        if ($xml === false) {
+            throw new \Exception("Erro ao carregar o arquivo XML.");
+        }
+
+        $projects = [];
+        $researcherData = $this->extractResearcherData($xml);
+        
+        // Projetos de pesquisa
+        if (isset($xml->{'DADOS-GERAIS'}->{'ATUACOES-PROFISSIONAIS'}->{'ATUACAO-PROFISSIONAL'})) {
+            foreach ($xml->{'DADOS-GERAIS'}->{'ATUACOES-PROFISSIONAIS'}->{'ATUACAO-PROFISSIONAL'} as $atuacao) {
+                if (isset($atuacao->{'ATIVIDADES-DE-PARTICIPACAO-EM-PROJETO'}->{'PARTICIPACAO-EM-PROJETO'})) {
+                    foreach ($atuacao->{'ATIVIDADES-DE-PARTICIPACAO-EM-PROJETO'}->{'PARTICIPACAO-EM-PROJETO'} as $projeto) {
+                        $projData = $projeto->{'PROJETO-DE-PESQUISA'};
+                        $dadosBasicos = $projData->{'DADOS-BASICOS-DO-PROJETO-DE-PESQUISA'};
+                        $detalhamento = $projData->{'DETALHAMENTO-DO-PROJETO-DE-PESQUISA'};
+                        
+                        $titulo = (string)$dadosBasicos->attributes()['NOME-DO-PROJETO'];
+                        $anoInicio = (int)$dadosBasicos->attributes()['ANO-INICIO'];
+                        
+                        // Extrair equipe do projeto
+                        $equipe = [];
+                        if (isset($projData->{'EQUIPE-DO-PROJETO'}->{'INTEGRANTES-DO-PROJETO'})) {
+                            foreach ($projData->{'EQUIPE-DO-PROJETO'}->{'INTEGRANTES-DO-PROJETO'} as $integrante) {
+                                $equipe[] = [
+                                    'nome' => (string)$integrante->attributes()['NOME-COMPLETO'],
+                                    'funcao' => (string)$integrante->attributes()['FLAG-RESPONSAVEL']
+                                ];
+                            }
+                        }
+                        
+                        $projects[] = [
+                            'id' => 'projeto_' . md5($titulo . $anoInicio),
+                            'titulo' => $titulo,
+                            'ano_inicio' => $anoInicio,
+                            'ano_fim' => (int)$dadosBasicos->attributes()['ANO-FIM'],
+                            'situacao' => (string)$dadosBasicos->attributes()['SITUACAO'],
+                            'natureza' => (string)$dadosBasicos->attributes()['NATUREZA'],
+                            'descricao' => (string)$dadosBasicos->attributes()['DESCRICAO-DO-PROJETO'],
+                            'financiamento' => (string)$detalhamento->attributes()['FINANCIADOR-DO-PROJETO'],
+                            'coordenador' => $researcherData['name'],
+                            'lattes_coordenador' => $researcherData['lattes_id'],
+                            'instituicao' => (string)($atuacao->attributes()['NOME-INSTITUICAO'] ?? $researcherData['institution']),
+                            'equipe' => $equipe,
+                            'grande_area' => (string)$dadosBasicos->attributes()['GRANDE-AREA-CONHECIMENTO'],
+                            'area' => (string)$dadosBasicos->attributes()['AREA-CONHECIMENTO'],
+                            'sub_area' => (string)$dadosBasicos->attributes()['SUB-AREA-CONHECIMENTO'],
+                            'source' => 'Lattes'
+                        ];
+                    }
+                }
+            }
+        }
+        
+        return $projects;
+    }
+
     private function extractResearcherData(\SimpleXMLElement $xml): array
     {
         $dadosGerais = $xml->{'DADOS-GERAIS'};
