@@ -65,6 +65,7 @@ $ppgs = getAllPPGs();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/img/umc-favicon.png">
     <title>Importar Currículo Lattes - PRODMAIS UMC</title>
 
     <!-- Fonts -->
@@ -93,7 +94,7 @@ $ppgs = getAllPPGs();
             border-radius: 16px;
             padding: 3rem;
             text-align: center;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             background: white;
             position: relative;
@@ -114,8 +115,8 @@ $ppgs = getAllPPGs();
 
         .upload-zone:hover {
             border-color: #6366f1;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.15);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(99, 102, 241, 0.2);
         }
 
         .upload-zone:hover::before {
@@ -126,10 +127,24 @@ $ppgs = getAllPPGs();
             border-color: #8b5cf6;
             background: rgba(139, 92, 246, 0.05);
             transform: scale(1.02);
+            box-shadow: 0 16px 40px rgba(139, 92, 246, 0.25);
         }
 
         .upload-zone i {
             color: #6366f1;
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .upload-zone h5 {
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.75rem;
+        }
+        
+        .upload-zone p {
+            color: var(--gray-600);
+            font-size: 0.938rem;
         }
 
         .result-card {
@@ -224,8 +239,17 @@ $ppgs = getAllPPGs();
         }
 
         .page-header h1 {
-            font-weight: 700;
-            margin-bottom: 10px;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            font-size: 3.5rem;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+        
+        .page-header .lead {
+            font-size: 1.25rem;
+            opacity: 0.95;
+            font-weight: 400;
         }
 
         .card-umc-custom {
@@ -248,33 +272,60 @@ $ppgs = getAllPPGs();
             font-weight: 800;
             font-size: 1.25rem;
         }
-
-        .card-umc mt-4 {
-            z-index: 0;
-            transition: none;
-            overflow: none;
-            height: 50%;
+        
+        .card-umc {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--gray-200);
         }
-
-        .card-umc mt-4:hover {
-            transform: none;
+        
+        .btn-umc-primary {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 12px;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-umc-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+            color: white;
+        }
+        
+        .btn-umc-outline {
+            background: white;
+            color: #6366f1;
+            border: 2px solid #6366f1;
+            padding: 0.75rem 2rem;
+            border-radius: 12px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-umc-outline:hover {
+            background: #6366f1;
+            color: white;
+            transform: translateY(-2px);
         }
     </style>
 </head>
 
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light navbar-umc fixed-top">
+    <!-- Navbar Elegante -->
+    <nav class="navbar navbar-expand-lg navbar-elegant fixed-top">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="index_umc.php">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/0/03/Logo_umc1.png"
-                    alt="UMC Logo"
-                    height="50"
-                    class="me-3"
-                    onerror="this.style.display='none'">
-                <div>
-                    <strong style="font-size: 1.8rem; color: var(--umc-azul-claro); margin-left: 8px;">Prodmais</strong>
-                </div>
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/0/03/Logo_umc1.png" 
+                     alt="UMC Logo" 
+                     height="45" 
+                     class="me-2"
+                     onerror="this.style.display='none'">
+                <strong style="font-size: 1.5rem; background: linear-gradient(135deg, #6366f1, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Prodmais</strong>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -282,22 +333,25 @@ $ppgs = getAllPPGs();
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="index_umc.php"><i class="fas fa-home"></i> Início</a>
+                        <a class="nav-link-elegant" href="/index_umc.php"><i class="fas fa-home me-1"></i> Início</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="pesquisadores.php"><i class="fas fa-users"></i> Pesquisadores</a>
+                        <a class="nav-link-elegant" href="/pesquisadores.php"><i class="fas fa-users me-1"></i> Pesquisadores</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="ppgs.php"><i class="fas fa-university"></i> PPGs</a>
+                        <a class="nav-link-elegant" href="/ppgs.php"><i class="fas fa-university me-1"></i> PPGs</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="importar_lattes.php"><i class="fas fa-file-upload"></i> Importar Lattes</a>
+                        <a class="nav-link-elegant" href="/projetos.php"><i class="fas fa-project-diagram me-1"></i> Projetos</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="dashboard.php"><i class="fas fa-chart-line"></i> Dashboard</a>
+                        <a class="nav-link-elegant active" href="/importar_lattes.php"><i class="fas fa-file-upload me-1"></i> Importar</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="login.php"><i class="fas fa-cog"></i> Admin</a>
+                        <a class="nav-link-elegant" href="/dashboard.php"><i class="fas fa-chart-line me-1"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link-elegant" href="/login.php"><i class="fas fa-cog me-1"></i> Admin</a>
                     </li>
                 </ul>
             </div>
@@ -587,40 +641,36 @@ $ppgs = getAllPPGs();
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer-umc mt-5">
+    <!-- Footer Elegante -->
+    <footer class="footer-elegant">
         <div class="container">
             <div class="row">
-                <div class="col-md-6">
-                    <h5>PRODMAIS UMC</h5>
-                    <p>Sistema de Gestão da Produção Científica dos Programas de Pós-Graduação da Universidade de Mogi das Cruzes</p>
+                <div class="col-md-4 mb-4">
+                    <h5>Universidade de Mogi das Cruzes</h5>
+                    <p style="color: var(--gray-400); line-height: 1.6;">Sistema de Gestão da Produção Científica dos Programas de Pós-Graduação</p>
                 </div>
-                <div class="col-md-3">
-                    <h6>Links Úteis</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="index_umc.php">Início</a></li>
-                        <li><a href="pesquisadores.php">Pesquisadores</a></li>
-                        <li><a href="ppgs.php">PPGs</a></li>
-                        <li><a href="dashboard.php">Dashboard</a></li>
+                <div class="col-md-4 mb-4">
+                    <h5>Links Úteis</h5>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 0.5rem;"><a href="/index_umc.php">Início</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="/pesquisadores.php">Pesquisadores</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="/ppgs.php">PPGs</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="/projetos.php">Projetos</a></li>
                     </ul>
                 </div>
-                <div class="col-md-3">
-                    <h6>Integrações</h6>
-                    <ul class="list-unstyled">
-                        <li><i class="fas fa-check" style="color: #28a745;"></i> Plataforma Lattes</li>
-                        <li><i class="fas fa-check" style="color: #28a745;"></i> Elasticsearch</li>
-                        <li><i class="fas fa-check" style="color: #28a745;"></i> ORCID</li>
-                        <li><i class="fas fa-check" style="color: #28a745;"></i> OpenAlex</li>
+                <div class="col-md-4 mb-4">
+                    <h5>Integrações</h5>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: #10b981;"></i> Plataforma Lattes</li>
+                        <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: #10b981;"></i> ORCID</li>
+                        <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: #10b981;"></i> OpenAlex</li>
                     </ul>
                 </div>
             </div>
-            <hr style="border-color: rgba(255,255,255,0.1);">
+            <hr style="border-color: var(--gray-700); margin: 2rem 0;">
             <div class="text-center">
-                <p class="mb-0">
-                    &copy; <?= date('Y') ?> Universidade de Mogi das Cruzes - UMC |
-                    Desenvolvido com <i class="fas fa-heart" style="color: var(--umc-azul-claro);"></i>
-                    pela equipe PRODMAIS
-                </p>
+                <p class="mb-1">&copy; <?= date('Y') ?> Universidade de Mogi das Cruzes - PIVIC 2025</p>
+                <p style="font-size: 0.875rem; color: var(--gray-500);">Desenvolvido com excelência seguindo conformidade LGPD e padrões CAPES</p>
             </div>
         </div>
     </footer>

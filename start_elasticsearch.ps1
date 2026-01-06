@@ -37,7 +37,7 @@ Write-Host "`n🔄 Iniciando Elasticsearch..." -ForegroundColor Cyan
 # Iniciar Elasticsearch
 Start-Process -FilePath "$esPath\bin\elasticsearch.bat" -WorkingDirectory $esPath -WindowStyle Normal
 
-Write-Host "`n⏳ Aguardando Elasticsearch iniciar (30 segundos)..." -ForegroundColor Yellow
+Write-Host "`n⏳ Aguardando Elasticsearch iniciar..." -ForegroundColor Yellow
 Start-Sleep -Seconds 30
 
 # Verificar se está rodando

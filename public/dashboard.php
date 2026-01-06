@@ -92,6 +92,7 @@ if ($client !== null) {
 $producoes_por_qualis = [];
 if ($client !== null) {
     try {
+        // Tentar buscar por qualis.keyword primeiro
         $params = [
             'index' => $index,
             'body' => [
@@ -107,14 +108,76 @@ if ($client !== null) {
             ]
         ];
         $response = $client->search($params);
-        if (isset($response['aggregations']['por_qualis']['buckets'])) {
+        if (isset($response['aggregations']['por_qualis']['buckets']) && !empty($response['aggregations']['por_qualis']['buckets'])) {
             foreach ($response['aggregations']['por_qualis']['buckets'] as $bucket) {
                 $producoes_por_qualis[$bucket['key']] = $bucket['doc_count'];
+            }
+        } else {
+            // Se não encontrou com .keyword, tentar sem
+            $params['body']['aggs']['por_qualis']['terms']['field'] = 'qualis';
+            $response = $client->search($params);
+            if (isset($response['aggregations']['por_qualis']['buckets'])) {
+                foreach ($response['aggregations']['por_qualis']['buckets'] as $bucket) {
+                    $producoes_por_qualis[$bucket['key']] = $bucket['doc_count'];
+                }
+            }
+        }
+        
+        // Se ainda estiver vazio, buscar todos e contar manualmente
+        if (empty($producoes_por_qualis)) {
+            $params = [
+                'index' => $index,
+                'size' => 1000,
+                'body' => [
+                    'query' => ['match_all' => (object)[]]
+                ]
+            ];
+            $response = $client->search($params);
+            $qualis_count = [];
+            
+            if (isset($response['hits']['hits'])) {
+                foreach ($response['hits']['hits'] as $hit) {
+                    $source = $hit['_source'];
+                    if (isset($source['qualis']) && !empty($source['qualis'])) {
+                        $qualis = is_array($source['qualis']) ? $source['qualis'][0] : $source['qualis'];
+                        if (!isset($qualis_count[$qualis])) {
+                            $qualis_count[$qualis] = 0;
+                        }
+                        $qualis_count[$qualis]++;
+                    }
+                }
+            }
+            
+            if (!empty($qualis_count)) {
+                $producoes_por_qualis = $qualis_count;
             }
         }
     } catch (Exception $e) {
         error_log("Erro ao buscar produções por qualis: " . $e->getMessage());
     }
+}
+
+// Garantir ordem correta do Qualis e remover vazios
+if (!empty($producoes_por_qualis)) {
+    // Remover valores vazios, null ou "Não classificado"
+    $producoes_por_qualis = array_filter($producoes_por_qualis, function($key) {
+        return !empty($key) && $key !== 'Não classificado' && $key !== 'null';
+    }, ARRAY_FILTER_USE_KEY);
+    
+    $ordem_qualis = ['A1', 'A2', 'A3', 'A4', 'B1', 'B2', 'B3', 'B4', 'C'];
+    $producoes_ordenadas = [];
+    foreach ($ordem_qualis as $q) {
+        if (isset($producoes_por_qualis[$q])) {
+            $producoes_ordenadas[$q] = $producoes_por_qualis[$q];
+        }
+    }
+    // Adicionar qualis não previstos (mas válidos)
+    foreach ($producoes_por_qualis as $key => $value) {
+        if (!in_array($key, $ordem_qualis) && !empty($key)) {
+            $producoes_ordenadas[$key] = $value;
+        }
+    }
+    $producoes_por_qualis = $producoes_ordenadas;
 }
 ?>
 <!DOCTYPE html>
@@ -122,6 +185,7 @@ if ($client !== null) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/img/umc-favicon.png">
     <title>Dashboard - <?php echo $branch; ?></title>
     
     <!-- Bootstrap CSS -->
@@ -143,6 +207,16 @@ if ($client !== null) {
     <link rel="stylesheet" href="/css/umc-theme.css">
     
     <style>
+        .navbar-brand .brand-text {
+            font-size: 1.75rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+        
         body {
             font-family: 'Inter', sans-serif;
         }
@@ -166,7 +240,9 @@ if ($client !== null) {
                  height="45" 
                  class="me-2"
                  onerror="this.style.display='none'">
-            <strong style="font-size: 1.5rem; background: linear-gradient(135deg, #1a56db, #0369a1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Prodmais</strong>
+            <div class="brand-text">
+                Prod<span style="color: #60a5fa; font-weight: 900;">mais</span>
+            </div>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
@@ -365,7 +441,7 @@ if ($client !== null) {
             </div>
             
             <div class="col-lg-4 col-md-6 fade-in-up" style="animation-delay: 0.7s;">
-                <a href="/importar_lattes.php" style="text-decoration: none;">
+                <a href="/login.php" style="text-decoration: none;">
                     <div style="background: white; border-radius: 16px; padding: 1.5rem; border: 1px solid var(--gray-200); box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: all 0.3s ease;"
                          onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.15)'; this.style.borderColor='#6366f1';"
                          onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'; this.style.borderColor='var(--gray-200)';">
@@ -383,7 +459,7 @@ if ($client !== null) {
             </div>
             
             <div class="col-lg-4 col-md-6 fade-in-up" style="animation-delay: 0.8s;">
-                <a href="/result.php" style="text-decoration: none;">
+                <a href="/index_umc.php" style="text-decoration: none;">
                     <div style="background: white; border-radius: 16px; padding: 1.5rem; border: 1px solid var(--gray-200); box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: all 0.3s ease;"
                          onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.15)'; this.style.borderColor='#10b981';"
                          onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'; this.style.borderColor='var(--gray-200)';">
@@ -401,7 +477,7 @@ if ($client !== null) {
             </div>
             
             <div class="col-lg-4 col-md-6 fade-in-up" style="animation-delay: 0.9s;">
-                <a href="/admin.php" style="text-decoration: none;">
+                <a href="/login.php" style="text-decoration: none;">
                     <div style="background: white; border-radius: 16px; padding: 1.5rem; border: 1px solid var(--gray-200); box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: all 0.3s ease;"
                          onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.15)'; this.style.borderColor='#f59e0b';"
                          onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'; this.style.borderColor='var(--gray-200)';">
@@ -432,8 +508,8 @@ if ($client !== null) {
             <div class="col-md-4 mb-4">
                 <h5>Links Úteis</h5>
                 <ul style="list-style: none; padding: 0;">
-                    <li style="margin-bottom: 0.5rem;"><a href="<?php echo $privacy_policy_url; ?>">Política de Privacidade</a></li>
-                    <li style="margin-bottom: 0.5rem;"><a href="<?php echo $terms_of_use_url; ?>">Termos de Uso</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/politica-privacidade.php">Política de Privacidade</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/termos-uso.php">Termos de Uso</a></li>
                     <li style="margin-bottom: 0.5rem;"><a href="/sobre">Sobre</a></li>
                 </ul>
             </div>
@@ -497,35 +573,83 @@ new Chart(ctxAno, {
 
 // Produções por Qualis
 const ctxQualis = document.getElementById('chartProducoesPorQualis').getContext('2d');
-new Chart(ctxQualis, {
-    type: 'doughnut',
-    data: {
-        labels: <?php echo json_encode(array_keys($producoes_por_qualis)); ?>,
-        datasets: [{
-            data: <?php echo json_encode(array_values($producoes_por_qualis)); ?>,
-            backgroundColor: [
-                'rgba(16, 185, 129, 0.8)',
-                'rgba(5, 150, 105, 0.8)',
-                'rgba(59, 130, 246, 0.8)',
-                'rgba(37, 99, 235, 0.8)',
-                'rgba(245, 158, 11, 0.8)',
-                'rgba(217, 119, 6, 0.8)',
-                'rgba(239, 68, 68, 0.8)'
-            ],
-            borderWidth: 2,
-            borderColor: '#fff'
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                position: 'right'
+const qualisData = <?php echo json_encode(array_values($producoes_por_qualis)); ?>;
+const qualisLabels = <?php echo json_encode(array_keys($producoes_por_qualis)); ?>;
+
+// Se não houver dados, mostrar mensagem
+if (!qualisData || qualisData.length === 0 || qualisData.every(v => v === 0)) {
+    const canvas = document.getElementById('chartProducoesPorQualis');
+    const parent = canvas.parentElement;
+    parent.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 280px; color: var(--gray-500);"><div class="text-center"><i class="fas fa-chart-pie" style="font-size: 3rem; opacity: 0.3; margin-bottom: 1rem;"></i><p style="margin: 0; font-weight: 600;">Dados de Qualis não disponíveis</p><p style="font-size: 0.875rem; margin-top: 0.5rem;">Importe currículos para visualizar a distribuição</p></div></div>';
+} else {
+    new Chart(ctxQualis, {
+        type: 'doughnut',
+        data: {
+            labels: qualisLabels,
+            datasets: [{
+                data: qualisData,
+                backgroundColor: [
+                    'rgba(16, 185, 129, 0.8)',   // A1 - Verde
+                    'rgba(5, 150, 105, 0.8)',    // A2 - Verde escuro
+                    'rgba(59, 130, 246, 0.8)',   // A3 - Azul
+                    'rgba(37, 99, 235, 0.8)',    // A4 - Azul escuro
+                    'rgba(245, 158, 11, 0.8)',   // B1 - Laranja
+                    'rgba(217, 119, 6, 0.8)',    // B2 - Laranja escuro
+                    'rgba(239, 68, 68, 0.8)',    // B3 - Vermelho
+                    'rgba(185, 28, 28, 0.8)',    // B4 - Vermelho escuro
+                    'rgba(107, 114, 128, 0.8)',  // C - Cinza
+                    'rgba(75, 85, 99, 0.8)'      // Não classificado
+                ],
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: {
+                        padding: 15,
+                        font: {
+                            size: 12,
+                            weight: '600'
+                        },
+                        generateLabels: function(chart) {
+                            const data = chart.data;
+                            if (data.labels.length && data.datasets.length) {
+                                return data.labels.map((label, i) => {
+                                    const value = data.datasets[0].data[i];
+                                    const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return {
+                                        text: `${label}: ${value} (${percentage}%)`,
+                                        fillStyle: data.datasets[0].backgroundColor[i],
+                                        hidden: false,
+                                        index: i
+                                    };
+                                });
+                            }
+                            return [];
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = ((value / total) * 100).toFixed(1);
+                            return `${label}: ${value} produções (${percentage}%)`;
+                        }
+                    }
+                }
             }
         }
-    }
-});
+    });
+}
 
 // Produções por PPG
 const ctxPPG = document.getElementById('chartProducoesPorPPG').getContext('2d');

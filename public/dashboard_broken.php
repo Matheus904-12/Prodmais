@@ -86,6 +86,8 @@ require_once __DIR__ . '/../config/config_umc.php';
             margin-bottom: 1.5rem;
             flex-grow: 1;
         }
+
+        .info-section h5 {
             color: var(--umc-azul-royal);
             font-weight: 600;
             margin-top: 25px;

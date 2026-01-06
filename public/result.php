@@ -112,6 +112,7 @@ $total_pages = ceil($total / $limit);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/img/umc-favicon.png">
     <title>Resultados: <?php echo htmlspecialchars($search_term); ?> - Prodmais UMC</title>
 
     <!-- Bootstrap CSS -->
@@ -145,7 +146,9 @@ $total_pages = ceil($total / $limit);
                  height="45" 
                  class="me-2"
                  onerror="this.style.display='none'">
-            <strong style="font-size: 1.5rem; background: linear-gradient(135deg, #1a56db, #0369a1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Prodmais</strong>
+            <div class="brand-text" style="font-size: 1.75rem; font-weight: 900; background: linear-gradient(135deg, #1a56db 0%, #0369a1 50%, #0ea5e9 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: -0.5px;">
+                Prod<span style="color: #0ea5e9; font-weight: 900;">mais</span>
+            </div>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
@@ -604,8 +607,8 @@ $total_pages = ceil($total / $limit);
             <div class="col-md-4 mb-4">
                 <h5>Links Úteis</h5>
                 <ul style="list-style: none; padding: 0;">
-                    <li style="margin-bottom: 0.5rem;"><a href="<?php echo $privacy_policy_url; ?>">Política de Privacidade</a></li>
-                    <li style="margin-bottom: 0.5rem;"><a href="<?php echo $terms_of_use_url; ?>">Termos de Uso</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/politica-privacidade.php">Política de Privacidade</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/termos-uso.php">Termos de Uso</a></li>
                     <li style="margin-bottom: 0.5rem;"><a href="/sobre">Sobre</a></li>
                 </ul>
             </div>

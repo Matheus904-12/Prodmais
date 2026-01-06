@@ -68,12 +68,13 @@ $total_results = $count_producoes + $count_pesquisadores + $count_projetos;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/img/umc-favicon.png">
     <title>Resultados para "<?php echo htmlspecialchars($search_term); ?>" - <?php echo $branch; ?></title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -83,22 +84,76 @@ $total_results = $count_producoes + $count_pesquisadores + $count_projetos;
 
     <!-- UMC Theme -->
     <link rel="stylesheet" href="/css/umc-theme.css">
+    <link rel="stylesheet" href="/css/prodmais-elegant.css">
 
     <style>
-        .nav-item {
-            padding-left: 15px;
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--gray-100);
+            padding-top: 0;
+        }
+        
+        .hero-search {
+            background: linear-gradient(135deg, #1a56db 0%, #0369a1 50%, #0284c7 100%);
+            padding: 8rem 0 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-search::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 10%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            filter: blur(80px);
+        }
+        
+        .hero-search::after {
+            content: '';
+            position: absolute;
+            bottom: 20%;
+            right: 10%;
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            filter: blur(100px);
+        }
+        
+        .hero-search h1 {
+            color: white;
+            font-weight: 900;
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-search p {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.25rem;
+            margin: 0;
+            position: relative;
+            z-index: 1;
         }
 
         .result-category {
             background: white;
             border-radius: 16px;
-            padding: 40px 30px;
-            box-shadow: 0 4px 20px rgba(0, 75, 147, 0.1);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            padding: 2.5rem 2rem;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             text-align: center;
-            border: 2px solid transparent;
+            border: 1px solid var(--gray-200);
             position: relative;
             overflow: hidden;
+            height: 100%;
         }
 
         .result-category::before {
@@ -107,10 +162,10 @@ $total_results = $count_producoes + $count_pesquisadores + $count_projetos;
             top: 0;
             left: 0;
             width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, var(--umc-azul-royal), var(--umc-azul-claro));
+            height: 4px;
+            background: linear-gradient(90deg, #1a56db, #0369a1);
             transform: scaleX(0);
-            transition: transform 0.4s ease;
+            transition: transform 0.3s ease;
         }
 
         .result-category:hover::before {
@@ -118,135 +173,134 @@ $total_results = $count_producoes + $count_pesquisadores + $count_projetos;
         }
 
         .result-category:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 12px 40px rgba(0, 75, 147, 0.2);
-            border-color: var(--umc-azul-claro);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 32px rgba(26, 86, 219, 0.15);
+            border-color: #1a56db;
         }
 
         .category-icon {
-            width: 100px;
-            height: 100px;
-            margin: 0 auto 25px;
-            background: linear-gradient(var(--umc-azul-royal), var(--umc-azul-claro));
-            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, #1a56db, #0369a1);
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 8px 25px rgba(0, 75, 147, 0.25);
+            box-shadow: 0 8px 20px rgba(26, 86, 219, 0.25);
             transition: all 0.3s ease;
         }
 
         .result-category:hover .category-icon {
-            transform: scale(1.1);
-            box-shadow: 0 12px 35px rgba(0, 75, 147, 0.35);
+            transform: scale(1.05) rotate(5deg);
+            box-shadow: 0 12px 28px rgba(26, 86, 219, 0.35);
         }
 
         .category-icon i {
-            font-size: 3rem;
+            font-size: 2.25rem;
             color: white;
         }
 
         .result-count {
-            font-size: 3.5rem;
+            font-size: 3rem;
             font-weight: 900;
-            background: linear-gradient(135deg, var(--umc-azul-royal), var(--umc-azul-claro));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin: 20px 0 10px;
+            color: #1a56db;
+            margin: 1rem 0 0.5rem;
             line-height: 1;
         }
 
         .result-label {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #495057;
-            margin-bottom: 25px;
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+        
+        .result-category p {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            margin-bottom: 1.5rem;
         }
 
-        .result-category .btn {
-            padding: 12px 35px;
-            font-size: 1.05rem;
-            font-weight: 600;
-            border-radius: 30px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 75, 147, 0.2);
+        .btn-search-primary {
+            background: linear-gradient(135deg, #1a56db, #0369a1);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 12px;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(26, 86, 219, 0.3);
         }
-
-        .result-category .btn:hover {
+        
+        .btn-search-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 75, 147, 0.3);
+            box-shadow: 0 8px 20px rgba(26, 86, 219, 0.4);
+            color: white;
         }
 
         .search-info-card {
             background: white;
             border-radius: 16px;
-            padding: 35px;
-            box-shadow: 0 4px 20px rgba(0, 75, 147, 0.1);
-            border-left: 5px solid var(--umc-azul-royal);
-        }
-
-        .search-info-card h5 {
-            color: var(--umc-azul-royal);
-            font-weight: 700;
-            margin-bottom: 20px;
+            padding: 2rem;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--gray-200);
         }
 
         .stats-badge {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            padding: 15px 25px;
-            border-radius: 50px;
+            gap: 0.75rem;
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            padding: 1rem 1.5rem;
+            border-radius: 999px;
             font-weight: 600;
-            color: var(--umc-azul-royal);
-            margin: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            color: #1e3a8a;
+            box-shadow: 0 2px 10px rgba(26, 86, 219, 0.1);
         }
 
         .stats-badge i {
             font-size: 1.5rem;
-            color: var(--umc-azul-claro);
+            color: #1a56db;
         }
 
         .search-term-display {
-            background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
             border-radius: 12px;
-            padding: 20px 30px;
-            margin-bottom: 15px;
-            border-left: 4px solid var(--umc-azul-royal);
+            padding: 1.5rem 2rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #1a56db;
         }
 
         .search-term-text {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            color: var(--umc-azul-royal);
+            color: #1e3a8a;
             margin: 0;
         }
 
         .refine-search-card {
-            background: linear-gradient(135deg, white, #f8f9fa);
+            background: white;
             border-radius: 16px;
-            padding: 35px;
-            box-shadow: 0 4px 20px rgba(0, 75, 147, 0.1);
-            border: 2px dashed var(--umc-azul-claro);
+            padding: 2rem;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            border: 2px solid #1a56db;
         }
     </style>
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light navbar-umc fixed-top">
+<!-- Navbar Elegante -->
+<nav class="navbar navbar-expand-lg navbar-elegant fixed-top">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="/">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/0/03/Logo_umc1.png"
-                alt="UMC Logo"
-                height="50"
-                class="me-3"
-                onerror="this.style.display='none'">
-            <div>
-                <strong style="font-size: 1.8rem; color: var(--umc-azul-claro); margin-left: 8px;">Prodmais</strong>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/03/Logo_umc1.png" 
+                 alt="UMC Logo" 
+                 height="45" 
+                 class="me-2"
+                 onerror="this.style.display='none'">
+            <div class="brand-text" style="font-size: 1.75rem; font-weight: 900; background: linear-gradient(135deg, #1a56db 0%, #0369a1 50%, #0ea5e9 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: -0.5px;">
+                Prod<span style="color: #0ea5e9; font-weight: 900;">mais</span>
             </div>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -255,39 +309,37 @@ $total_results = $count_producoes + $count_pesquisadores + $count_projetos;
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="/index_umc.php"><i class="fas fa-home me-1"></i> Início</a>
+                    <a class="nav-link-elegant" href="/index_umc.php"><i class="fas fa-home me-1"></i> Início</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/pesquisadores.php"><i class="fas fa-users me-1"></i> Pesquisadores</a>
+                    <a class="nav-link-elegant" href="/pesquisadores.php"><i class="fas fa-users me-1"></i> Pesquisadores</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/ppgs.php"><i class="fas fa-university me-1"></i> PPGs</a>
+                    <a class="nav-link-elegant" href="/ppgs.php"><i class="fas fa-university me-1"></i> PPGs</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/projetos.php"><i class="fas fa-project-diagram me-1"></i> Projetos</a>
+                    <a class="nav-link-elegant" href="/projetos.php"><i class="fas fa-project-diagram me-1"></i> Projetos</a>
                 </li>
                 <?php if ($mostrar_link_dashboard): ?>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/dashboard.php"><i class="fas fa-chart-line me-1"></i> Dashboard</a>
-                    </li>
+                <li class="nav-item">
+                    <a class="nav-link-elegant" href="/dashboard.php"><i class="fas fa-chart-line me-1"></i> Dashboard</a>
+                </li>
                 <?php endif; ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="/login.php"><i class="fas fa-cog me-1"></i> Admin</a>
+                    <a class="nav-link-elegant" href="/login.php"><i class="fas fa-cog me-1"></i> Admin</a>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
 
-<div class="hero-umc">
+<!-- Hero Section -->
+<section class="hero-search">
     <div class="container text-center">
-        <h1 class="display-3 fw-bold mb-3">
-            <br>
-            <i class="fas fa-search me-3"></i> Resultados da Busca
-        </h1>
-        <p class="lead">Sistema de Busca Multi-Índice</p>
+        <h1><i class="fas fa-search me-3"></i>Resultados da Busca</h1>
+        <p>Sistema de Busca Multi-Índice com Elasticsearch</p>
     </div>
-</div>
+</section>
 
 <!-- Results Categories -->
 <div class="container my-5">
@@ -322,12 +374,12 @@ $total_results = $count_producoes + $count_pesquisadores + $count_projetos;
                 <?php if ($count_producoes > 0): ?>
                 <form action="/result.php" method="POST">
                     <input type="hidden" name="search" value="<?php echo htmlspecialchars($search_term); ?>">
-                    <button type="submit" class="btn btn-umc-primary">
+                    <button type="submit" class="btn-search-primary">
                         <i class="fas fa-arrow-right me-2"></i>Ver Produções
                     </button>
                 </form>
                 <?php else: ?>
-                <button class="btn btn-secondary" disabled>
+                <button class="btn btn-secondary" disabled style="border-radius: 12px; padding: 0.75rem 2rem;">
                     <i class="fas fa-times me-2"></i>Sem resultados
                 </button>
                 <?php endif; ?>
@@ -346,12 +398,12 @@ $total_results = $count_producoes + $count_pesquisadores + $count_projetos;
                 <?php if ($count_pesquisadores > 0): ?>
                 <form action="/pesquisadores.php" method="GET">
                     <input type="hidden" name="q" value="<?php echo htmlspecialchars($search_term); ?>">
-                    <button type="submit" class="btn btn-umc-primary">
+                    <button type="submit" class="btn-search-primary">
                         <i class="fas fa-arrow-right me-2"></i>Ver Pesquisadores
                     </button>
                 </form>
                 <?php else: ?>
-                <button class="btn btn-secondary" disabled>
+                <button class="btn btn-secondary" disabled style="border-radius: 12px; padding: 0.75rem 2rem;">
                     <i class="fas fa-times me-2"></i>Sem resultados
                 </button>
                 <?php endif; ?>
@@ -370,12 +422,12 @@ $total_results = $count_producoes + $count_pesquisadores + $count_projetos;
                 <?php if ($count_projetos > 0): ?>
                 <form action="/projetos.php" method="POST">
                     <input type="hidden" name="search" value="<?php echo htmlspecialchars($search_term); ?>">
-                    <button type="submit" class="btn btn-umc-primary">
+                    <button type="submit" class="btn-search-primary">
                         <i class="fas fa-arrow-right me-2"></i>Ver Projetos
                     </button>
                 </form>
                 <?php else: ?>
-                <button class="btn btn-secondary" disabled>
+                <button class="btn btn-secondary" disabled style="border-radius: 12px; padding: 0.75rem 2rem;">
                     <i class="fas fa-times me-2"></i>Sem resultados
                 </button>
                 <?php endif; ?>
@@ -395,21 +447,22 @@ $total_results = $count_producoes + $count_pesquisadores + $count_projetos;
                     <p class="text-muted">Digite novos termos para uma busca mais específica</p>
                 </div>
                 <form action="/presearch.php" method="POST">
-                    <div class="input-group input-group-lg">
-                        <span class="input-group-text bg-white">
-                            <i class="fas fa-search text-primary"></i>
+                    <div class="input-group input-group-lg" style="box-shadow: 0 2px 12px rgba(0,0,0,0.08); border-radius: 12px; overflow: hidden;">
+                        <span class="input-group-text bg-white" style="border: none;">
+                            <i class="fas fa-search" style="color: #1a56db;"></i>
                         </span>
                         <input type="search" name="search" class="form-control" 
                                placeholder="Ex: biotecnologia, genômica, saúde pública..." 
                                value="<?php echo htmlspecialchars($search_term); ?>"
+                               style="border: none; outline: none;"
                                required>
-                        <button type="submit" class="btn btn-umc-primary px-5">
+                        <button type="submit" class="btn-search-primary" style="border-radius: 0;">
                             <i class="fas fa-search me-2"></i>Nova Busca
                         </button>
                     </div>
                 </form>
                 <div class="text-center mt-3">
-                    <a href="/index_umc.php" class="btn btn-outline-secondary">
+                    <a href="/index_umc.php" class="btn btn-outline-secondary" style="border-radius: 12px; padding: 0.75rem 2rem; font-weight: 600;">
                         <i class="fas fa-home me-2"></i>Voltar ao Início
                     </a>
                 </div>
@@ -418,31 +471,43 @@ $total_results = $count_producoes + $count_pesquisadores + $count_projetos;
     </div>
 </div>
 
-<!-- Footer UMC -->
-<footer class="footer-umc mt-5">
+<!-- Footer Elegante -->
+<footer class="footer-elegant">
     <div class="container">
         <div class="row">
-            <div class="col-md-4 mb-4">
-                <h5><i class="fas fa-university me-2"></i> UMC Prodmais</h5>
-                <p>Sistema de gestão da produção científica dos Programas de Pós-Graduação.</p>
+            <div class="col-md-3 mb-4">
+                <h5>Universidade de Mogi das Cruzes</h5>
+                <p style="color: var(--gray-400); line-height: 1.6;">Sistema de Gestão da Produção Científica dos Programas de Pós-Graduação</p>
             </div>
-            <div class="col-md-4 mb-4">
-                <h5><i class="fas fa-link me-2"></i> Links Rápidos</h5>
-                <ul class="list-unstyled">
-                    <li><a href="/index_umc.php"><i class="fas fa-chevron-right me-2"></i> Início</a></li>
-                    <li><a href="/pesquisadores.php"><i class="fas fa-chevron-right me-2"></i> Pesquisadores</a></li>
-                    <li><a href="/ppgs.php"><i class="fas fa-chevron-right me-2"></i> PPGs</a></li>
+            <div class="col-md-3 mb-4">
+                <h5>Links Úteis</h5>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 0.5rem;"><a href="/index_umc.php">Início</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/pesquisadores.php">Pesquisadores</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/ppgs.php">PPGs</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/projetos.php">Projetos</a></li>
                 </ul>
             </div>
-            <div class="col-md-4 mb-4">
-                <h5><i class="fas fa-info-circle me-2"></i> Sobre</h5>
-                <p>Universidade de Mogi das Cruzes<br>
-                    Sistema desenvolvido para a gestão da produção acadêmica.</p>
+            <div class="col-md-3 mb-4">
+                <h5>Integrações</h5>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: #1a56db;"></i> Plataforma Lattes</li>
+                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: #1a56db;"></i> ORCID</li>
+                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: #1a56db;"></i> OpenAlex</li>
+                </ul>
+            </div>
+            <div class="col-md-3 mb-4">
+                <h5>Legal</h5>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 0.5rem;"><a href="/politica-privacidade.php"><i class="fas fa-shield-alt me-2"></i>Política de Privacidade</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/termos-uso.php"><i class="fas fa-file-contract me-2"></i>Termos de Uso</a></li>
+                </ul>
             </div>
         </div>
-        <hr>
+        <hr style="border-color: var(--gray-700); margin: 2rem 0;">
         <div class="text-center">
-            <p class="mb-0">&copy; <?php echo date('Y'); ?> UMC - Todos os direitos reservados</p>
+            <p class="mb-1">&copy; <?php echo date('Y'); ?> Universidade de Mogi das Cruzes - PIVIC 2025</p>
+            <p style="font-size: 0.875rem; color: var(--gray-500);">Desenvolvido com excelência seguindo conformidade LGPD e padrões CAPES</p>
         </div>
     </div>
 </footer>

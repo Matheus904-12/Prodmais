@@ -148,6 +148,7 @@ error_log("PPG.php - Debug Final: " . json_encode($debug_info));
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/img/umc-favicon.png">
     <title><?php echo htmlspecialchars($ppg_data['nome']); ?> - <?php echo $branch; ?></title>
     
     <!-- Bootstrap CSS -->
@@ -769,8 +770,8 @@ error_log("PPG.php - Debug Final: " . json_encode($debug_info));
             <div class="col-md-4 mb-4">
                 <h5>Links Úteis</h5>
                 <ul style="list-style: none; padding: 0;">
-                    <li style="margin-bottom: 0.5rem;"><a href="<?php echo $privacy_policy_url; ?>">Política de Privacidade</a></li>
-                    <li style="margin-bottom: 0.5rem;"><a href="<?php echo $terms_of_use_url; ?>">Termos de Uso</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/politica-privacidade.php">Política de Privacidade</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/termos-uso.php">Termos de Uso</a></li>
                     <li style="margin-bottom: 0.5rem;"><a href="/sobre">Sobre</a></li>
                 </ul>
             </div>

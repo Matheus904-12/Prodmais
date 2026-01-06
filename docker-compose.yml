@@ -1,7 +1,45 @@
-# Configuração Docker para Prodmais
+# Configuração Docker para Prodmais - MySQL + Elasticsearch
 version: '3.8'
 
 services:
+  # MySQL Database
+  db:
+    image: mysql:8.0
+    container_name: prodmais_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASS:-root}
+      MYSQL_DATABASE: ${MYSQL_DB:-prodmais_umc}
+      MYSQL_USER: ${MYSQL_USER:-prodmais}
+      MYSQL_PASSWORD: ${MYSQL_PASS:-prodmais123}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./sql/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    ports:
+      - "3306:3306"
+    networks:
+      - prodmais
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 10
+
+  # phpMyAdmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: prodmais_phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASS:-root}
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+    networks:
+      - prodmais
+
   # Elasticsearch
   elasticsearch:
     image: elasticsearch:8.10.4
@@ -30,6 +68,7 @@ services:
     ports:
       - "5601:5601"
     depends_on:
+      - db
       - elasticsearch
     networks:
       - prodmais
@@ -40,22 +79,34 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: prodmais_web
+    restart: always
     ports:
-      - "80:80"
+      - "8080:80"
     volumes:
-      - ./:/var/www/html
-      - ./data:/var/www/html/data
+      - ./public:/var/www/html
+      - ./src:/var/www/src
+      - ./config:/var/www/config
+      - ./vendor:/var/www/vendor
+      - ./data:/var/www/data
     environment:
       - ELASTICSEARCH_HOST=elasticsearch:9200
+      - MYSQL_HOST=db
+      - MYSQL_DB=${MYSQL_DB:-prodmais_umc}
+      - MYSQL_USER=${MYSQL_USER:-prodmais}
+      - MYSQL_PASS=${MYSQL_PASS:-prodmais123}
     depends_on:
+      - db
       - elasticsearch
     networks:
       - prodmais
 
 volumes:
+  mysql_data:
+    driver: local
   elasticsearch_data:
     driver: local
 
 networks:
   prodmais:
     driver: bridge
+

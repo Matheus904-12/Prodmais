@@ -29,6 +29,7 @@ if ($elasticsearch_available) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/img/umc-favicon.png">
     <title><?php echo $branch; ?> - Sistema de Gestão de Produção Científica</title>
     
     <!-- Meta tags SEO -->
@@ -74,6 +75,15 @@ if ($elasticsearch_available) {
         body {
             padding-top: 70px;
         }
+        
+        form button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(26, 86, 219, 0.4);
+        }
+        
+        form button[type="submit"]:active {
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
@@ -87,7 +97,9 @@ if ($elasticsearch_available) {
                  height="45" 
                  class="me-2"
                  onerror="this.style.display='none'">
-            <strong style="font-size: 1.5rem; background: linear-gradient(135deg, #1a56db, #0369a1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Prodmais</strong>
+            <div class="brand-text" style="font-size: 1.75rem; font-weight: 900; background: linear-gradient(135deg, #1a56db 0%, #0369a1 50%, #0ea5e9 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: -0.5px; text-shadow: 0 2px 10px rgba(26, 86, 219, 0.2);">
+                Prod<span style="color: #0ea5e9; font-weight: 900;">mais</span>
+            </div>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
@@ -153,14 +165,16 @@ if ($elasticsearch_available) {
                 <?php endif; ?>
                 
                 <!-- Search Bar Ultra Elegante -->
-                <form action="/presearch.php" method="POST" class="search-elegant" style="max-width: 700px; margin: 0 auto 3rem;">
-                
+                <form action="/presearch.php" method="POST" class="search-elegant" style="max-width: 700px; margin: 0 auto 3rem; display: flex; gap: 0.75rem; background: white; padding: 0.5rem; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.12);">
                     <input type="search" 
                            name="search" 
                            placeholder="Pesquise por produções científicas, pesquisadores ou projetos..." 
                            aria-label="Pesquisar" 
-                           style="color: var(--gray-900);"
+                           style="flex: 1; border: none; outline: none; padding: 1rem 1.5rem; font-size: 1rem; color: var(--gray-900); background: transparent;"
                            required>
+                    <button type="submit" style="background: linear-gradient(135deg, #1a56db, #0369a1); color: white; border: none; padding: 1rem 2.5rem; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 12px rgba(26, 86, 219, 0.3); white-space: nowrap;">
+                        Buscar
+                    </button>
                 </form>
             </div>
         </div>
@@ -340,8 +354,8 @@ if ($elasticsearch_available) {
             <div class="col-md-4 mb-4">
                 <h5>Links Úteis</h5>
                 <ul style="list-style: none; padding: 0;">
-                    <li style="margin-bottom: 0.5rem;"><a href="<?php echo $privacy_policy_url; ?>">Política de Privacidade</a></li>
-                    <li style="margin-bottom: 0.5rem;"><a href="<?php echo $terms_of_use_url; ?>">Termos de Uso</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/politica-privacidade.php">Política de Privacidade</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/termos-uso.php">Termos de Uso</a></li>
                     <li style="margin-bottom: 0.5rem;"><a href="/sobre">Sobre</a></li>
                 </ul>
             </div>
