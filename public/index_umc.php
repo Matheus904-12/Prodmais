@@ -14,13 +14,17 @@ $client = getElasticsearchClient();
 $elasticsearch_available = ($client !== null);
 $total_records = 0;
 
+// Debug: forçar disponibilidade do Elasticsearch para teste
+$elasticsearch_available = true;
+
 if ($elasticsearch_available) {
     try {
         $params = ['index' => $index];
         $count = $client->count($params);
         $total_records = $count['count'] ?? 0;
     } catch (Exception $e) {
-        $elasticsearch_available = false;
+        error_log("Erro ao contar registros: " . $e->getMessage());
+        $total_records = 0;
     }
 }
 ?>

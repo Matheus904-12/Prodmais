@@ -17,7 +17,15 @@ require_once(__DIR__ . '/LattesParser.php');
 require_once(__DIR__ . '/OrcidFetcher.php');
 require_once(__DIR__ . '/OpenAlexFetcher.php');
 require_once(__DIR__ . '/ExportService.php');
+
+// Load configuration first
+$config = require(__DIR__ . '/../config/config.php');
+
+// Load LogService class
 require_once(__DIR__ . '/LogService.php');
+
+// Initialize LogService with config
+$logService = new LogService($config);
 require_once(__DIR__ . '/Anonymizer.php');
 
 // Carregar camada relacional
@@ -33,17 +41,12 @@ function getElasticsearchClient() {
     global $hosts, $elasticsearch_user, $elasticsearch_password;
     
     try {
-        if (isset($elasticsearch_user) && !empty($elasticsearch_user)) {
-            $client = ClientBuilder::create()
-                ->setHosts($hosts)
-                ->setBasicAuthentication($elasticsearch_user, $elasticsearch_password)
-                ->setCABundle(__DIR__ . '/http_ca.crt')
-                ->build();
-        } else {
-            $client = ClientBuilder::create()
-                ->setHosts($hosts)
-                ->build();
-        }
+        $client = ClientBuilder::create()
+            ->setHosts($hosts)
+            ->build();
+        
+        // Test connection
+        $client->info();
         return $client;
     } catch (Exception $e) {
         error_log("Erro ao conectar no Elasticsearch: " . $e->getMessage());
@@ -408,16 +411,14 @@ if (php_sapi_name() !== 'cli') {
     } catch (Exception $e) {
         error_log('Erro ao inicializar banco relacional: ' . $e->getMessage());
     }
-}
-
-/**
- * Log de acesso (LGPD)
- */
-if (($lgpd_log_access ?? false) && class_exists('LogService')) {
-    try {
-        $logService = new LogService();
-        $logService->logAction($_SERVER['REMOTE_ADDR'] ?? 'unknown', 'access:' . ($_SERVER['REQUEST_URI'] ?? '/'));
-    } catch (Exception $e) {
-        // Silenciar erro se LogService não estiver disponível
+    
+    // Log de acesso (LGPD) - apenas se LogService estiver disponível
+    if (($lgpd_log_access ?? false) && class_exists('LogService')) {
+        try {
+            $logService = new LogService($config ?? []);
+            $logService->logAction($_SERVER['REMOTE_ADDR'] ?? 'unknown', 'access:' . ($_SERVER['REQUEST_URI'] ?? '/'));
+        } catch (Exception $e) {
+            // Silenciar erro se LogService não estiver disponível
+        }
     }
 }

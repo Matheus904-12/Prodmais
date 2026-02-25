@@ -32,7 +32,7 @@ $url_base = "http://localhost:8000";
 
 /* Login administrativo */
 $login_user = "admin";
-$login_password = "admin123";
+$login_password = "Admin@2025";
 
 // ============== INSTITUIÇÃO UMC ============== //
 
