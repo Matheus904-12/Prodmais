@@ -14,8 +14,10 @@ elasticsearch-*/
 /data/cache/*
 /data/logs/*
 /data/backups/*
+/data/lattes_xml/*.xml
 /data/*.sqlite
 /data/*.db
+/data/*.json
 
 # Manter estrutura de diretórios
 !/data/uploads/.gitkeep
@@ -60,10 +62,9 @@ package-lock.json
 
 # Cypress test artifacts (manter alguns exemplos)
 cypress/downloads/
+cypress/videos/
+cypress/screenshots/
 cypress.env.json
-# Manter screenshots e vídeos de exemplo para documentação
-# cypress/videos/
-# cypress/screenshots/
 
 # Ambiente
 .env

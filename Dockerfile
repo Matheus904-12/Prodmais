@@ -9,20 +9,26 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libcurl4-openssl-dev \
     libsqlite3-dev \
+    libonig-dev \
     && docker-php-ext-install \
     zip \
-    xml \
-    curl \
+    pdo \
+    pdo_mysql \
     pdo_sqlite \
-    mbstring
+    mysqli \
+    mbstring \
+    && rm -rf /var/lib/apt/lists/*
 
 # Habilitar mod_rewrite do Apache
 RUN a2enmod rewrite
 
-# Configurar DocumentRoot
+# Configurar DocumentRoot para apontar para public
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+# Configurar AllowOverride para permitir .htaccess
+RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
 
 # Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -31,16 +37,20 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 COPY . .
 
-# Instalar dependências PHP
-RUN composer install --no-dev --optimize-autoloader
+# Instalar dependências PHP (se composer.json existir)
+RUN if [ -f composer.json ]; then composer install --no-dev --optimize-autoloader --no-interaction || true; fi
+
+# Criar diretórios necessários
+RUN mkdir -p /var/www/html/data/uploads \
+    /var/www/html/data/logs \
+    /var/www/html/data/cache \
+    /var/www/html/data/lattes_xml \
+    /var/www/html/data/backups
 
 # Configurar permissões
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html \
     && chmod -R 777 /var/www/html/data
-
-# Executar script de instalação
-RUN php bin/install.php
 
 # Expor porta 80
 EXPOSE 80

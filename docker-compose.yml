@@ -16,7 +16,7 @@ services:
       - mysql_data:/var/lib/mysql
       - ./sql/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     ports:
-      - "3306:3306"
+      - "3307:3306"
     networks:
       - prodmais
     healthcheck:
@@ -83,11 +83,7 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./public:/var/www/html
-      - ./src:/var/www/src
-      - ./config:/var/www/config
-      - ./vendor:/var/www/vendor
-      - ./data:/var/www/data
+      - .:/var/www/html
     environment:
       - ELASTICSEARCH_HOST=elasticsearch:9200
       - MYSQL_HOST=db

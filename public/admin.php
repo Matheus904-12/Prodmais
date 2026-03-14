@@ -113,6 +113,7 @@ $ppgs = getAllPPGs();
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link href="/css/umc-theme.css" rel="stylesheet">
     <link href="/css/prodmais-elegant.css" rel="stylesheet">
     
@@ -457,8 +458,7 @@ $ppgs = getAllPPGs();
                                                 id="lattes_xml"
                                                 name="lattes_xml"
                                                 style="display: none;"
-                                                accept=".xml"
-                                                required>
+                                                accept=".xml">
                                             <small class="text-muted">Tamanho máximo: 50MB</small>
                                         </div>
                                         <div id="fileInfo" class="mt-2 d-none">
@@ -572,7 +572,6 @@ $ppgs = getAllPPGs();
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"></script>
     
     <!-- JavaScript para upload em lote -->
     <script>
@@ -605,7 +604,6 @@ $ppgs = getAllPPGs();
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"></script>
     
     <!-- JavaScript para upload em lote -->
     <script>
@@ -730,10 +728,18 @@ $ppgs = getAllPPGs();
         }
     }
 
-    // Form submission
+    // Form submission com validação
     const uploadFormEl = document.getElementById('uploadForm');
     if (uploadFormEl) {
-        uploadFormEl.addEventListener('submit', function() {
+        uploadFormEl.addEventListener('submit', function(e) {
+            // Validar se arquivo foi selecionado
+            const fileInput = document.getElementById('lattes_xml');
+            if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+                e.preventDefault();
+                alert('Por favor, selecione um arquivo XML antes de enviar.');
+                return false;
+            }
+            
             const submitBtn = document.getElementById('submitBtn');
             const processingBtn = document.getElementById('processingBtn');
             if (submitBtn) submitBtn.style.display = 'none';

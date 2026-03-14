@@ -45,57 +45,37 @@ class LattesImporter {
         if (!file_exists($xml_file_path)) {
             throw new \Exception("Arquivo XML não encontrado: $xml_file_path");
         }
-        
-        echo "📄 Carregando arquivo XML...\n";
-        
+
         // Usar XMLReader para arquivos grandes (não carrega tudo na memória)
         libxml_use_internal_errors(true);
         $xml = simplexml_load_file($xml_file_path, 'SimpleXMLElement', LIBXML_PARSEHUGE);
-        
+
         if ($xml === false) {
             $errors = libxml_get_errors();
             libxml_clear_errors();
             throw new \Exception("Erro ao parsear XML: " . implode(", ", array_map(function($e) { return $e->message; }, $errors)));
         }
-        
-        echo "✅ XML carregado com sucesso!\n";
-        
+
         // Extrair dados do pesquisador
         $pesquisador = $this->extractPesquisadorData($xml, $ppg_nome, $area_concentracao);
-        
-        echo "👤 Pesquisador: {$pesquisador['nome_completo']}\n";
-        echo "📊 Processando produções...\n";
-        
+
         // Extrair produções
         $producoes = $this->extractProducoes($xml, $pesquisador['lattesID']);
-        
-        echo "✅ {$producoes['total']} produções extraídas\n";
-        echo "   - Artigos: {$producoes['artigos']}\n";
-        echo "   - Livros: {$producoes['livros']}\n";
-        echo "   - Capítulos: {$producoes['capitulos']}\n";
-        echo "   - Eventos: {$producoes['eventos']}\n";
-        
+
         // Extrair projetos
-        echo "🔬 Processando projetos de pesquisa...\n";
         $projetos = $this->extractProjetos($xml, $pesquisador['lattesID'], $ppg_nome);
-        
-        echo "✅ {$projetos['total']} projetos extraídos\n";
-        
+
         // Atualizar contadores no perfil do pesquisador
         $pesquisador['total_producoes'] = $producoes['total'];
         $pesquisador['total_projetos'] = $projetos['total'];
-        
-        // Indexar no Elasticsearch
-        echo "💾 Indexando no Elasticsearch...\n";
-        
+
         // Banco relacional: salvar pesquisador
         $db_pesq_id = null;
         if ($this->dbService) {
             try {
                 $db_pesq_id = $this->dbService->addPesquisador($pesquisador);
-                echo "💾 Pesquisador salvo no banco relacional (ID: $db_pesq_id)\n";
             } catch (\Exception $e) {
-                echo "⚠️ Erro ao salvar pesquisador no banco relacional: " . $e->getMessage() . "\n";
+                // Silenciar erro
             }
         }
         // Banco relacional: salvar produções
@@ -106,10 +86,9 @@ class LattesImporter {
                     $this->dbService->addProducao($prod);
                     $db_prod_count++;
                 } catch (\Exception $e) {
-                    echo "⚠️ Erro ao salvar produção no banco relacional: " . $e->getMessage() . "\n";
+                    // Silenciar erro
                 }
             }
-            echo "💾 $db_prod_count produções salvas no banco relacional\n";
         }
         // Banco relacional: salvar projetos
         $db_proj_count = 0;
@@ -119,10 +98,9 @@ class LattesImporter {
                     $this->dbService->addProjeto($proj);
                     $db_proj_count++;
                 } catch (\Exception $e) {
-                    echo "⚠️ Erro ao salvar projeto no banco relacional: " . $e->getMessage() . "\n";
+                    // Silenciar erro
                 }
             }
-            echo "💾 $db_proj_count projetos salvos no banco relacional\n";
         }
         $result = [
             'pesquisador_nome' => $pesquisador['nome_completo'],
@@ -138,9 +116,7 @@ class LattesImporter {
             'capitulos' => $producoes['capitulos'],
             'eventos' => $producoes['eventos']
         ];
-        
-        echo "🎉 Importação concluída com sucesso!\n";
-        
+
         return $result;
     }
     

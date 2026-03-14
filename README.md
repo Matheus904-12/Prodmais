@@ -1,58 +1,101 @@
-# Prodmais UMC - Sistema de Gestao de Producao Cientifica
+# Prodmais UMC - Sistema de Gestão de Produção Científica
 
-Sistema completo para gerenciamento da producao cientifica dos Programas de Pos-Graduacao da Universidade de Mogi das Cruzes.
+Sistema completo para gerenciamento da produção científica dos Programas de Pós-Graduação da Universidade de Mogi das Cruzes.
+
+## ⚡ INÍCIO RÁPIDO (Recomendado)
+
+### 🐳 Opção 1: Com Docker (Mais Fácil)
+
+**Pré-requisito:** Docker Desktop instalado
+
+```powershell
+# Iniciar tudo (MySQL + Elasticsearch + Web)
+.\INICIAR.ps1
+
+# Verificar se está tudo OK
+.\VERIFICAR.ps1
+
+# Parar tudo
+.\PARAR.ps1
+```
+
+**Pronto!** Acesse: http://localhost:8080
+
+---
+
+### 💻 Opção 2: Sem Docker (Local)
+
+**Pré-requisitos:** PHP 8.0+, MySQL, Elasticsearch 8.x
+
+```powershell
+.\INICIAR_LOCAL.ps1
+```
+
+**Acesse:** http://localhost:8000
+
+---
+
+## 🎯 Para Apresentação/Demo
+
+1. **Abrir Docker Desktop** (aguardar inicialização)
+2. **Executar:** `.\INICIAR.ps1`
+3. **Aguardar** ~2-3 minutos
+4. **Acessar:** http://localhost:8080
+5. **Pronto!** 🎉
+
+📖 **Guia completo:** [GUIA_APRESENTACAO.md](GUIA_APRESENTACAO.md)
+
+---
 
 ## 🚀 Funcionalidades
 
 ### Core
-- ✅ Busca avancada multi-indice (Elasticsearch)
-- ✅ Importacao automatica de curruculos Lattes
-- ✅ Integracao com ORCID e OpenAlex
-- ✅ Dashboard com metricas e graficos interativos
-- ✅ Sistema de gestao de PPGs, pesquisadores e projetos
+- ✅ Busca avançada multi-índice (Elasticsearch)
+- ✅ Importação automática de currículos Lattes
+- ✅ Integração com ORCID e OpenAlex
+- ✅ Dashboard com métricas e gráficos interativos
+- ✅ Sistema de gestão de PPGs, pesquisadores e projetos
 
-### Seguranca
-- ✅ Autenticacao segura com bcrypt
-- ✅ Sessoes com timeout e regeneracao de ID
-- ✅ Recuperacao de senha por email
-- ✅ Troca de senha para usuarios logados
-- ✅ Bloqueio automatico apos tentativas falhas
+### Segurança
+- ✅ Autenticação segura com bcrypt
+- ✅ Sessões com timeout e regeneração de ID
+- ✅ Recuperação de senha por email
+- ✅ Troca de senha para usuários logados
+- ✅ Bloqueio automático após tentativas falhas
 - ✅ Log de auditoria de logins
-- ✅ Protecao contra brute force
+- ✅ Proteção contra brute force
 
 ### Legal
-- ✅ Politica de Privacidade (LGPD compliant)
+- ✅ Política de Privacidade (LGPD compliant)
 - ✅ Termos de Uso
 - ✅ Consentimento de cookies
 
-## 📋 Requisitos
+---
 
-### Servidor
-- PHP 8.0+
-- MySQL 5.7+ ou MariaDB 10.3+
-- Elasticsearch 8.x
-- Composer
-- Node.js 16+ (para Cypress)
+## 📋 Serviços e Portas
 
-### PHP Extensions
-```
-php-mysqli
-php-pdo
-php-mbstring
-php-curl
-php-json
-php-xml
-```
+| Serviço | URL | Descrição |
+|---------|-----|-----------|
+| **Site Principal** | http://localhost:8080 | Interface principal |
+| **Elasticsearch** | http://localhost:9200 | Motor de busca |
+| **Kibana** | http://localhost:5601 | Visualização de dados |
+| **phpMyAdmin** | http://localhost:8081 | Gerenciamento MySQL |
+| **MySQL** | localhost:3306 | Banco de dados |
 
-## 🔧 Instalacao
+---
 
-### 1. Clonar repositorio
+## 🔧 Instalação Manual (Avançado)
+
+<details>
+<summary>Clique para ver instruções detalhadas</summary>
+
+### 1. Clonar repositório
 ```bash
 git clone https://github.com/Matheus904-12/Prodmais.git
 cd Prodmais
 ```
 
-### 2. Instalar dependencias PHP
+### 2. Instalar dependências PHP
 ```bash
 composer install
 ```
@@ -70,9 +113,9 @@ mysql -u root -p prodmais_umc < sql/schema.sql
 mysql -u root -p prodmais_umc < sql/schema_auth.sql
 ```
 
-### 4. Configurar arquivo de configuracao
+### 4. Configurar arquivo de configuração
 
-Copie e edite o arquivo de configuracao:
+Copie e edite o arquivo de configuração:
 ```bash
 cp config/config.example.php config/config.php
 ```
@@ -87,9 +130,6 @@ $db_pass = 'sua_senha';
 
 // Elasticsearch
 $elasticsearch_host = 'localhost:9200';
-
-// Email (para recuperacao de senha)
-// Configure no php.ini ou use biblioteca como PHPMailer
 ```
 
 ### 5. Iniciar Elasticsearch
@@ -102,14 +142,14 @@ $elasticsearch_host = 'localhost:9200';
 ./elasticsearch-8.10.0/bin/elasticsearch
 ```
 
-### 6. Criar usuario administrador
+### 6. Criar usuário administrador
 
-O usuario padrao e criado automaticamente:
+O usuário padrão é criado automaticamente:
 - **Username:** admin
 - **Email:** admin@umc.br
 - **Senha:** Admin@2025
 
-⚠️ **IMPORTANTE:** Altere a senha apos o primeiro login!
+⚠️ **IMPORTANTE:** Altere a senha após o primeiro login!
 
 ### 7. Iniciar servidor PHP
 
@@ -118,6 +158,42 @@ php -S localhost:8000 -t public
 ```
 
 Acesse: `http://localhost:8000`
+
+</details>
+
+---
+
+## 🐳 Comandos Docker Úteis
+
+```powershell
+# Iniciar tudo
+.\INICIAR.ps1
+
+# Parar tudo
+.\PARAR.ps1
+
+# Verificar status
+.\VERIFICAR.ps1
+
+# Ver logs em tempo real
+docker-compose logs -f
+
+# Ver logs de um serviço específico
+docker-compose logs -f web
+docker-compose logs -f elasticsearch
+
+# Reiniciar um serviço
+docker-compose restart web
+
+# Acessar bash de um container
+docker exec -it prodmais_web bash
+
+# Limpar tudo e começar do zero
+docker-compose down -v
+.\INICIAR.ps1
+```
+
+---
 
 ## 🔐 Seguranca
 

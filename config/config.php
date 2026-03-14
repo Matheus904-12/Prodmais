@@ -3,7 +3,7 @@
 return [
     'elasticsearch' => [
         'hosts' => [
-            'http://localhost:9200' // Endereço do seu servidor Elasticsearch
+            'http://elasticsearch:9200' // Endereço do servidor Elasticsearch (nome do serviço Docker)
         ]
     ],
     'data_paths' => [

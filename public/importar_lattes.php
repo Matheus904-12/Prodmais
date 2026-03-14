@@ -74,6 +74,7 @@ $ppgs = getAllPPGs();
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="/css/umc-theme.css" rel="stylesheet">
     <link href="/css/prodmais-elegant.css" rel="stylesheet">
@@ -543,8 +544,7 @@ $ppgs = getAllPPGs();
                                         class="d-none"
                                         id="lattes_xml"
                                         name="lattes_xml"
-                                        accept=".xml"
-                                        required>
+                                        accept=".xml">
                                     <small class="text-muted">Tamanho máximo: 50MB</small>
                                 </div>
                                 <div id="fileInfo" class="mt-2 d-none">
@@ -742,7 +742,22 @@ $ppgs = getAllPPGs();
         }
 
         // Form submission
-        document.getElementById('uploadForm').addEventListener('submit', function() {
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            // Validar se o arquivo foi selecionado
+            if (!fileInput.files || fileInput.files.length === 0) {
+                e.preventDefault();
+                alert('Por favor, selecione um arquivo XML do currículo Lattes.');
+                return false;
+            }
+            
+            // Validar se é XML
+            const file = fileInput.files[0];
+            if (!file.name.toLowerCase().endsWith('.xml')) {
+                e.preventDefault();
+                alert('Por favor, selecione um arquivo XML válido.');
+                return false;
+            }
+            
             document.getElementById('submitBtn').style.display = 'none';
             document.getElementById('processingBtn').style.display = 'block';
         });
