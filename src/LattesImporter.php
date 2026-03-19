@@ -18,6 +18,7 @@ class LattesImporter {
     private $ppg_default = null;
     private $campus_default = 'Mogi das Cruzes';
     private $dbService = null;
+    private $openAlexFetcher = null;
     // Configurações de memória para currículos extensos
     private $max_execution_time = 600; // 10 minutos
     private $memory_limit = '512M';
@@ -27,6 +28,10 @@ class LattesImporter {
         $this->index_cv = $index_cv;
         $this->index = $index;
         $this->index_projetos = $index_projetos;
+        
+        // Inicializar enriquecedor OpenAlex
+        $this->openAlexFetcher = new \OpenAlexFetcher($config, $config['app']['email'] ?? null);
+        
         // Banco relacional
         try {
             $this->dbService = new \DatabaseService($config ?? []);
@@ -54,6 +59,19 @@ class LattesImporter {
             $errors = libxml_get_errors();
             libxml_clear_errors();
             throw new \Exception("Erro ao parsear XML: " . implode(", ", array_map(function($e) { return $e->message; }, $errors)));
+        }
+
+        // --- Lógica de Smart Skip ---
+        $lattesID = (string)$xml['NUMERO-IDENTIFICADOR'];
+        $dataAtualizacaoXML = (string)$xml['DATA-ATUALIZACAO'];
+        
+        if ($this->isAlreadyUpdated($lattesID, $dataAtualizacaoXML)) {
+            return [
+                'status' => 'skipped',
+                'pesquisador_nome' => (string)$xml->{'DADOS-GERAIS'}['NOME-COMPLETO'],
+                'lattesID' => $lattesID,
+                'message' => 'Currículo já está atualizado no sistema.'
+            ];
         }
 
         // Extrair dados do pesquisador
@@ -406,6 +424,31 @@ class LattesImporter {
     }
     
     /**
+     * Verificar se o currículo no Elasticsearch já possui a mesma data de atualização
+     */
+    private function isAlreadyUpdated($lattesID, $dataAtualizacaoXML) {
+        if (!$this->client || empty($lattesID)) return false;
+        
+        try {
+            $params = [
+                'index' => $this->index_cv,
+                'id' => $lattesID,
+                '_source' => ['data_atualizacao']
+            ];
+            
+            $response = $this->client->get($params);
+            if ($response['found']) {
+                $dataNoSistema = $response['_source']['data_atualizacao'] ?? '';
+                return ($dataNoSistema === $dataAtualizacaoXML);
+            }
+        } catch (\Exception $e) {
+            // Se não encontrar ou der erro, assume que precisa atualizar
+            return false;
+        }
+        return false;
+    }
+
+    /**
      * Indexar pesquisador no Elasticsearch
      */
     private function indexPesquisador($pesquisador) {
@@ -422,10 +465,15 @@ class LattesImporter {
             ];
             
             $response = $this->client->index($params);
-            echo "✅ Pesquisador indexado: {$pesquisador['nome_completo']}\n";
+            if (php_sapi_name() === 'cli') {
+                echo "✅ Pesquisador indexado: {$pesquisador['nome_completo']}\n";
+            }
             return $response;
         } catch (\Exception $e) {
-            echo "❌ Erro ao indexar pesquisador: " . $e->getMessage() . "\n";
+            if (php_sapi_name() === 'cli') {
+                echo "❌ Erro ao indexar pesquisador: " . $e->getMessage() . "\n";
+            }
+            error_log("Erro ao indexar pesquisador: " . $e->getMessage());
             return false;
         }
     }
@@ -441,6 +489,15 @@ class LattesImporter {
         $indexed = 0;
         
         foreach ($producoes as $producao) {
+            // Enriquecer com OpenAlex se tiver DOI
+            if ($this->openAlexFetcher && !empty($producao['doi'])) {
+                try {
+                    $producao = $this->openAlexFetcher->enrichProduction($producao);
+                } catch (\Exception $e) {
+                    // Silenciar erro de rede para não travar a importação
+                }
+            }
+
             // Adicionar dados do PPG
             $producao['ppg'] = $pesquisador['ppg'];
             $producao['area_concentracao'] = $pesquisador['area_concentracao'];
@@ -458,11 +515,16 @@ class LattesImporter {
                 $this->client->index($params);
                 $indexed++;
             } catch (\Exception $e) {
-                echo "⚠️ Erro ao indexar produção: " . $e->getMessage() . "\n";
+                if (php_sapi_name() === 'cli') {
+                    echo "⚠️ Erro ao indexar produção: " . $e->getMessage() . "\n";
+                }
+                error_log("Erro ao indexar produção: " . $e->getMessage());
             }
         }
         
-        echo "✅ {$indexed} produções indexadas\n";
+        if (php_sapi_name() === 'cli') {
+            echo "✅ {$indexed} produções indexadas\n";
+        }
         return $indexed;
     }
     
@@ -489,11 +551,16 @@ class LattesImporter {
                 $this->client->index($params);
                 $indexed++;
             } catch (\Exception $e) {
-                echo "⚠️ Erro ao indexar projeto: " . $e->getMessage() . "\n";
+                if (php_sapi_name() === 'cli') {
+                    echo "⚠️ Erro ao indexar projeto: " . $e->getMessage() . "\n";
+                }
+                error_log("Erro ao indexar projeto: " . $e->getMessage());
             }
         }
         
-        echo "✅ {$indexed} projetos indexados\n";
+        if (php_sapi_name() === 'cli') {
+            echo "✅ {$indexed} projetos indexados\n";
+        }
         return $indexed;
     }
 }

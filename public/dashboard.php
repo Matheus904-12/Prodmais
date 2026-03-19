@@ -273,6 +273,7 @@ if (!empty($producoes_por_qualis)) {
 </nav>
 
 <!-- Hero Section Ultra Elegante -->
+<?php HookManager::doAction('dashboard_header'); ?>
 <section style="background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%); padding: 4rem 0 3rem; position: relative; overflow: hidden;">
     <!-- Background decorativo -->
     <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.1;">

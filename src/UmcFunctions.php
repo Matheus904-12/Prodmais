@@ -19,6 +19,11 @@ require_once(__DIR__ . '/OpenAlexFetcher.php');
 require_once(__DIR__ . '/ExportService.php');
 require_once(__DIR__ . '/LogService.php');
 require_once(__DIR__ . '/Anonymizer.php');
+require_once(__DIR__ . '/HookManager.php');
+require_once(__DIR__ . '/PluginLoader.php');
+
+// Carregar Camada de Plugins
+PluginLoader::loadPlugins();
 
 // Carregar camada relacional
 require_once(__DIR__ . '/DatabaseService.php');

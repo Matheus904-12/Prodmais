@@ -5,6 +5,7 @@ class OpenAlexFetcher
     private string $baseUrl = 'https://api.openalex.org';
     private array $rateLimitInfo = ['remaining' => 100, 'reset_time' => 0];
     private $config;
+    private $cacheDb = null;
 
     public function __construct($config = null, private ?string $email = null)
     {
@@ -13,6 +14,41 @@ class OpenAlexFetcher
         if ($this->email) {
             $this->baseUrl .= "?mailto={$this->email}";
         }
+        $this->initCache();
+    }
+
+    private function initCache()
+    {
+        try {
+            $cachePath = dirname(__DIR__) . '/data/cache_openalex.sqlite';
+            $this->cacheDb = new \SQLite3($cachePath);
+            $this->cacheDb->exec("CREATE TABLE IF NOT EXISTS doi_cache (doi TEXT PRIMARY KEY, json_data TEXT, created_at DATETIME)");
+        } catch (\Exception $e) {
+            error_log("Erro ao inicializar cache OpenAlex: " . $e->getMessage());
+        }
+    }
+
+    private function getFromCache(string $doi): ?array
+    {
+        if (!$this->cacheDb) return null;
+        
+        $stmt = $this->cacheDb->prepare("SELECT json_data FROM doi_cache WHERE doi = ?");
+        $stmt->bindValue(1, $doi);
+        $result = $stmt->execute();
+        $row = $result->fetchArray(SQLITE3_ASSOC);
+        
+        return $row ? json_decode($row['json_data'], true) : null;
+    }
+
+    private function saveToCache(string $doi, array $data)
+    {
+        if (!$this->cacheDb) return;
+        
+        $stmt = $this->cacheDb->prepare("INSERT OR REPLACE INTO doi_cache (doi, json_data, created_at) VALUES (?, ?, ?)");
+        $stmt->bindValue(1, $doi);
+        $stmt->bindValue(2, json_encode($data));
+        $stmt->bindValue(3, date('Y-m-d H:i:s'));
+        $stmt->execute();
     }
 
     /**
@@ -20,8 +56,20 @@ class OpenAlexFetcher
      */
     public function searchByDoi(string $doi): ?array
     {
+        // Tentar cache primeiro
+        $cached = $this->getFromCache($doi);
+        if ($cached) {
+            return $cached;
+        }
+
         $url = $this->baseUrl . "/works/https://doi.org/{$doi}";
-        return $this->makeRequest($url);
+        $data = $this->makeRequest($url);
+        
+        if ($data) {
+            $this->saveToCache($doi, $data);
+        }
+        
+        return $data;
     }
 
     /**

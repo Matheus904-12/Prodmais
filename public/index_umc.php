@@ -158,22 +158,20 @@ if ($elasticsearch_available) {
                 </p>
                 
                 <?php if (!$elasticsearch_available): ?>
-                <div class="alert alert-warning glass-effect mb-4" role="alert" style="background: rgba(251, 191, 36, 0.2); backdrop-filter: blur(10px); border: 1px solid rgba(251, 191, 36, 0.3); color: white;">
+                <div class="alert alert-warning glass-panel mb-4" role="alert" style="color: #856404; font-weight: 500;">
                     <i class="fas fa-exclamation-triangle me-2"></i> 
                     <strong>Atenção:</strong> Elasticsearch não está disponível. Sistema funcionando em modo limitado.
                 </div>
                 <?php endif; ?>
                 
-                <!-- Search Bar Ultra Elegante -->
-                <form action="/presearch.php" method="POST" class="search-elegant" style="max-width: 700px; margin: 0 auto 3rem; display: flex; gap: 0.75rem; background: white; padding: 0.5rem; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.12);">
+                <!-- Search Bar Ultra Elegante (Atualizado) -->
+                <form action="/presearch.php" method="POST" class="search-elegant mb-4">
                     <input type="search" 
                            name="search" 
                            placeholder="Pesquise por produções científicas, pesquisadores ou projetos..." 
-                           aria-label="Pesquisar" 
-                           style="flex: 1; border: none; outline: none; padding: 1rem 1.5rem; font-size: 1rem; color: var(--gray-900); background: transparent;"
                            required>
-                    <button type="submit" style="background: linear-gradient(135deg, #1a56db, #0369a1); color: white; border: none; padding: 1rem 2.5rem; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 12px rgba(26, 86, 219, 0.3); white-space: nowrap;">
-                        Buscar
+                    <button type="submit">
+                        <i class="fas fa-search me-2"></i> Buscar
                     </button>
                 </form>
             </div>
@@ -211,28 +209,32 @@ if ($elasticsearch_available) {
         ?>
     <div class="container">
         <div class="row g-4">
-            <div class="col-md-3 slide-in-right" style="animation-delay: 0.1s;">
-                <div class="stat-card-modern">
-                    <div class="stat-number"><?php echo number_format($total_records); ?></div>
-                    <div class="stat-label">Produções Científicas</div>
+            <div class="col-md-3">
+                <div class="card-umc text-center">
+                    <div class="card-umc-icon"><i class="fas fa-microscope"></i></div>
+                    <div class="stat-number h2 fw-bold text-primary"><?php echo number_format($total_records); ?></div>
+                    <div class="text-muted small">Produções Científicas</div>
                 </div>
             </div>
-            <div class="col-md-3 slide-in-right" style="animation-delay: 0.2s;">
-                <div class="stat-card-modern">
-                    <div class="stat-number"><?php echo number_format($total_pesquisadores); ?></div>
-                    <div class="stat-label">Pesquisadores</div>
+            <div class="col-md-3">
+                <div class="card-umc text-center">
+                    <div class="card-umc-icon"><i class="fas fa-user-graduate"></i></div>
+                    <div class="stat-number h2 fw-bold text-primary"><?php echo number_format($total_pesquisadores); ?></div>
+                    <div class="text-muted small">Pesquisadores</div>
                 </div>
             </div>
-            <div class="col-md-3 slide-in-right" style="animation-delay: 0.3s;">
-                <div class="stat-card-modern">
-                    <div class="stat-number"><?php echo count($ppgs_umc); ?></div>
-                    <div class="stat-label">Programas PPG</div>
+            <div class="col-md-3">
+                <div class="card-umc text-center">
+                    <div class="card-umc-icon"><i class="fas fa-university"></i></div>
+                    <div class="stat-number h2 fw-bold text-primary"><?php echo count($ppgs_umc); ?></div>
+                    <div class="text-muted small">Programas PPG</div>
                 </div>
             </div>
-            <div class="col-md-3 slide-in-right" style="animation-delay: 0.4s;">
-                <div class="stat-card-modern">
-                    <div class="stat-number"><?php echo number_format($total_projetos); ?></div>
-                    <div class="stat-label">Projetos Ativos</div>
+            <div class="col-md-3">
+                <div class="card-umc text-center">
+                    <div class="card-umc-icon"><i class="fas fa-project-diagram"></i></div>
+                    <div class="stat-number h2 fw-bold text-primary"><?php echo number_format($total_projetos); ?></div>
+                    <div class="text-muted small">Projetos Ativos</div>
                 </div>
             </div>
         </div>

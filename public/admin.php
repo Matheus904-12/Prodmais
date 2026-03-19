@@ -573,97 +573,79 @@ $ppgs = getAllPPGs();
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- JavaScript para upload em lote -->
+    <!-- JavaScript para Administração -->
     <script>
-    document.getElementById('upload-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(this);
-        const statusDiv = document.getElementById('upload-status');
-        
-        statusDiv.innerHTML = '<div class="alert alert-info"><i class="bi bi-clock"></i> Processando arquivos...</div>';
-        
-        fetch('api/upload_and_index.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                statusDiv.innerHTML = `<div class="alert alert-success"><i class="bi bi-check-circle"></i> ${data.message}</div>`;
-            } else {
-                statusDiv.innerHTML = `<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> ${data.message}</div>`;
-            }
-        })
-        .catch(error => {
-            statusDiv.innerHTML = '<div class="alert alert-danger"><i class="bi bi-x-circle"></i> Erro ao processar arquivos.</div>';
-        });
-    });
-    </script>
-    </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    // Configuração de dados
+    const areas = <?= json_encode(array_column($ppgs, 'areas_concentracao', 'nome')) ?>;
     
-    <!-- JavaScript para upload em lote -->
-    <script>
+    // Upload em Lote (Handler principal)
     document.getElementById('upload-form').addEventListener('submit', function(e) {
         e.preventDefault();
-
         const form = e.target;
         const formData = new FormData(form);
         const statusDiv = document.getElementById('upload-status');
-
-        statusDiv.innerHTML = `<div class="alert alert-info">Enviando arquivos e iniciando a indexação... Isso pode levar alguns minutos. Por favor, aguarde.</div>`;
-
+        
+        statusDiv.innerHTML = '<div class="alert alert-info"><i class="spinner-border spinner-border-sm me-2"></i> Enviando e processando arquivos... Isso pode levar alguns minutos.</div>';
+        
         fetch(form.action, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Erro do servidor: ${response.status} ${response.statusText}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                let reportHtml = `
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Erro na comunicação com o servidor: ' + response.statusText);
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'error') {
+                statusDiv.innerHTML = `<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> ${data.message}</div>`;
+                return;
+            }
+            
+            let reportHtml = `
                 <div class="alert alert-success">
-                    <strong>Processo Concluído!</strong><br>
-                    <ul class="mb-0">
-                        <li>Arquivos processados: ${data.processed_files}</li>
-                        <li>Produções indexadas: ${data.indexed_productions}</li>
+                    <i class="bi bi-check-circle-fill me-2"></i> <strong>Processo Concluído!</strong><br>
+                    <ul class="mb-0 mt-2">
+                        <li>Arquivos processados: ${data.processed_files || 0}</li>
+                        <li>Produções indexadas: ${data.indexed_productions || 0}</li>
                     </ul>
                 </div>
             `;
 
-                if (data.files && data.files.length > 0) {
-                    reportHtml += `<h5>Detalhes por Arquivo:</h5><ul class="list-group">`;
-                    data.files.forEach(file => {
-                        if (file.status === 'success') {
-                            const productionsText = file.indexed === 1 ? 'produção indexada' : 'produções indexadas';
-                            reportHtml += `<li class="list-group-item list-group-item-success d-flex justify-content-between align-items-center">
-                            ${file.name}
-                            <span class="badge bg-primary rounded-pill">${file.indexed} ${productionsText}</span>
-                        </li>`;
-                        } else {
-                            reportHtml += `<li class="list-group-item list-group-item-danger">
-                            <strong>${file.name}</strong> - Erro: ${file.message}
-                        </li>`;
-                        }
-                    });
-                    reportHtml += `</ul>`;
-                }
-
-                statusDiv.innerHTML = reportHtml;
-            })
-            .catch(error => {
-                statusDiv.innerHTML = `<div class="alert alert-danger"><strong>Ocorreu um erro:</strong> ${error.message}</div>`;
-            });
+            if (data.files && data.files.length > 0) {
+                reportHtml += `<h6 class="mt-3">Detalhes por Arquivo:</h6><ul class="list-group shadow-sm">`;
+                data.files.forEach(file => {
+                    let icon, listClass, badge;
+                    
+                    if (file.status === 'success') {
+                        icon = 'bi-check-circle';
+                        listClass = 'list-group-item-success';
+                        badge = `<span class="badge bg-primary rounded-pill">${file.indexed} produções</span>`;
+                    } else if (file.status === 'skipped') {
+                        icon = 'bi-info-circle';
+                        listClass = 'list-group-item-warning';
+                        badge = `<span class="badge bg-warning text-dark rounded-pill">Já atualizado</span>`;
+                    } else {
+                        icon = 'bi-x-circle';
+                        listClass = 'list-group-item-danger';
+                        badge = `<span class="badge bg-danger rounded-pill">Erro: ${file.message}</span>`;
+                    }
+                    
+                    reportHtml += `<li class="list-group-item ${listClass} d-flex justify-content-between align-items-center">
+                        <div><i class="bi ${icon} me-2"></i><strong>${file.name}</strong> ${file.researcher ? ' - ' + file.researcher : ''}</div>
+                        ${badge}
+                    </li>`;
+                });
+                reportHtml += `</ul>`;
+            }
+            statusDiv.innerHTML = reportHtml;
+        })
+        .catch(error => {
+            statusDiv.innerHTML = `<div class="alert alert-danger"><i class="bi bi-x-circle"></i> <strong>Erro:</strong> ${error.message}</div>`;
+        });
     });
     
-    // Áreas de concentração por PPG
-    const areas = <?= json_encode(array_column($ppgs, 'areas_concentracao', 'nome')) ?>;
+    
+    // Áreas de concentração por PPG (já carregado acima)
 
     document.getElementById('ppg').addEventListener('change', function() {
         const selectedPPG = this.value;
