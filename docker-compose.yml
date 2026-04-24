@@ -84,6 +84,7 @@ services:
       - "8080:80"
     volumes:
       - .:/var/www/html
+      - /var/www/html/vendor
     environment:
       - ELASTICSEARCH_HOST=elasticsearch:9200
       - MYSQL_HOST=db
