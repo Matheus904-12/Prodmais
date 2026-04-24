@@ -9,7 +9,7 @@ Write-Host "============================================" -ForegroundColor Cyan
 Write-Host ""
 
 Write-Host "1/4 Parando todos os containers..." -ForegroundColor Yellow
-docker-compose down
+docker compose down
 
 Write-Host ""
 Write-Host "2/4 Removendo imagens antigas..." -ForegroundColor Yellow
@@ -21,7 +21,7 @@ docker builder prune -f
 
 Write-Host ""
 Write-Host "4/4 Reconstruindo e iniciando..." -ForegroundColor Yellow
-docker-compose up -d --build --force-recreate
+docker compose up -d --build --force-recreate
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host ""
@@ -40,7 +40,7 @@ if ($LASTEXITCODE -eq 0) {
     Write-Host "[X] ERRO no rebuild!" -ForegroundColor Red
     Write-Host ""
     Write-Host "Verifique os logs:" -ForegroundColor Yellow
-    Write-Host "   docker-compose logs" -ForegroundColor White
+    Write-Host "   docker compose logs" -ForegroundColor White
     Write-Host ""
 }
 

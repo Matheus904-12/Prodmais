@@ -12,21 +12,21 @@ require(__DIR__ . '/../vendor/autoload.php');
 require(__DIR__ . '/../config/config_umc.php');
 
 /* Load UMC classes */
-require_once(__DIR__ . '/ElasticsearchService.php');
-require_once(__DIR__ . '/LattesParser.php');
-require_once(__DIR__ . '/OrcidFetcher.php');
-require_once(__DIR__ . '/OpenAlexFetcher.php');
-require_once(__DIR__ . '/ExportService.php');
-require_once(__DIR__ . '/LogService.php');
-require_once(__DIR__ . '/Anonymizer.php');
-require_once(__DIR__ . '/HookManager.php');
-require_once(__DIR__ . '/PluginLoader.php');
+require_once(__DIR__ . '/Infrastructure/Elasticsearch/ElasticsearchService.php');
+require_once(__DIR__ . '/Domain/Importers/LattesParser.php');
+require_once(__DIR__ . '/Infrastructure/External/OrcidFetcher.php');
+require_once(__DIR__ . '/Infrastructure/External/OpenAlexFetcher.php');
+require_once(__DIR__ . '/Domain/Services/ExportService.php');
+require_once(__DIR__ . '/Domain/Services/LogService.php');
+require_once(__DIR__ . '/Core/Anonymizer.php');
+require_once(__DIR__ . '/Core/HookManager.php');
+require_once(__DIR__ . '/Core/PluginLoader.php');
 
 // Carregar Camada de Plugins
 PluginLoader::loadPlugins();
 
 // Carregar camada relacional
-require_once(__DIR__ . '/DatabaseService.php');
+require_once(__DIR__ . '/Infrastructure/Database/DatabaseService.php');
 
 /* Load Elasticsearch Client */
 use Elastic\Elasticsearch\ClientBuilder;

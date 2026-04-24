@@ -1,118 +1,65 @@
-# Prodmais UMC - Sistema de Gestão de Produção Científica
+# 🚀 Prodmais UMC
 
-Sistema completo para gerenciamento da produção científica dos Programas de Pós-Graduação da Universidade de Mogi das Cruzes.
+![Versão](https://img.shields.io/badge/vers%C3%A3o-2.0.0-blue)
+![Arquitetura](https://img.shields.io/badge/arquitetura-modular-green)
+![PHP](https://img.shields.io/badge/PHP-8.2-777bb4)
+![Docker](https://img.shields.io/badge/Docker-ready-2496ed)
 
-## ⚡ INÍCIO RÁPIDO (Recomendado)
+Sistema moderno para gestão e análise da produção científica dos Programas de Pós-Graduação da **Universidade de Mogi das Cruzes**.
 
-### 🐳 Opção 1: Com Docker (Mais Fácil)
+---
 
-**Pré-requisito:** Docker Desktop instalado
+## 👨‍💻 Criador
+**Matheus Lucindo dos Santos** — *Criador e Desenvolvedor Principal*
+
+---
+
+## ⚡ Início Rápido
+
+O sistema é totalmente dockerizado para facilitar o ambiente de desenvolvimento.
 
 ```powershell
-# Iniciar tudo (MySQL + Elasticsearch + Web)
+# Iniciar o ecossistema completo
 .\INICIAR.ps1
 
-# Verificar se está tudo OK
-.\VERIFICAR.ps1
-
-# Parar tudo
-.\PARAR.ps1
+# Acessar a aplicação
+http://localhost:8000
 ```
 
-**Pronto!** Acesse: http://localhost:8080
+*   **Elasticsearch:** `http://localhost:9200`
+*   **Kibana:** `http://localhost:5601`
+*   **Admin:** `http://localhost:8000/login.php` (User: admin / Pass: admin123)
 
 ---
 
-### 💻 Opção 2: Sem Docker (Local)
+## 🏗️ Nova Arquitetura Modular
+O Prodmais foi reestruturado para seguir padrões de **Clean Architecture**, garantindo manutenibilidade e escalabilidade:
 
-**Pré-requisitos:** PHP 8.0+, MySQL, Elasticsearch 8.x
-
-```powershell
-.\INICIAR_LOCAL.ps1
-```
-
-**Acesse:** http://localhost:8000
+*   **`src/Core/`**: Extensibilidade via Hook Manager (Estilo WordPress).
+*   **`src/Infrastructure/`**: Camada de dados (Elasticsearch, MySQL, SQLite).
+*   **`src/Domain/`**: Inteligência de negócio e importação Lattes.
+*   **`src/View/`**: Sistema de componentes e páginas modulares.
 
 ---
 
-## 🚀 Funcionalidades
-
-### Core & Extensibilidade
-- ✅ **Arquitetura de Plugins:** Extensível via Hooks (Actions/Filters) estilo WordPress.
-- ✅ **Busca Avançada:** Multi-índice com Elasticsearch 8.x.
-- ✅ **Importação Lattes:** Extração robusta de XML (Artigos, Livros, Patentes, Softwares).
-- ✅ **Integração:** ORCID, OpenAlex e BrCris.
-- ✅ **Dashboard Premium:** Métricas interativas e visualizações modernas.
-
-### Segurança & Conformidade
-- ✅ **LGPD:** Total conformidade (Art. 7º, §4º) com logs de auditoria e anonimização.
-- ✅ **Segurança:** Autenticação bcrypt, proteção brute-force e sessões seguras.
+## 🌟 Principais Funcionalidades
+- ✅ **Busca Ultra-rápida:** Motor Elasticsearch 8.x para grandes volumes de dados.
+- ✅ **Importação Lattes:** Parser robusto para CV Lattes (Artigos, Livros, Patentes).
+- ✅ **Integrações:** ORCID, OpenAlex e Crossref sincronizados.
+- ✅ **LGPD Compliant:** Logs de auditoria e anonimização de dados sensíveis.
+- ✅ **Exportação:** Suporte a BibTeX, RIS, CSV e JSON.
 
 ---
 
-## 🔌 Sistema de Plugins
-O Prodmais agora permite a linkagem de plugins para expansão conforme o uso.
-*   **Localização:** Pasta `/plugins/`
-*   **Funcionamento:** Baseado em `HookManager.php` (estilo WordPress).
-*   **Hooks Disponíveis:** `dashboard_header`, `log_action`, entre outros.
+## 📂 Organização
+- **`/public`**: Apenas arquivos estáticos e entry-points.
+- **`/src`**: Código fonte protegido e organizado por camadas.
+- **`/data`**: Armazenamento seguro de logs, bancos SQLite e backups.
 
 ---
 
-## 📋 Serviços e Portas
-
-| Serviço | URL | Descrição |
-|---------|-----|-----------|
-| **Site Principal** | http://localhost:8080 | Interface principal |
-| **Elasticsearch** | http://localhost:9200 | Motor de busca |
-| **Kibana** | http://localhost:5601 | Visualização de dados |
-| **phpMyAdmin** | http://localhost:8081 | Gerenciamento MySQL |
+## 📞 Suporte & Contato
+- **Universidade de Mogi das Cruzes**
 
 ---
-
-## 🔗 Links Uteis
-
-- [Plataforma Lattes](http://lattes.cnpq.br/)
-- [ORCID](https://orcid.org/)
-- [OpenAlex](https://openalex.org/)
-- [Elasticsearch Docs](https://www.elastic.co/guide/)
-- [LGPD](https://www.gov.br/cidadania/pt-br/acesso-a-informacao/lgpd)
-
----
-
-## ☁️ Hospedagem e Deploy
-
-Temos guias detalhados para diferentes ambientes:
-1.  **[OCI_DEPLOY_GUIDE.md](docs/OCI_DEPLOY_GUIDE.md)** - ☁️ Guia para Oracle Cloud (Always Free).
-2.  **[DEPLOY_LOCAWEB.md](docs/DEPLOY_LOCAWEB.md)** - 💼 Guia para Locaweb (PHP + MySQL).
-
----
-
-## 📂 Estrutura de Pastas
-
-```
-Prodmais/
-├── config/            # Configurações
-├── data/              # Dados (Lattes XML, SQLite, Backups)
-├── docs/              # Documentação técnica e Guias de Deploy
-├── plugins/           # Extensões do sistema (Plugins)
-├── public/            # Document Root (Páginas Web e CSS)
-├── sql/               # Schemas MySQL e SQLite
-├── src/               # Core Logics (HookManager, PluginLoader, Parsers)
-└── vendor/            # Dependências Composer
-```
-
----
-
-## 🤝 Contribuindo
-
-1. Fork o projeto
-2. Crie uma branch (`git checkout -b feature/NovaFuncionalidade`)
-
-- Matheus Lucindo - Desenvolvimento principal
-- Orientacao: Prof. Dr. [Nome]
-
-## 📞 Suporte
-
-- Email: prodmais@umc.br
-- DPO: dpo@umc.br
-- Telefone: (11) 4798-7000
+© 2025 **Prodmais UMC** — *Desenvolvido por Matheus Lucindo dos Santos*

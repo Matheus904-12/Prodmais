@@ -1,5 +1,4 @@
 # Configuração Docker para Prodmais - MySQL + Elasticsearch
-version: '3.8'
 
 services:
   # MySQL Database
