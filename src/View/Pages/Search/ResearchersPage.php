@@ -93,7 +93,8 @@ HeroSection::display([
     'title' => 'Pesquisadores',
     'subtitle' => 'Conheça os pesquisadores dos Programas de Pós-Graduação da UMC',
     'badge' => number_format($total_pesquisadores) . ' Pesquisadores Cadastrados',
-    'badge_icon' => 'users'
+    'badge_icon' => 'users',
+    'variant' => 'lavender'
 ]); 
 ?>
 

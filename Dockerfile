@@ -1,7 +1,7 @@
-# Dockerfile para Prodmais
+# Dockerfile Otimizado para Prodmais
 FROM php:8.2-apache
 
-# Instalar extensões PHP necessárias
+# Instalar extensões PHP necessárias (Camada de sistema - raramente muda)
 RUN apt-get update && apt-get install -y \
     libzip-dev \
     zip \
@@ -19,41 +19,37 @@ RUN apt-get update && apt-get install -y \
     mbstring \
     && rm -rf /var/lib/apt/lists/*
 
-# Habilitar mod_rewrite do Apache
+# Configurações do Apache
 RUN a2enmod rewrite
-
-# Configurar DocumentRoot para apontar para public
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-# Configurar AllowOverride para permitir .htaccess
-RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
-
 # Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copiar arquivos da aplicação
 WORKDIR /var/www/html
+
+# OTIMIZAÇÃO: Instalar dependências ANTES de copiar o código todo
+# Isso evita rodar composer install toda vez que uma linha de CSS/JS muda
+COPY composer.json ./
+RUN if [ -f composer.json ]; then \
+    composer install --no-dev --no-interaction --no-autoloader --no-scripts || true; \
+    fi
+
+# Copiar o restante da aplicação
 COPY . .
 
-# Instalar dependências PHP (se composer.json existir)
-RUN if [ -f composer.json ]; then composer install --no-dev --optimize-autoloader --no-interaction || true; fi
+# Finalizar autoload e permissões
+RUN if [ -f composer.json ]; then \
+    composer dump-autoload --optimize --no-interaction || true; \
+    fi
 
-# Criar diretórios necessários
-RUN mkdir -p /var/www/html/data/uploads \
-    /var/www/html/data/logs \
-    /var/www/html/data/cache \
-    /var/www/html/data/lattes_xml \
-    /var/www/html/data/backups
-
-# Configurar permissões
-RUN chown -R www-data:www-data /var/www/html \
+# Criar diretórios de dados e ajustar permissões
+RUN mkdir -p data/uploads data/logs data/cache data/lattes_xml data/backups \
+    && chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html \
     && chmod -R 777 /var/www/html/data
 
-# Expor porta 80
 EXPOSE 80
-
-# Comando padrão
 CMD ["apache2-foreground"]

@@ -58,10 +58,11 @@ services:
     networks:
       - prodmais
 
-  # Kibana (opcional - para visualização)
+  # Kibana (Opcional - movido para profile para iniciar mais rápido)
   kibana:
     image: kibana:8.10.4
     container_name: prodmais_kibana
+    profiles: ["heavy"]
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     ports:
