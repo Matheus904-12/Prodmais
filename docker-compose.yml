@@ -1,5 +1,4 @@
 # Configuração Docker para Prodmais - MySQL + Elasticsearch
-version: '3.8'
 
 services:
   # MySQL Database
@@ -16,7 +15,7 @@ services:
       - mysql_data:/var/lib/mysql
       - ./sql/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     ports:
-      - "3306:3306"
+      - "3307:3306"
     networks:
       - prodmais
     healthcheck:
@@ -59,10 +58,11 @@ services:
     networks:
       - prodmais
 
-  # Kibana (opcional - para visualização)
+  # Kibana (Opcional - movido para profile para iniciar mais rápido)
   kibana:
     image: kibana:8.10.4
     container_name: prodmais_kibana
+    profiles: ["heavy"]
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     ports:
@@ -83,11 +83,8 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./public:/var/www/html
-      - ./src:/var/www/src
-      - ./config:/var/www/config
-      - ./vendor:/var/www/vendor
-      - ./data:/var/www/data
+      - .:/var/www/html
+      - /var/www/html/vendor
     environment:
       - ELASTICSEARCH_HOST=elasticsearch:9200
       - MYSQL_HOST=db

@@ -11,8 +11,6 @@ return [
     // ================================
     // CONFIGURAÇÕES ELASTICSEARCH
     // ================================
-    'elasticsearch' => [
-        'hosts' => [
     // ================================
     // CONFIGURAÇÕES DO BANCO DE DADOS
     // ================================
@@ -24,8 +22,9 @@ return [
         'charset' => 'utf8mb4'
     ],
 
-
-            'http://localhost:9200' // Endereço do servidor Elasticsearch
+    'elasticsearch' => [
+        'hosts' => [
+            'http://elasticsearch:9200' // Endereço do servidor Elasticsearch (nome do serviço Docker)
         ],
         'username' => null, // Usuário (se autenticação habilitada)
         'password' => null, // Senha (se autenticação habilitada)

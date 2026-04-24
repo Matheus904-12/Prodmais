@@ -13,7 +13,7 @@ error_reporting(E_ALL);
 // ============== ELASTICSEARCH ============== //
 
 /* Configuração do Elasticsearch */
-$hosts = ['localhost:9200'];
+$hosts = ['elasticsearch:9200'];
 // $elasticsearch_user = "elastic";
 // $elasticsearch_password = "";
 

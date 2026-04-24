@@ -3,6 +3,8 @@ RewriteEngine On
 
 # Force HTTPS
 RewriteCond %{HTTPS} off
+RewriteCond %{HTTP_HOST} !^localhost
+RewriteCond %{HTTP_HOST} !^localhost:
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 # Remove index.php from URL

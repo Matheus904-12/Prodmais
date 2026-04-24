@@ -6,24 +6,37 @@ require_once dirname(__DIR__) . '/vendor/autoload.php';
 require_once dirname(__DIR__) . '/src/ElasticsearchService.php';
 require_once dirname(__DIR__) . '/src/LattesParser.php';
 require_once dirname(__DIR__) . '/src/PdfParser.php';
+require_once dirname(__DIR__) . '/src/OpenAlexFetcher.php';
 
 $config = require dirname(__DIR__) . '/config/config.php';
 $lattesXmlPath = $config['data_paths']['lattes_xml'];
 $indexName = $config['app']['index_name'];
 
+// Parse command line options
+$options = getopt("", ["skip-enrichment", "keep-index", "force"]);
+$skipEnrichment = isset($options['skip-enrichment']);
+$keepIndex = isset($options['keep-index']);
+$force = isset($options['force']);
+
 $esService = new ElasticsearchService($config['elasticsearch']);
+$openAlexFetcher = new OpenAlexFetcher($config, $config['app']['email'] ?? null);
 
 echo "=== PRODMAIS - INDEXADOR DE PRODUÇÃO CIENTÍFICA ===\n";
-echo "Iniciando processo de indexação no Elasticsearch...\n";
+echo "Configuração:\n";
+echo " - Enriquecimento OpenAlex: " . ($skipEnrichment ? "DESATIVADO" : "ATIVADO") . "\n";
+echo " - Manter índice anterior: " . ($keepIndex ? "SIM" : "NÃO (Reset)") . "\n";
+echo "---------------------------------------------------\n";
 
-// Verifica e apaga o índice antigo, se existir
-if ($esService->indexExists($indexName)) {
-    echo "Índice '{$indexName}' existente. Apagando...\n";
+// Verifica e apaga o índice antigo, se não for solicitado manter
+if (!$keepIndex && $esService->indexExists($indexName)) {
+    echo "Limpando índice '{$indexName}' para novo processamento...\n";
     $esService->deleteIndex($indexName);
 }
 
-echo "Criando novo índice: '{$indexName}'...\n";
-$esService->createIndex($indexName);
+if (!$esService->indexExists($indexName)) {
+    echo "Criando novo índice: '{$indexName}'...\n";
+    $esService->createIndex($indexName);
+}
 
 // Buscar arquivos XML e PDF
 $xmlFiles = glob($lattesXmlPath . '/*.xml');
@@ -37,13 +50,14 @@ if (empty($allFiles)) {
 
 echo "Encontrados " . count($allFiles) . " arquivos para processamento.\n";
 
-    $lattesParser = new LattesParser($config);
+$lattesParser = new LattesParser($config);
 $pdfParser = new PdfParser();
 $allProductions = [];
 $stats = [
     'files_processed' => 0,
     'productions_found' => 0,
     'enriched_with_openalex' => 0,
+    'cache_hits' => 0,
     'errors' => 0
 ];
 
@@ -63,34 +77,48 @@ foreach ($allFiles as $file) {
         }
         
         if (!empty($productions)) {
-            // Enriquecer dados com OpenAlex (com throttling)
-            echo "   🔍 Enriquecendo dados com OpenAlex...\n";
-            $enrichedCount = 0;
-            
-            foreach ($productions as &$production) {
-                try {
-                    if (!empty($production['doi']) || !empty($production['title'])) {
-                        $enrichedProduction = $openAlexFetcher->enrichProduction($production);
-                        
-                        if (isset($enrichedProduction['openalex_id'])) {
-                            $enrichedCount++;
-                            echo "     ↳ Enriquecido: " . substr($production['title'], 0, 50) . "...\n";
+            if ($skipEnrichment) {
+                echo "   ⏭️ Pulando enriquecimento (flag --skip-enrichment ativa)\n";
+            } else {
+                echo "   🔍 Enriquecendo dados com OpenAlex...\n";
+                $enrichedCount = 0;
+                
+                foreach ($productions as &$production) {
+                    try {
+                        if (!empty($production['doi']) || !empty($production['title'])) {
+                            // Check if already in ES and enriched (unless --force)
+                            if (!$force && $keepIndex) {
+                                // Logic to skip if already indexed could go here
+                                // For now, relies on OpenAlex cache hit
+                            }
+
+                            $startTime = microtime(true);
+                            $enrichedProduction = $openAlexFetcher->enrichProduction($production);
+                            $endTime = microtime(true);
+                            
+                            if (isset($enrichedProduction['openalex_id'])) {
+                                $enrichedCount++;
+                                if (($endTime - $startTime) < 0.01) { // Lógica simples para detectar cache hit
+                                    $stats['cache_hits']++;
+                                }
+                            }
+                            
+                            $production = $enrichedProduction;
+                            
+                            // Rate limiting: Only sleep if it wasn't a cache hit
+                            if (($endTime - $startTime) > 0.05) {
+                                usleep(100000); // 0.1 second delay for real API calls
+                            }
                         }
-                        
-                        $production = $enrichedProduction;
-                        
-                        // Rate limiting: 10 requests per second for OpenAlex
-                        usleep(100000); // 0.1 second delay
+                    } catch (\Exception $e) {
+                        echo "     ⚠️ Erro ao enriquecer produção: " . $e->getMessage() . "\n";
                     }
-                } catch (\Exception $e) {
-                    echo "     ⚠️ Erro ao enriquecer produção: " . $e->getMessage() . "\n";
                 }
+                echo "   ✓ {$enrichedCount} produções processadas pelo OpenAlex\n";
             }
             
-            echo "   ✓ {$enrichedCount} produções enriquecidas com dados do OpenAlex\n";
-            
             $allProductions = array_merge($allProductions, $productions);
-            $stats['enriched_with_openalex'] += $enrichedCount;
+            $stats['enriched_with_openalex'] += ($enrichedCount ?? 0);
         }
         
         $stats['files_processed']++;
@@ -105,14 +133,15 @@ foreach ($allFiles as $file) {
 echo "\n=== RESUMO DO PROCESSAMENTO ===\n";
 echo "Arquivos processados: {$stats['files_processed']}\n";
 echo "Produções encontradas: {$stats['productions_found']}\n";
-echo "Enriquecidas com OpenAlex: {$stats['enriched_with_openalex']}\n";
+echo "Enriquecidas (OpenAlex): {$stats['enriched_with_openalex']}\n";
+echo "Cache Hits (OpenAlex): {$stats['cache_hits']}\n";
 echo "Erros: {$stats['errors']}\n";
 
 if (!empty($allProductions)) {
     echo "\n🔄 Indexando " . count($allProductions) . " produções no Elasticsearch...\n";
     
-    // Indexar em lotes para melhor performance
-    $batchSize = 100;
+    // Indexar em lotes maiores para melhor performance
+    $batchSize = 250;
     $totalBatches = ceil(count($allProductions) / $batchSize);
     $successfullyIndexed = 0;
     
@@ -124,11 +153,6 @@ if (!empty($allProductions)) {
             
             if ($response['errors']) {
                 echo "   ⚠️ Lote " . ($i + 1) . "/{$totalBatches}: Alguns erros encontrados\n";
-                foreach ($response['items'] as $item) {
-                    if (isset($item['index']['error'])) {
-                        echo "      - Erro: " . $item['index']['error']['type'] . " - " . $item['index']['error']['reason'] . "\n";
-                    }
-                }
             } else {
                 echo "   ✓ Lote " . ($i + 1) . "/{$totalBatches}: " . count($batch) . " documentos indexados\n";
                 $successfullyIndexed += count($batch);

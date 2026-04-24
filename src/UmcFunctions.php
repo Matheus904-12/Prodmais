@@ -12,24 +12,21 @@ require(__DIR__ . '/../vendor/autoload.php');
 require(__DIR__ . '/../config/config_umc.php');
 
 /* Load UMC classes */
-require_once(__DIR__ . '/ElasticsearchService.php');
-require_once(__DIR__ . '/LattesParser.php');
-require_once(__DIR__ . '/OrcidFetcher.php');
-require_once(__DIR__ . '/OpenAlexFetcher.php');
-require_once(__DIR__ . '/ExportService.php');
+require_once(__DIR__ . '/Infrastructure/Elasticsearch/ElasticsearchService.php');
+require_once(__DIR__ . '/Domain/Importers/LattesParser.php');
+require_once(__DIR__ . '/Infrastructure/External/OrcidFetcher.php');
+require_once(__DIR__ . '/Infrastructure/External/OpenAlexFetcher.php');
+require_once(__DIR__ . '/Domain/Services/ExportService.php');
+require_once(__DIR__ . '/Domain/Services/LogService.php');
+require_once(__DIR__ . '/Core/Anonymizer.php');
+require_once(__DIR__ . '/Core/HookManager.php');
+require_once(__DIR__ . '/Core/PluginLoader.php');
 
-// Load configuration first
-$config = require(__DIR__ . '/../config/config.php');
-
-// Load LogService class
-require_once(__DIR__ . '/LogService.php');
-
-// Initialize LogService with config
-$logService = new LogService($config);
-require_once(__DIR__ . '/Anonymizer.php');
+// Carregar Camada de Plugins
+PluginLoader::loadPlugins();
 
 // Carregar camada relacional
-require_once(__DIR__ . '/DatabaseService.php');
+require_once(__DIR__ . '/Infrastructure/Database/DatabaseService.php');
 
 /* Load Elasticsearch Client */
 use Elastic\Elasticsearch\ClientBuilder;
@@ -41,12 +38,17 @@ function getElasticsearchClient() {
     global $hosts, $elasticsearch_user, $elasticsearch_password;
     
     try {
-        $client = ClientBuilder::create()
-            ->setHosts($hosts)
-            ->build();
-        
-        // Test connection
-        $client->info();
+        if (isset($elasticsearch_user) && !empty($elasticsearch_user)) {
+            $client = ClientBuilder::create()
+                ->setHosts($hosts)
+                ->setBasicAuthentication($elasticsearch_user, $elasticsearch_password)
+                ->setCABundle(__DIR__ . '/http_ca.crt')
+                ->build();
+        } else {
+            $client = ClientBuilder::create()
+                ->setHosts($hosts)
+                ->build();
+        }
         return $client;
     } catch (Exception $e) {
         error_log("Erro ao conectar no Elasticsearch: " . $e->getMessage());
@@ -411,14 +413,16 @@ if (php_sapi_name() !== 'cli') {
     } catch (Exception $e) {
         error_log('Erro ao inicializar banco relacional: ' . $e->getMessage());
     }
-    
-    // Log de acesso (LGPD) - apenas se LogService estiver disponível
-    if (($lgpd_log_access ?? false) && class_exists('LogService')) {
-        try {
-            $logService = new LogService($config ?? []);
-            $logService->logAction($_SERVER['REMOTE_ADDR'] ?? 'unknown', 'access:' . ($_SERVER['REQUEST_URI'] ?? '/'));
-        } catch (Exception $e) {
-            // Silenciar erro se LogService não estiver disponível
-        }
+}
+
+/**
+ * Log de acesso (LGPD)
+ */
+if (($lgpd_log_access ?? false) && class_exists('LogService')) {
+    try {
+        $logService = new LogService();
+        $logService->logAction($_SERVER['REMOTE_ADDR'] ?? 'unknown', 'access:' . ($_SERVER['REQUEST_URI'] ?? '/'));
+    } catch (Exception $e) {
+        // Silenciar erro se LogService não estiver disponível
     }
 }

@@ -1,0 +1,25 @@
+# Configuração de Produção - Prodmais
+# Otimizado para performance e segurança (sem bind mounts locais)
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Em produção, não usamos volumes de bind '.' para o código
+    # O código já está dentro da imagem via comando COPY no Dockerfile
+    volumes:
+      - app_data:/var/www/html/data
+    restart: always
+
+  elasticsearch:
+    environment:
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g" # Mais memória em produção
+    restart: always
+
+  db:
+    restart: always
+
+volumes:
+  app_data:
+    driver: local
