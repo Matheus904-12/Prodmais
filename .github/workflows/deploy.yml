@@ -1,0 +1,34 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main, feat/restruturacao-geral ]
+  pull_request:
+    branches: [ main, feat/restruturacao-geral ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, curl, json, xml
+        
+    - name: Copy to dist
+      run: |
+        mkdir -p dist
+        # Na nova arquitetura, TUDO o que é público (css, js, img) está em public/
+        cp -r public/* dist/
+        
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist

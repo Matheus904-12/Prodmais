@@ -31,14 +31,14 @@ try {
 
 Write-Host ""
 Write-Host "[*] Parando containers antigos..." -ForegroundColor Yellow
-docker-compose down 2>$null
+docker compose down 2>$null
 
 Write-Host ""
 Write-Host "[*] Construindo e iniciando containers..." -ForegroundColor Yellow
 Write-Host "    Isso pode levar alguns minutos na primeira vez..." -ForegroundColor Cyan
 Write-Host ""
 
-docker-compose up -d --build
+docker compose up -d --build
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host ""
@@ -130,7 +130,7 @@ if ($LASTEXITCODE -eq 0) {
     Write-Host ""
     Write-Host "DICAS:" -ForegroundColor White
     Write-Host "   * Para ver os logs: " -NoNewline -ForegroundColor Gray
-    Write-Host "docker-compose logs -f" -ForegroundColor Yellow
+    Write-Host "docker compose logs -f" -ForegroundColor Yellow
     Write-Host "   * Para parar tudo: " -NoNewline -ForegroundColor Gray
     Write-Host "Execute PARAR.ps1" -ForegroundColor Yellow
     Write-Host ""
@@ -147,7 +147,7 @@ if ($LASTEXITCODE -eq 0) {
     Write-Host "[X] ERRO ao iniciar o sistema!" -ForegroundColor Red
     Write-Host ""
     Write-Host "Tente verificar os logs com:" -ForegroundColor Yellow
-    Write-Host "   docker-compose logs" -ForegroundColor White
+    Write-Host "   docker compose logs" -ForegroundColor White
     Write-Host ""
 }
 

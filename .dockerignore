@@ -1,34 +1,14 @@
-# .dockerignore para otimizar build
-.git
-.gitignore
-README.md
-PIVIC*
-*.pdf
-.vscode
-.idea
-
-# Arquivos de desenvolvimento
-.env
-.env.local
-.env.*.local
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Dados temporários
-data/cache/*
-data/logs/*
-data/uploads/*
-!data/cache/.gitkeep
-!data/logs/.gitkeep
-!data/uploads/.gitkeep
-
-# Dependências (serão instaladas no container)
+# Ignorar pastas pesadas para acelerar o BUILD
+vendor/
+data/
+.git/
+.vscode/
 node_modules/
-
-# Backups
-data/backups/*
-
-# Arquivos do sistema
-.DS_Store
-Thumbs.db
+*.log
+*.sqlite
+*.ps1
+ Dockerfile
+docker-compose*.yml
+README.md
+ARCHITECTURE.md
+LICENSE

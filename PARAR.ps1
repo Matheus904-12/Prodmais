@@ -9,7 +9,7 @@ Write-Host "============================================" -ForegroundColor Cyan
 Write-Host ""
 
 Write-Host "[*] Parando containers..." -ForegroundColor Yellow
-docker-compose down
+docker compose down
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host ""
