@@ -434,3 +434,157 @@ body {
 .hover-lift:hover {
     transform: translateY(-4px);
 }
+
+/* ========== MOBILE-FIRST ADDITIONS ========== */
+
+/* Tipografia fluida */
+:root {
+    --font-title-fluid: clamp(1.5rem, 4vw, 2.5rem);
+    --font-subtitle-fluid: clamp(1rem, 2.5vw, 1.25rem);
+    --touch-min: 44px;
+}
+
+/* Safe area iOS (notch/dynamic island) */
+.navbar-elegant {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+}
+
+body {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Touch targets mínimos WCAG 2.1 */
+.btn,
+.btn-elegant,
+.nav-link,
+.nav-link-elegant {
+    min-height: var(--touch-min);
+}
+
+/* Evita zoom automático no iOS em inputs */
+.form-control,
+.form-select,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+textarea,
+select {
+    font-size: 16px !important;
+}
+
+@media (min-width: 768px) {
+    .form-control,
+    .form-select,
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="search"],
+    textarea,
+    select {
+        font-size: 0.9375rem !important;
+    }
+}
+
+/* Hamburger animation (Bootstrap toggler) */
+.navbar-toggler {
+    border: none;
+    padding: 0.5rem;
+    border-radius: var(--radius-md);
+    min-height: var(--touch-min);
+    min-width: var(--touch-min);
+    transition: background var(--transition-fast);
+}
+
+.navbar-toggler:focus {
+    box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.2);
+}
+
+.navbar-toggler:hover {
+    background: var(--gray-100);
+}
+
+.navbar-toggler-bar {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--gray-700);
+    border-radius: 2px;
+    transition: all 0.25s ease;
+    transform-origin: center;
+    margin: 5px auto;
+}
+
+.navbar-toggler[aria-expanded="true"] .navbar-toggler-bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.navbar-toggler[aria-expanded="true"] .navbar-toggler-bar:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+
+.navbar-toggler[aria-expanded="true"] .navbar-toggler-bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Tabelas responsive no mobile */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Cards no mobile — padding reduzido */
+@media (max-width: 575px) {
+    .card-elegant {
+        padding: 1.25rem;
+    }
+
+    .stat-card-modern {
+        padding: 1.25rem;
+    }
+
+    .hero-elegant {
+        padding: 3rem 0 4rem;
+    }
+
+    .hero-elegant h1 {
+        font-size: clamp(1.5rem, 6vw, 2rem);
+    }
+
+    .hero-elegant .lead {
+        font-size: 0.938rem;
+    }
+}
+
+/* Charts responsive */
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 250px;
+}
+
+@media (min-width: 768px) {
+    .chart-container {
+        height: 350px;
+    }
+}
+
+/* Imagens lazy */
+img[loading="lazy"] {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+img[loading="lazy"].loaded {
+    opacity: 1;
+}
+
+/* Utilitários de espaçamento mobile */
+@media (max-width: 575px) {
+    .px-mobile-2 { padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
+    .py-mobile-3 { padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
+    .gap-mobile-2 { gap: 0.5rem !important; }
+    .fs-mobile-sm { font-size: 0.875rem !important; }
+}
