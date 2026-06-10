@@ -19,8 +19,11 @@ CREATE TABLE `usuarios_admin` (
     `bloqueado_ate` TIMESTAMP NULL,
     `criado_em` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `atualizado_em` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `status` ENUM('pendente','ativo','inativo') NOT NULL DEFAULT 'ativo' COMMENT 'pendente = aguarda aprovação admin',
+    `papel` ENUM('admin','pesquisador','visualizador') NOT NULL DEFAULT 'visualizador',
     INDEX `idx_username` (`username`),
-    INDEX `idx_email` (`email`)
+    INDEX `idx_email` (`email`),
+    INDEX `idx_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =====================================================

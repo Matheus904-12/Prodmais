@@ -121,3 +121,18 @@ coverage/
 # Build artifacts
 build/
 dist/
+
+# Credenciais de produção (NUNCA commitar)
+.env.production
+.env.production.local
+
+# Spec-kit — specs locais, não sobem para produção
+.specify/
+*.spec.local.md
+
+# Planos e memória do Claude Code (contexto local)
+.claude/plans/
+.claude/memory/
+
+# package-lock.json (gerado, não versionar)
+# (já listado acima como package-lock.json — mantido)
