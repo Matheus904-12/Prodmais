@@ -15,7 +15,12 @@ class LogService {
         }
         
         $this->db = new \SQLite3($logPath);
-        
+
+        // Compatibilidade com volumes Docker no Windows — evita lock I/O error
+        $this->db->exec("PRAGMA journal_mode=WAL");
+        $this->db->exec("PRAGMA synchronous=NORMAL");
+        $this->db->exec("PRAGMA busy_timeout=5000");
+
         // Check if table exists and get its structure
         $result = $this->db->query("SELECT name FROM sqlite_master WHERE type='table' AND name='logs'");
         $tableExists = $result->fetchArray();
