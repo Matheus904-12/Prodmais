@@ -63,12 +63,8 @@ if ($elasticsearch_available) {
     <!-- CSS Elegante Profissional -->
     <link rel="stylesheet" href="/css/prodmais-elegant.css">
     <link rel="stylesheet" href="/css/umc-theme.css">
-    
-    </style>
     <?php HookManager::doAction('app_head'); ?>
 </head>
-<body>
-
 <body>
 
 <?php 
@@ -119,33 +115,34 @@ HeroSection::display([
         }
         ?>
     <div class="container">
-        <div class="row g-4">
-            <div class="col-md-3">
-                <div class="card-umc text-center">
-                    <div class="card-umc-icon"><i class="fas fa-microscope"></i></div>
-                    <div class="stat-number h2 fw-bold text-primary"><?php echo number_format($total_records); ?></div>
-                    <div class="text-muted small">Produções Científicas</div>
+        <div class="row g-3 g-md-4">
+            <!-- 2 colunas no mobile (col-6), 4 no desktop (col-md-3) -->
+            <div class="col-6 col-md-3">
+                <div class="stat-card-modern text-center">
+                    <div class="card-icon mx-auto mb-2"><i class="fas fa-microscope" aria-hidden="true"></i></div>
+                    <div class="stat-number"><?php echo number_format($total_records); ?></div>
+                    <div class="stat-label">Produções</div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card-umc text-center">
-                    <div class="card-umc-icon"><i class="fas fa-user-graduate"></i></div>
-                    <div class="stat-number h2 fw-bold text-primary"><?php echo number_format($total_pesquisadores); ?></div>
-                    <div class="text-muted small">Pesquisadores</div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card-modern text-center">
+                    <div class="card-icon mx-auto mb-2"><i class="fas fa-user-graduate" aria-hidden="true"></i></div>
+                    <div class="stat-number"><?php echo number_format($total_pesquisadores); ?></div>
+                    <div class="stat-label">Pesquisadores</div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card-umc text-center">
-                    <div class="card-umc-icon"><i class="fas fa-university"></i></div>
-                    <div class="stat-number h2 fw-bold text-primary"><?php echo count($ppgs_umc); ?></div>
-                    <div class="text-muted small">Programas PPG</div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card-modern text-center">
+                    <div class="card-icon mx-auto mb-2"><i class="fas fa-university" aria-hidden="true"></i></div>
+                    <div class="stat-number"><?php echo count($ppgs_umc); ?></div>
+                    <div class="stat-label">Programas PPG</div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card-umc text-center">
-                    <div class="card-umc-icon"><i class="fas fa-project-diagram"></i></div>
-                    <div class="stat-number h2 fw-bold text-primary"><?php echo number_format($total_projetos); ?></div>
-                    <div class="text-muted small">Projetos Ativos</div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card-modern text-center">
+                    <div class="card-icon mx-auto mb-2"><i class="fas fa-project-diagram" aria-hidden="true"></i></div>
+                    <div class="stat-number"><?php echo number_format($total_projetos); ?></div>
+                    <div class="stat-label">Projetos Ativos</div>
                 </div>
             </div>
         </div>
@@ -286,5 +283,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     <?php HookManager::doAction('app_footer'); ?>
+});
+</script>
 </body>
 </html>

@@ -12,10 +12,14 @@ class ElasticsearchService
         try {
             $this->client = ClientBuilder::create()
                 ->setHosts($esConfig['hosts'])
-                ->setRetries(1)
+                ->setRetries(0)
+                ->setHttpClientOptions([
+                    'timeout'         => $esConfig['timeout'] ?? 3,
+                    'connect_timeout' => 2,
+                ])
                 ->build();
-            
-            // Testa conexão
+
+            // Testa conexão com timeout curto
             $this->client->ping();
         } catch (Exception $e) {
             $this->fallbackMode = true;

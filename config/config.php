@@ -28,8 +28,8 @@ return [
         ],
         'username' => null, // Usuário (se autenticação habilitada)
         'password' => null, // Senha (se autenticação habilitada)
-        'timeout' => 30,    // Timeout em segundos
-        'retries' => 3      // Número de tentativas em caso de falha
+        'timeout' => 3,     // Timeout em segundos (curto para fallback rápido)
+        'retries' => 0      // Sem retry — fallback MySQL é mais rápido
     ],
 
     // ================================

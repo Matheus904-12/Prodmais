@@ -208,7 +208,72 @@ if (!empty($producoes_por_qualis)) {
     <!-- CSS Elegante Profissional -->
     <link rel="stylesheet" href="/css/prodmais-elegant.css">
     <link rel="stylesheet" href="/css/umc-theme.css">
-    
+
+    <style>
+        /* ── Dashboard styles ── */
+        .dashboard-chart-card {
+            background: #fff;
+            border-radius: var(--radius-xl);
+            padding: 1.5rem;
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .dashboard-chart-card h5 {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--gray-900);
+            margin-bottom: 1.25rem;
+        }
+
+        .quick-card {
+            background: #fff;
+            border-radius: var(--radius-xl);
+            padding: 1.25rem;
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+            display: block;
+            text-decoration: none;
+        }
+
+        .quick-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+
+        .quick-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .quick-card-label {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--gray-900);
+            margin-bottom: 0.2rem;
+        }
+
+        .quick-card-sub {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+        }
+
+        /* Stats grid — 2 cols on mobile */
+        @media (max-width: 575px) {
+            .stats-grid > [class*="col-"] {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+        }
     </style>
     <?php HookManager::doAction('app_head'); ?>
 </head>
@@ -235,20 +300,20 @@ HeroSection::display([
 <!-- Estatísticas Principais -->
 <section class="py-5" style="background: var(--gray-100);">
     <div class="container">
-        <!-- Cards de Estatísticas -->
-        <div class="row g-4 mb-5">
-            <div class="col-lg-3 col-md-6">
+        <!-- Cards de Estatísticas — 2 cols mobile, 4 desktop -->
+        <div class="row g-3 g-md-4 mb-5 stats-grid">
+            <div class="col-6 col-lg-3">
                 <?php StatCard::display([
                     'value' => $stats['producoes'],
                     'label' => 'Produções Científicas',
                     'icon' => 'file-alt',
-                    'colors' => ['#6366f1', '#8b5cf6'],
+                    'colors' => ['#1a56db', '#1e429f'],
                     'link' => '/result.php',
                     'delay' => '0s'
                 ]); ?>
             </div>
-            
-            <div class="col-lg-3 col-md-6">
+
+            <div class="col-6 col-lg-3">
                 <?php StatCard::display([
                     'value' => $stats['pesquisadores'],
                     'label' => 'Pesquisadores',
@@ -258,22 +323,22 @@ HeroSection::display([
                     'delay' => '0.1s'
                 ]); ?>
             </div>
-            
-            <div class="col-lg-3 col-md-6">
+
+            <div class="col-6 col-lg-3">
                 <?php StatCard::display([
                     'value' => $stats['ppgs'],
-                    'label' => 'Programas de Pós-Graduação',
+                    'label' => 'Programas PPG',
                     'icon' => 'graduation-cap',
-                    'colors' => ['#3b82f6', '#2563eb'],
+                    'colors' => ['#0369a1', '#0c4a6e'],
                     'link' => '/ppgs.php',
                     'delay' => '0.2s'
                 ]); ?>
             </div>
-            
-            <div class="col-lg-3 col-md-6">
+
+            <div class="col-6 col-lg-3">
                 <?php StatCard::display([
                     'value' => $stats['projetos'],
-                    'label' => 'Projetos de Pesquisa',
+                    'label' => 'Projetos',
                     'icon' => 'flask',
                     'colors' => ['#14b8a6', '#0d9488'],
                     'link' => '/projetos.php',
@@ -283,103 +348,85 @@ HeroSection::display([
         </div>
         
         <!-- Gráficos -->
-        <div class="row g-4 mb-5">
+        <div class="row g-3 g-md-4 mb-5">
             <!-- Produções por Ano -->
-            <div class="col-lg-6 fade-in-up" style="animation-delay: 0.4s;">
-                <div style="background: white; border-radius: 16px; padding: 2rem; border: 1px solid var(--gray-200); box-shadow: 0 2px 8px rgba(0,0,0,0.08); max-height: 450px;">
-                    <h5 style="font-weight: 800; margin-bottom: 1.5rem; color: var(--gray-900); font-size: 1.25rem;">
-                        <i class="fas fa-chart-line me-2" style="color: #6366f1;"></i>Produções por Ano
-                    </h5>
-                    <div style="height: 280px; max-height: 280px; position: relative;">
-                        <canvas id="chartProducoesPorAno"></canvas>
+            <div class="col-12 col-lg-6 fade-in-up" style="animation-delay: 0.4s;">
+                <div class="dashboard-chart-card">
+                    <h5><i class="fas fa-chart-line me-2" style="color: var(--primary);" aria-hidden="true"></i>Produções por Ano</h5>
+                    <div class="chart-container">
+                        <canvas id="chartProducoesPorAno" aria-label="Gráfico de produções por ano"></canvas>
                     </div>
                 </div>
             </div>
-            
+
             <!-- Produções por Qualis -->
-            <div class="col-lg-6 fade-in-up" style="animation-delay: 0.5s;">
-                <div style="background: white; border-radius: 16px; padding: 2rem; border: 1px solid var(--gray-200); box-shadow: 0 2px 8px rgba(0,0,0,0.08); max-height: 450px;">
-                    <h5 style="font-weight: 800; margin-bottom: 1.5rem; color: var(--gray-900); font-size: 1.25rem;">
-                        <i class="fas fa-star me-2" style="color: #10b981;"></i>Distribuição por Qualis
-                    </h5>
-                    <div style="height: 280px; max-height: 280px; position: relative;">
-                        <canvas id="chartProducoesPorQualis"></canvas>
+            <div class="col-12 col-lg-6 fade-in-up" style="animation-delay: 0.5s;">
+                <div class="dashboard-chart-card">
+                    <h5><i class="fas fa-star me-2" style="color: #10b981;" aria-hidden="true"></i>Distribuição por Qualis</h5>
+                    <div class="chart-container">
+                        <canvas id="chartProducoesPorQualis" aria-label="Gráfico de distribuição por Qualis"></canvas>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <!-- Produções por PPG -->
-        <div class="row g-4 mb-5">
+        <div class="row g-3 g-md-4 mb-5">
             <div class="col-12 fade-in-up" style="animation-delay: 0.6s;">
-                <div style="background: white; border-radius: 16px; padding: 2rem; border: 1px solid var(--gray-200); box-shadow: 0 2px 8px rgba(0,0,0,0.08); max-height: 450px;">
-                    <h5 style="font-weight: 800; margin-bottom: 1.5rem; color: var(--gray-900); font-size: 1.25rem;">
-                        <i class="fas fa-university me-2" style="color: #3b82f6;"></i>Produções por PPG
-                    </h5>
-                    <div style="height: 280px; max-height: 280px; position: relative;">
-                        <canvas id="chartProducoesPorPPG"></canvas>
+                <div class="dashboard-chart-card">
+                    <h5><i class="fas fa-university me-2" style="color: var(--secondary);" aria-hidden="true"></i>Produções por PPG</h5>
+                    <div class="chart-container">
+                        <canvas id="chartProducoesPorPPG" aria-label="Gráfico de produções por PPG"></canvas>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <!-- Cards de Acesso Rápido -->
-        <div class="row g-4">
+        <div class="row g-3 g-md-4">
             <div class="col-12">
-                <h5 style="font-weight: 800; margin-bottom: 1.5rem; color: var(--gray-900); font-size: 1.25rem;">
-                    <i class="fas fa-bolt me-2" style="color: #f59e0b;"></i>Acesso Rápido
+                <h5 class="fw-bold mb-3" style="color: var(--gray-900);">
+                    <i class="fas fa-bolt me-2" style="color: var(--accent);" aria-hidden="true"></i>Acesso Rápido
                 </h5>
             </div>
-            
-            <div class="col-lg-4 col-md-6 fade-in-up" style="animation-delay: 0.7s;">
-                <a href="/login.php" style="text-decoration: none;">
-                    <div style="background: white; border-radius: 16px; padding: 1.5rem; border: 1px solid var(--gray-200); box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: all 0.3s ease;"
-                         onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.15)'; this.style.borderColor='#6366f1';"
-                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'; this.style.borderColor='var(--gray-200)';">
-                        <div style="display: flex; align-items: center; gap: 1rem;">
-                            <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.25rem;">
-                                <i class="fas fa-upload"></i>
-                            </div>
-                            <div>
-                                <div style="font-weight: 700; font-size: 1rem; color: var(--gray-900); margin-bottom: 0.25rem;">Importar Lattes</div>
-                                <div style="font-size: 0.813rem; color: var(--gray-600);">Adicionar currículos</div>
-                            </div>
+
+            <div class="col-12 col-md-4 fade-in-up" style="animation-delay: 0.7s;">
+                <a href="/login.php" class="quick-card" aria-label="Importar Lattes">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="quick-card-icon" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark));">
+                            <i class="fas fa-upload" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <div class="quick-card-label">Importar Lattes</div>
+                            <div class="quick-card-sub">Adicionar currículos</div>
                         </div>
                     </div>
                 </a>
             </div>
-            
-            <div class="col-lg-4 col-md-6 fade-in-up" style="animation-delay: 0.8s;">
-                <a href="/index_umc.php" style="text-decoration: none;">
-                    <div style="background: white; border-radius: 16px; padding: 1.5rem; border: 1px solid var(--gray-200); box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: all 0.3s ease;"
-                         onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.15)'; this.style.borderColor='#10b981';"
-                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'; this.style.borderColor='var(--gray-200)';">
-                        <div style="display: flex; align-items: center; gap: 1rem;">
-                            <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.25rem;">
-                                <i class="fas fa-search"></i>
-                            </div>
-                            <div>
-                                <div style="font-weight: 700; font-size: 1rem; color: var(--gray-900); margin-bottom: 0.25rem;">Buscar Produções</div>
-                                <div style="font-size: 0.813rem; color: var(--gray-600);">Pesquisar na base</div>
-                            </div>
+
+            <div class="col-12 col-md-4 fade-in-up" style="animation-delay: 0.8s;">
+                <a href="/index_umc.php" class="quick-card" aria-label="Buscar Produções">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="quick-card-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <div class="quick-card-label">Buscar Produções</div>
+                            <div class="quick-card-sub">Pesquisar na base</div>
                         </div>
                     </div>
                 </a>
             </div>
-            
-            <div class="col-lg-4 col-md-6 fade-in-up" style="animation-delay: 0.9s;">
-                <a href="/login.php" style="text-decoration: none;">
-                    <div style="background: white; border-radius: 16px; padding: 1.5rem; border: 1px solid var(--gray-200); box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: all 0.3s ease;"
-                         onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.15)'; this.style.borderColor='#f59e0b';"
-                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'; this.style.borderColor='var(--gray-200)';">
-                        <div style="display: flex; align-items: center; gap: 1rem;">
-                            <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.25rem;">
-                                <i class="fas fa-cog"></i>
-                            </div>
-                            <div>
-                                <div style="font-weight: 700; font-size: 1rem; color: var(--gray-900); margin-bottom: 0.25rem;">Administração</div>
-                                <div style="font-size: 0.813rem; color: var(--gray-600);">Gerenciar sistema</div>
-                            </div>
+
+            <div class="col-12 col-md-4 fade-in-up" style="animation-delay: 0.9s;">
+                <a href="/login.php" class="quick-card" aria-label="Administração">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="quick-card-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                            <i class="fas fa-cog" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <div class="quick-card-label">Administração</div>
+                            <div class="quick-card-sub">Gerenciar sistema</div>
                         </div>
                     </div>
                 </a>
@@ -395,6 +442,14 @@ HeroSection::display([
 
 <!-- Chart.js - Gráficos -->
 <script>
+// Extrair cores do CSS design system
+const cssVars = getComputedStyle(document.documentElement);
+const colorPrimary   = cssVars.getPropertyValue('--primary').trim()   || '#1a56db';
+const colorSecondary = cssVars.getPropertyValue('--secondary').trim() || '#0369a1';
+const colorSuccess   = '#10b981';
+const colorWarning   = '#f59e0b';
+const colorDanger    = '#ef4444';
+
 // Produções por Ano
 const ctxAno = document.getElementById('chartProducoesPorAno').getContext('2d');
 new Chart(ctxAno, {
@@ -404,8 +459,8 @@ new Chart(ctxAno, {
         datasets: [{
             label: 'Produções',
             data: <?php echo json_encode(array_values($producoes_por_ano)); ?>,
-            backgroundColor: 'rgba(99, 102, 241, 0.8)',
-            borderColor: 'rgba(99, 102, 241, 1)',
+            backgroundColor: colorPrimary + 'cc',
+            borderColor: colorPrimary,
             borderWidth: 2,
             borderRadius: 8
         }]
@@ -413,18 +468,9 @@ new Chart(ctxAno, {
     options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                display: false
-            }
-        },
+        plugins: { legend: { display: false } },
         scales: {
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    precision: 0
-                }
-            }
+            y: { beginAtZero: true, ticks: { precision: 0 } }
         }
     }
 });
@@ -554,5 +600,6 @@ new Chart(ctxPPG, {
     }
 });
     <?php HookManager::doAction('app_footer'); ?>
+</script>
 </body>
 </html>

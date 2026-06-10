@@ -74,8 +74,177 @@ if ($client === null || empty($pesquisadores)) {
     <link rel="stylesheet" href="/css/umc-theme.css">
     
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
+        /* ── Researcher cards ── */
+        .researcher-card {
+            background: #fff;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .researcher-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light, #3f83f8));
+        }
+
+        .researcher-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary);
+        }
+
+        .researcher-avatar {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #fff;
+            flex-shrink: 0;
+            box-shadow: 0 6px 16px rgba(26, 86, 219, 0.25);
+        }
+
+        .researcher-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            line-height: 1.3;
+            margin: 0 0 0.625rem 0;
+        }
+
+        .researcher-meta {
+            background: rgba(26, 86, 219, 0.05);
+            border-left: 3px solid var(--primary);
+            border-radius: var(--radius-md);
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.25rem;
+            font-size: 0.875rem;
+            color: var(--gray-700);
+        }
+
+        .badge-lattes {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #fff;
+            padding: 0.3rem 0.7rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .badge-orcid {
+            background: linear-gradient(135deg, #a6ce39, #8ab62d);
+            color: #fff;
+            padding: 0.3rem 0.7rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .badge-ppg {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            padding: 0.3rem 0.7rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .btn-researcher {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #fff;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-lg);
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-height: 44px;
+            transition: all var(--transition-base);
+            box-shadow: 0 3px 10px rgba(26, 86, 219, 0.25);
+        }
+
+        .btn-researcher:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(26, 86, 219, 0.35);
+            color: #fff;
+        }
+
+        .btn-orcid {
+            background: #a6ce39;
+            color: #fff;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-lg);
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            min-width: 44px;
+            transition: all var(--transition-base);
+            box-shadow: 0 3px 10px rgba(166, 206, 57, 0.25);
+        }
+
+        .btn-orcid:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(166, 206, 57, 0.4);
+            color: #fff;
+        }
+
+        /* Search box */
+        .search-box {
+            background: #fff;
+            border-radius: var(--radius-xl);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+        }
+
+        .search-icon-box {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        #searchPesquisador:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.12);
+        }
+
+        @media (max-width: 575px) {
+            .researcher-card { padding: 1.25rem; }
+            .researcher-name { font-size: 1rem; }
         }
     </style>
 </head>
@@ -101,40 +270,40 @@ HeroSection::display([
 <!-- Pesquisadores Section -->
 <section class="py-5" style="background: var(--gray-100);">
     <div class="container">
+
         <!-- Search Box -->
         <div class="row mb-4">
             <div class="col-12">
-                <div style="background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 2px 12px rgba(0,0,0,0.08); border: 1px solid var(--gray-200);">
-                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-                        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.25rem; flex-shrink: 0;">
-                            <i class="fas fa-search"></i>
+                <div class="search-box">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="search-icon-box">
+                            <i class="fas fa-search" aria-hidden="true"></i>
                         </div>
                         <div>
-                            <h5 style="margin: 0; font-weight: 700; color: var(--gray-900);">Buscar Pesquisador</h5>
-                            <p style="margin: 0; font-size: 0.875rem; color: var(--gray-600);">Digite o nome para filtrar a lista</p>
+                            <h5 class="mb-0 fw-bold" style="color: var(--gray-900);">Buscar Pesquisador</h5>
+                            <p class="mb-0 small" style="color: var(--gray-600);">Digite o nome para filtrar a lista</p>
                         </div>
                     </div>
-                    <input type="text" 
-                           id="searchPesquisador" 
-                           class="form-control form-control-lg" 
-                           placeholder="Digite o nome do pesquisador..." 
-                           style="border-radius: 12px; border: 2px solid var(--gray-200); padding: 0.875rem 1.25rem; font-size: 1rem; transition: all 0.3s ease;"
+                    <input type="search"
+                           id="searchPesquisador"
+                           class="form-control form-control-lg"
+                           placeholder="Digite o nome do pesquisador..."
+                           style="border-radius: var(--radius-lg); border: 2px solid var(--gray-200);"
                            onkeyup="filterPesquisadores()"
-                           onfocus="this.style.borderColor='#6366f1'; this.style.boxShadow='0 0 0 4px rgba(99, 102, 241, 0.1)'"
-                           onblur="this.style.borderColor='var(--gray-200)'; this.style.boxShadow='none'">
-                    <div id="searchStats" style="margin-top: 0.75rem; font-size: 0.875rem; color: var(--gray-600); font-weight: 500;"></div>
+                           aria-label="Filtrar pesquisadores por nome">
+                    <div id="searchStats" class="mt-2 small" style="color: var(--gray-600); font-weight: 500;" role="status" aria-live="polite"></div>
                 </div>
             </div>
         </div>
-        
+
         <?php if (empty($pesquisadores)): ?>
-        <div class="alert alert-info glass-effect" role="alert">
-            <i class="fas fa-info-circle me-2"></i> 
+        <div class="alert alert-info" role="alert">
+            <i class="fas fa-info-circle me-2" aria-hidden="true"></i>
             Nenhum pesquisador encontrado. Importe currículos Lattes para visualizar.
         </div>
         <?php else: ?>
-        <div class="row g-4" id="pesquisadoresList">
-            <?php foreach ($pesquisadores as $index => $p): 
+        <div class="row g-3 g-md-4" id="pesquisadoresList">
+            <?php foreach ($pesquisadores as $idx => $p):
                 $nome = $p['nome_completo'] ?? 'Nome não informado';
                 $orcid = $p['orcid'] ?? '';
                 $lattes = $p['id_lattes'] ?? '';
@@ -142,76 +311,68 @@ HeroSection::display([
                 $email = $p['email'] ?? '';
                 $ppg = $p['ppg'] ?? '';
             ?>
-            <div class="col-lg-6 fade-in-up pesquisador-card" data-nome="<?php echo strtolower(htmlspecialchars($nome)); ?>" style="animation-delay: <?php echo ($index * 0.05); ?>s;">
-                <div style="background: white; border-radius: 16px; padding: 2rem; border: 1px solid var(--gray-200); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06); height: 100%;"
-                     onmouseover="this.style.transform='translateY(-8px) scale(1.02)'; this.style.boxShadow='0 20px 40px rgba(99, 102, 241, 0.18)'; this.style.borderColor='#6366f1';"
-                     onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.06)'; this.style.borderColor='var(--gray-200)';">
-                    
-                    <!-- Decorative gradient bar -->
-                    <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(135deg, #6366f1, #8b5cf6, #a855f7);"></div>
-                    
-                    <div style="display: flex; align-items: start; gap: 1.25rem; margin-bottom: 1.5rem;">
-                        <div style="width: 70px; height: 70px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; color: white; box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3); flex-shrink: 0;">
-                            <i class="fas fa-user-graduate"></i>
+            <div class="col-12 col-md-6 col-lg-4 fade-in-up pesquisador-card"
+                 data-nome="<?php echo strtolower(htmlspecialchars($nome)); ?>"
+                 style="animation-delay: <?php echo min($idx * 0.05, 0.5); ?>s;">
+                <div class="researcher-card">
+
+                    <!-- Cabeçalho: avatar + nome + badges -->
+                    <div class="d-flex align-items-start gap-3 mb-3">
+                        <div class="researcher-avatar">
+                            <i class="fas fa-user-graduate" aria-hidden="true"></i>
                         </div>
-                        <div style="flex: 1; min-width: 0;">
-                            <h3 style="margin: 0 0 0.75rem 0; font-size: 1.25rem; font-weight: 800; color: var(--gray-900); line-height: 1.3;">
-                                <?php echo htmlspecialchars($nome); ?>
-                            </h3>
-                            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-                                <span style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 0.375rem 0.75rem; border-radius: 8px; font-size: 0.813rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.375rem; box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);">
-                                    <i class="fas fa-id-badge"></i> Lattes
-                                </span>
+                        <div class="flex-grow-1 min-width-0">
+                            <h3 class="researcher-name"><?php echo htmlspecialchars($nome); ?></h3>
+                            <div class="d-flex flex-wrap gap-1">
+                                <span class="badge-lattes"><i class="fas fa-id-badge" aria-hidden="true"></i> Lattes</span>
                                 <?php if (!empty($orcid)): ?>
-                                <span style="background: linear-gradient(135deg, #a6ce39, #8ab62d); color: white; padding: 0.375rem 0.75rem; border-radius: 8px; font-size: 0.813rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.375rem; box-shadow: 0 2px 8px rgba(166, 206, 57, 0.25);">
-                                    <i class="fab fa-orcid"></i> ORCID
-                                </span>
+                                <span class="badge-orcid"><i class="fab fa-orcid" aria-hidden="true"></i> ORCID</span>
                                 <?php endif; ?>
                                 <?php if (!empty($ppg)): ?>
-                                <span style="background: var(--gray-100); color: var(--gray-700); padding: 0.375rem 0.75rem; border-radius: 8px; font-size: 0.813rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.375rem;">
-                                    <i class="fas fa-university" style="color: #6366f1;"></i> <?php echo htmlspecialchars($ppg); ?>
-                                </span>
+                                <span class="badge-ppg"><i class="fas fa-university" aria-hidden="true"></i> <?php echo htmlspecialchars($ppg); ?></span>
                                 <?php endif; ?>
                             </div>
                         </div>
                     </div>
-                    
-                    <div style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05)); border-left: 3px solid #6366f1; padding: 1rem 1.25rem; border-radius: 12px; margin-bottom: 1.5rem;">
+
+                    <!-- Meta: data de atualização e email -->
+                    <div class="researcher-meta">
                         <?php if (!empty($ultima_atualizacao)): ?>
-                        <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--gray-700); font-size: 0.875rem; font-weight: 600; margin-bottom: <?php echo !empty($email) ? '0.5rem' : '0'; ?>;">
-                            <i class="fas fa-clock" style="color: #6366f1;"></i>
-                            Atualizado em <?php echo date('d/m/Y', strtotime($ultima_atualizacao)); ?>
+                        <div class="d-flex align-items-center gap-2 <?php echo !empty($email) ? 'mb-1' : ''; ?>">
+                            <i class="fas fa-clock" style="color: var(--primary);" aria-hidden="true"></i>
+                            <span>Atualizado em <?php echo date('d/m/Y', strtotime($ultima_atualizacao)); ?></span>
                         </div>
                         <?php endif; ?>
                         <?php if (!empty($email)): ?>
-                        <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--gray-700); font-size: 0.875rem; font-weight: 500;">
-                            <i class="fas fa-envelope" style="color: #6366f1;"></i>
-                            <?php echo htmlspecialchars($email); ?>
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-envelope" style="color: var(--primary);" aria-hidden="true"></i>
+                            <span><?php echo htmlspecialchars($email); ?></span>
                         </div>
                         <?php elseif (empty($ultima_atualizacao)): ?>
-                        <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--gray-600); font-size: 0.875rem; font-weight: 500;">
-                            <i class="fas fa-info-circle" style="color: #6366f1;"></i>
-                            Pesquisador do PPG UMC
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-info-circle" style="color: var(--primary);" aria-hidden="true"></i>
+                            <span>Pesquisador do PPG UMC</span>
                         </div>
                         <?php endif; ?>
                     </div>
-                    
-                    <div style="display: flex; gap: 0.75rem;">
-                        <a href="/result.php?pesquisador=<?php echo urlencode($nome); ?>" 
-                           style="flex: 1; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 0.875rem 1.5rem; border-radius: 12px; font-weight: 700; font-size: 0.938rem; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s ease; border: none; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);"
-                           onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(99, 102, 241, 0.35)';"
-                           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(99, 102, 241, 0.25)';">
-                            <i class="fas fa-search"></i> Ver Produções
+
+                    <!-- Ações -->
+                    <div class="d-flex gap-2">
+                        <a href="/result.php?pesquisador=<?php echo urlencode($nome); ?>"
+                           class="btn-researcher">
+                            <i class="fas fa-search" aria-hidden="true"></i> Ver Produções
                         </a>
                         <?php if (!empty($orcid)): ?>
-                        <a href="https://orcid.org/<?php echo htmlspecialchars($orcid); ?>" target="_blank" 
-                           style="background: #a6ce39; color: white; padding: 0.875rem 1.25rem; border-radius: 12px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(166, 206, 57, 0.25);"
-                           onmouseover="this.style.transform='translateY(-2px) scale(1.05)'; this.style.boxShadow='0 8px 20px rgba(166, 206, 57, 0.4)';"
-                           onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 12px rgba(166, 206, 57, 0.25)';">
-                            <i class="fab fa-orcid" style="font-size: 1.25rem;"></i>
+                        <a href="https://orcid.org/<?php echo htmlspecialchars($orcid); ?>"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="btn-orcid"
+                           aria-label="Perfil ORCID de <?php echo htmlspecialchars($nome); ?>">
+                            <i class="fab fa-orcid" aria-hidden="true"></i>
                         </a>
                         <?php endif; ?>
                     </div>
+
                 </div>
             </div>
             <?php endforeach; ?>
@@ -249,7 +410,7 @@ function filterPesquisadores() {
     if (filter === '') {
         searchStats.innerHTML = `<i class="fas fa-info-circle me-1"></i>Mostrando todos os ${totalCount} pesquisadores`;
     } else {
-        searchStats.innerHTML = `<i class="fas fa-filter me-1" style="color: #6366f1;"></i>Encontrados <strong>${visibleCount}</strong> de ${totalCount} pesquisadores`;
+        searchStats.innerHTML = `<i class="fas fa-filter me-1"></i>Encontrados <strong>${visibleCount}</strong> de ${totalCount} pesquisadores`;
     }
 }
 

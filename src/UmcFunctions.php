@@ -38,15 +38,19 @@ function getElasticsearchClient() {
     global $hosts, $elasticsearch_user, $elasticsearch_password;
     
     try {
+        $httpOptions = ['timeout' => 3, 'connect_timeout' => 2];
+
         if (isset($elasticsearch_user) && !empty($elasticsearch_user)) {
             $client = ClientBuilder::create()
                 ->setHosts($hosts)
                 ->setBasicAuthentication($elasticsearch_user, $elasticsearch_password)
                 ->setCABundle(__DIR__ . '/http_ca.crt')
+                ->setHttpClientOptions($httpOptions)
                 ->build();
         } else {
             $client = ClientBuilder::create()
                 ->setHosts($hosts)
+                ->setHttpClientOptions($httpOptions)
                 ->build();
         }
         return $client;
