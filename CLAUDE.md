@@ -38,20 +38,50 @@ Prodmais/
 └── .specify/         # Specs locais — nunca sobe para produção
 ```
 
-### Classes críticas em `src/`
+### Estrutura modular de `src/` (arquitetura Clean)
 
-| Classe | Responsabilidade |
-|--------|-----------------|
-| `AuthManager` | Login, BCrypt, brute-force, sessões seguras |
-| `LattesImporter` | Importação de XML do Lattes com skip inteligente |
-| `LattesParser` | Parser de XML dos currículos Lattes |
-| `ElasticsearchService` | Cliente ES 8.x, fallback automático para MySQL |
-| `DatabaseService` | ORM simples PDO para MySQL/SQLite |
-| `HookManager` | Sistema de hooks actions/filters |
-| `LgpdComplianceService` | Conformidade LGPD, anonimização, auditoria |
-| `ExportService` | Exportação BibTeX, RIS, CSV, JSON, XML |
-| `OpenAlexFetcher` | Enriquecimento via API OpenAlex |
-| `OrcidFetcher` | Integração ORCID (Consórcio CAPES-ORCID) |
+```
+src/
+├── Core/                     # Infraestrutura transversal
+│   ├── Anonymizer.php        # Anonimização de dados
+│   ├── HookManager.php       # Sistema de hooks (actions/filters)
+│   └── PluginLoader.php      # Carregador de plugins
+│
+├── Domain/                   # Regras de negócio
+│   ├── Importers/            # LattesImporter, LattesParser
+│   ├── Reports/              # CapesReportGenerator
+│   ├── Security/             # AuthManager, LgpdComplianceService
+│   ├── Services/             # ExportService, InstitutionalDashboard, LogService, UmcProgramService
+│   └── Validation/           # ProductionValidator, UmcValidationSystem
+│
+├── Infrastructure/           # Adaptadores externos
+│   ├── Database/             # DatabaseService (PDO MySQL/SQLite)
+│   ├── Elasticsearch/        # ElasticsearchService, JsonStorageService
+│   ├── External/             # OpenAlexFetcher, OrcidFetcher, BrCrisIntegration
+│   └── Storage/              # PdfParser
+│
+└── View/                     # Sistema de componentes e páginas
+    ├── Component.php         # Classe base de componente
+    ├── Components/           # Footer, HeroSection, Navbar, StatCard
+    └── Pages/
+        ├── Auth/             # LoginPage, ForgotPasswordPage, ResetPasswordPage, ChangePasswordPage
+        ├── Dashboard/        # AdminPage, DashboardPage, ImportLattesPage
+        ├── Search/           # HomePage, ResearchersPage, PPGPage, PPGsPage, ResultPage, ProjectsPage, PresearchPage
+        └── Static/           # PrivacyPolicyPage, TermsOfUsePage
+```
+
+### Classes críticas
+
+| Classe | Caminho | Responsabilidade |
+|--------|---------|-----------------|
+| `AuthManager` | `Domain/Security/` | Login, BCrypt, brute-force, sessões seguras |
+| `LattesImporter` | `Domain/Importers/` | Importação de XML do Lattes com skip inteligente |
+| `ElasticsearchService` | `Infrastructure/Elasticsearch/` | Cliente ES 8.x, fallback para MySQL |
+| `DatabaseService` | `Infrastructure/Database/` | ORM simples PDO MySQL/SQLite |
+| `HookManager` | `Core/` | Sistema de hooks actions/filters |
+| `LgpdComplianceService` | `Domain/Security/` | Conformidade LGPD, anonimização, auditoria |
+| `ExportService` | `Domain/Services/` | Exportação BibTeX, RIS, CSV, JSON, XML |
+| `OpenAlexFetcher` | `Infrastructure/External/` | Enriquecimento via API OpenAlex |
 
 ### Padrão de retorno dos métodos de serviço
 
