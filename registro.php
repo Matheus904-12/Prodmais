@@ -4,8 +4,6 @@
  * Novo usuário solicita acesso; admin aprova posteriormente.
  */
 
-require_once __DIR__ . '/../src/AuthManager.php';
-
 $mensagem = '';
 $tipo_mensagem = '';
 $cadastrado = false;
