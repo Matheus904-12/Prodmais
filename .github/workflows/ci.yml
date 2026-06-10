@@ -24,7 +24,15 @@ jobs:
           extensions: pdo, pdo_mysql, mbstring, xml, curl, zip
 
       - name: Verificar sintaxe de todos os arquivos PHP
-        run: find . -name "*.php" -not -path "./vendor/*" -exec php -l {} \; | grep -v "No syntax errors"
+        run: |
+          ERRORS=$(find . -name "*.php" -not -path "./vendor/*" -not -path "./dist/*" \
+            -exec php -l {} \; 2>&1 | grep -v "No syntax errors" || true)
+          if [ -n "$ERRORS" ]; then
+            echo "Erros de sintaxe PHP encontrados:"
+            echo "$ERRORS"
+            exit 1
+          fi
+          echo "Todos os arquivos PHP passaram na verificação de sintaxe."
 
       - name: Instalar dependências Composer
         run: composer install --no-dev --prefer-dist --no-interaction
