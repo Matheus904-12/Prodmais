@@ -73,180 +73,6 @@ if ($client === null || empty($pesquisadores)) {
     <link rel="stylesheet" href="/css/prodmais-elegant.css">
     <link rel="stylesheet" href="/css/umc-theme.css">
     
-    <style>
-        /* ── Researcher cards ── */
-        .researcher-card {
-            background: #fff;
-            border-radius: var(--radius-xl);
-            border: 1px solid var(--gray-200);
-            box-shadow: var(--shadow-sm);
-            padding: 1.5rem;
-            height: 100%;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-        }
-
-        .researcher-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 4px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light, #3f83f8));
-        }
-
-        .researcher-card:hover {
-            transform: translateY(-6px);
-            box-shadow: var(--shadow-xl);
-            border-color: var(--primary);
-        }
-
-        .researcher-avatar {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            border-radius: var(--radius-lg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: #fff;
-            flex-shrink: 0;
-            box-shadow: 0 6px 16px rgba(26, 86, 219, 0.25);
-        }
-
-        .researcher-name {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            line-height: 1.3;
-            margin: 0 0 0.625rem 0;
-        }
-
-        .researcher-meta {
-            background: rgba(26, 86, 219, 0.05);
-            border-left: 3px solid var(--primary);
-            border-radius: var(--radius-md);
-            padding: 0.75rem 1rem;
-            margin-bottom: 1.25rem;
-            font-size: 0.875rem;
-            color: var(--gray-700);
-        }
-
-        .badge-lattes {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: #fff;
-            padding: 0.3rem 0.7rem;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-
-        .badge-orcid {
-            background: linear-gradient(135deg, #a6ce39, #8ab62d);
-            color: #fff;
-            padding: 0.3rem 0.7rem;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-
-        .badge-ppg {
-            background: var(--gray-100);
-            color: var(--gray-700);
-            padding: 0.3rem 0.7rem;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-
-        .btn-researcher {
-            flex: 1;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: #fff;
-            padding: 0.75rem 1rem;
-            border-radius: var(--radius-lg);
-            font-weight: 700;
-            font-size: 0.9rem;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            min-height: 44px;
-            transition: all var(--transition-base);
-            box-shadow: 0 3px 10px rgba(26, 86, 219, 0.25);
-        }
-
-        .btn-researcher:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(26, 86, 219, 0.35);
-            color: #fff;
-        }
-
-        .btn-orcid {
-            background: #a6ce39;
-            color: #fff;
-            padding: 0.75rem 1rem;
-            border-radius: var(--radius-lg);
-            font-weight: 700;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 44px;
-            min-width: 44px;
-            transition: all var(--transition-base);
-            box-shadow: 0 3px 10px rgba(166, 206, 57, 0.25);
-        }
-
-        .btn-orcid:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(166, 206, 57, 0.4);
-            color: #fff;
-        }
-
-        /* Search box */
-        .search-box {
-            background: #fff;
-            border-radius: var(--radius-xl);
-            padding: 1.5rem;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--gray-200);
-        }
-
-        .search-icon-box {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            border-radius: var(--radius-lg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: 1.2rem;
-            flex-shrink: 0;
-        }
-
-        #searchPesquisador:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.12);
-        }
-
-        @media (max-width: 575px) {
-            .researcher-card { padding: 1.25rem; }
-            .researcher-name { font-size: 1rem; }
-        }
-    </style>
 </head>
 <body>
 
@@ -263,35 +89,32 @@ HeroSection::display([
     'subtitle' => 'Conheça os pesquisadores dos Programas de Pós-Graduação da UMC',
     'badge' => number_format($total_pesquisadores) . ' Pesquisadores Cadastrados',
     'badge_icon' => 'users',
-    'variant' => 'lavender'
+    'variant' => 'info'
 ]); 
 ?>
 
 <!-- Pesquisadores Section -->
-<section class="py-5" style="background: var(--gray-100);">
+<section class="page-section page-section-gray">
     <div class="container">
 
         <!-- Search Box -->
         <div class="row mb-4">
             <div class="col-12">
-                <div class="search-box">
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <div class="search-icon-box">
-                            <i class="fas fa-search" aria-hidden="true"></i>
-                        </div>
-                        <div>
-                            <h5 class="mb-0 fw-bold" style="color: var(--gray-900);">Buscar Pesquisador</h5>
-                            <p class="mb-0 small" style="color: var(--gray-600);">Digite o nome para filtrar a lista</p>
-                        </div>
+                <div class="researcher-search-box">
+                    <label for="searchPesquisador" class="search-label">
+                        <i class="fas fa-search me-1" aria-hidden="true"></i>
+                        Filtrar pesquisadores
+                    </label>
+                    <div class="search-input-wrap">
+                        <i class="fas fa-search" aria-hidden="true"></i>
+                        <input type="search"
+                               id="searchPesquisador"
+                               class="form-control"
+                               placeholder="Buscar por nome..."
+                               onkeyup="filterPesquisadores()"
+                               aria-label="Filtrar pesquisadores por nome">
                     </div>
-                    <input type="search"
-                           id="searchPesquisador"
-                           class="form-control form-control-lg"
-                           placeholder="Digite o nome do pesquisador..."
-                           style="border-radius: var(--radius-lg); border: 2px solid var(--gray-200);"
-                           onkeyup="filterPesquisadores()"
-                           aria-label="Filtrar pesquisadores por nome">
-                    <div id="searchStats" class="mt-2 small" style="color: var(--gray-600); font-weight: 500;" role="status" aria-live="polite"></div>
+                    <div id="searchStats" class="search-stats" role="status" aria-live="polite"></div>
                 </div>
             </div>
         </div>
@@ -339,18 +162,18 @@ HeroSection::display([
                     <div class="researcher-meta">
                         <?php if (!empty($ultima_atualizacao)): ?>
                         <div class="d-flex align-items-center gap-2 <?php echo !empty($email) ? 'mb-1' : ''; ?>">
-                            <i class="fas fa-clock" style="color: var(--primary);" aria-hidden="true"></i>
+                            <i class="fas fa-clock" aria-hidden="true"></i>
                             <span>Atualizado em <?php echo date('d/m/Y', strtotime($ultima_atualizacao)); ?></span>
                         </div>
                         <?php endif; ?>
                         <?php if (!empty($email)): ?>
                         <div class="d-flex align-items-center gap-2">
-                            <i class="fas fa-envelope" style="color: var(--primary);" aria-hidden="true"></i>
+                            <i class="fas fa-envelope" aria-hidden="true"></i>
                             <span><?php echo htmlspecialchars($email); ?></span>
                         </div>
                         <?php elseif (empty($ultima_atualizacao)): ?>
                         <div class="d-flex align-items-center gap-2">
-                            <i class="fas fa-info-circle" style="color: var(--primary);" aria-hidden="true"></i>
+                            <i class="fas fa-info-circle" aria-hidden="true"></i>
                             <span>Pesquisador do PPG UMC</span>
                         </div>
                         <?php endif; ?>
@@ -366,7 +189,7 @@ HeroSection::display([
                         <a href="https://orcid.org/<?php echo htmlspecialchars($orcid); ?>"
                            target="_blank"
                            rel="noopener noreferrer"
-                           class="btn-orcid"
+                           class="btn-orcid-link"
                            aria-label="Perfil ORCID de <?php echo htmlspecialchars($nome); ?>">
                             <i class="fab fa-orcid" aria-hidden="true"></i>
                         </a>

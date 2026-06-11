@@ -140,6 +140,20 @@ require_once __DIR__ . '/../../../../config/config_umc.php';
         .btn-back-home:active {
             transform: translateY(-1px) scale(1.02);
         }
+
+        .brand-text {
+            font-size: 1.75rem; font-weight: 900;
+            background: linear-gradient(135deg, #1a56db 0%, #0369a1 50%, #0ea5e9 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; letter-spacing: -0.5px;
+        }
+        .brand-text span { color: #0ea5e9; font-weight: 900; }
+
+        .page-hero-privacy { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%); padding: 4rem 0 3rem; }
+        .page-hero-privacy h1 { font-size: 3rem; font-weight: 900; color: white; margin-bottom: 1rem; }
+        .page-hero-privacy p { font-size: 1.25rem; color: rgba(255,255,255,0.95); margin: 0; }
+
+        .footer-note { font-size: 0.875rem; color: var(--gray-500); }
     </style>
 </head>
 <body>
@@ -153,8 +167,8 @@ require_once __DIR__ . '/../../../../config/config_umc.php';
                  height="45" 
                  class="me-2"
                  onerror="this.style.display='none'">
-            <div class="brand-text" style="font-size: 1.75rem; font-weight: 900; background: linear-gradient(135deg, #1a56db 0%, #0369a1 50%, #0ea5e9 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: -0.5px;">
-                Prod<span style="color: #0ea5e9; font-weight: 900;">mais</span>
+            <div class="brand-text">
+                Prod<span>mais</span>
             </div>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -177,19 +191,15 @@ require_once __DIR__ . '/../../../../config/config_umc.php';
 </nav>
 
 <!-- Hero Section -->
-<section style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%); padding: 4rem 0 3rem;">
+<section class="page-hero-privacy">
     <div class="container text-center">
-        <h1 style="font-size: 3rem; font-weight: 900; color: white; margin-bottom: 1rem;">
-            <i class="fas fa-shield-alt me-3"></i>Política de Privacidade
-        </h1>
-        <p style="font-size: 1.25rem; color: rgba(255,255,255,0.95); margin: 0;">
-            Transparência e proteção dos seus dados
-        </p>
+        <h1><i class="fas fa-shield-alt me-3"></i>Política de Privacidade</h1>
+        <p>Transparência e proteção dos seus dados</p>
     </div>
 </section>
 
 <!-- Content -->
-<section class="py-5" style="background: var(--gray-100);">
+<section class="page-section page-section-gray">
     <div class="container">
         <div class="last-updated">
             <i class="fas fa-calendar-alt"></i>
@@ -310,8 +320,8 @@ require_once __DIR__ . '/../../../../config/config_umc.php';
 
             <div class="highlight-box">
                 <p><strong><i class="fas fa-envelope me-2"></i>Para exercer seus direitos, entre em contato:</strong></p>
-                <p style="margin-bottom: 0.5rem;"><strong>E-mail:</strong> dpo@umc.br ou prodmais@umc.br</p>
-                <p style="margin-bottom: 0;"><strong>Endereço:</strong> Universidade de Mogi das Cruzes - Av. Dr. Cândido Xavier de Almeida e Souza, 200 - Mogi das Cruzes - SP</p>
+                <p class="mb-2"><strong>E-mail:</strong> dpo@umc.br ou prodmais@umc.br</p>
+                <p class="mb-0"><strong>Endereço:</strong> Universidade de Mogi das Cruzes - Av. Dr. Cândido Xavier de Almeida e Souza, 200 - Mogi das Cruzes - SP</p>
             </div>
         </div>
 
@@ -378,16 +388,16 @@ require_once __DIR__ . '/../../../../config/config_umc.php';
             
             <div class="highlight-box">
                 <p><strong>Encarregado de Proteção de Dados (DPO)</strong></p>
-                <p style="margin-bottom: 0.5rem;"><i class="fas fa-envelope me-2"></i><strong>E-mail:</strong> dpo@umc.br</p>
-                <p style="margin-bottom: 0.5rem;"><i class="fas fa-envelope me-2"></i><strong>E-mail do Sistema:</strong> prodmais@umc.br</p>
-                <p style="margin-bottom: 0.5rem;"><i class="fas fa-phone me-2"></i><strong>Telefone:</strong> (11) 4798-7000</p>
-                <p style="margin-bottom: 0;"><i class="fas fa-map-marker-alt me-2"></i><strong>Endereço:</strong> Av. Dr. Cândido Xavier de Almeida e Souza, 200 - Centro Cívico - Mogi das Cruzes - SP - CEP 08780-911</p>
+                <p class="mb-2"><i class="fas fa-envelope me-2"></i><strong>E-mail:</strong> dpo@umc.br</p>
+                <p class="mb-2"><i class="fas fa-envelope me-2"></i><strong>E-mail do Sistema:</strong> prodmais@umc.br</p>
+                <p class="mb-2"><i class="fas fa-phone me-2"></i><strong>Telefone:</strong> (11) 4798-7000</p>
+                <p class="mb-0"><i class="fas fa-map-marker-alt me-2"></i><strong>Endereço:</strong> Av. Dr. Cândido Xavier de Almeida e Souza, 200 - Centro Cívico - Mogi das Cruzes - SP - CEP 08780-911</p>
             </div>
         </div>
 
         <div class="text-center mt-5">
             <a href="/index_umc.php" class="btn btn-lg btn-back-home">
-                <i class="fas fa-home me-2" style="position: relative; z-index: 1;"></i><span style="position: relative; z-index: 1;">Voltar para o Início</span>
+                <i class="fas fa-home me-2"></i><span>Voltar para o Início</span>
             </a>
         </div>
     </div>
@@ -398,7 +408,7 @@ require_once __DIR__ . '/../../../../config/config_umc.php';
     <div class="container">
         <div class="text-center">
             <p class="mb-1">&copy; <?php echo date('Y'); ?> <?php echo $instituicao; ?> - Todos os direitos reservados</p>
-            <p style="font-size: 0.875rem; color: var(--gray-500);">
+            <p class="footer-note">
                 Sistema em conformidade com LGPD (Lei nº 13.709/2018)
             </p>
         </div>

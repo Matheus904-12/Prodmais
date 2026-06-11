@@ -191,6 +191,22 @@ require_once __DIR__ . '/../../../../config/config_umc.php';
         .btn-view-policy:active {
             transform: translateY(-1px) scale(1.02);
         }
+
+        .brand-text {
+            font-size: 1.75rem; font-weight: 900;
+            background: linear-gradient(135deg, #1a56db 0%, #0369a1 50%, #0ea5e9 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; letter-spacing: -0.5px;
+        }
+        .brand-text span { color: #0ea5e9; font-weight: 900; }
+
+        .page-hero-terms { background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%); padding: 4rem 0 3rem; }
+        .page-hero-terms h1 { font-size: 3rem; font-weight: 900; color: white; margin-bottom: 1rem; }
+        .page-hero-terms p { font-size: 1.25rem; color: rgba(255,255,255,0.95); margin: 0; }
+
+        .highlight-link { color: #10b981; font-weight: 700; }
+        .hero-accept-text { font-size: 1.125rem; margin-bottom: 1rem; }
+        .footer-note { font-size: 0.875rem; color: var(--gray-500); }
     </style>
 </head>
 <body>

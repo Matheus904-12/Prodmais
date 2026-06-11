@@ -209,72 +209,6 @@ if (!empty($producoes_por_qualis)) {
     <link rel="stylesheet" href="/css/prodmais-elegant.css">
     <link rel="stylesheet" href="/css/umc-theme.css">
 
-    <style>
-        /* ── Dashboard styles ── */
-        .dashboard-chart-card {
-            background: #fff;
-            border-radius: var(--radius-xl);
-            padding: 1.5rem;
-            border: 1px solid var(--gray-200);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .dashboard-chart-card h5 {
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: var(--gray-900);
-            margin-bottom: 1.25rem;
-        }
-
-        .quick-card {
-            background: #fff;
-            border-radius: var(--radius-xl);
-            padding: 1.25rem;
-            border: 1px solid var(--gray-200);
-            box-shadow: var(--shadow-sm);
-            transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
-            display: block;
-            text-decoration: none;
-        }
-
-        .quick-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
-            border-color: var(--primary);
-        }
-
-        .quick-card-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: var(--radius-lg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: 1.2rem;
-            flex-shrink: 0;
-        }
-
-        .quick-card-label {
-            font-weight: 700;
-            font-size: 1rem;
-            color: var(--gray-900);
-            margin-bottom: 0.2rem;
-        }
-
-        .quick-card-sub {
-            font-size: 0.8rem;
-            color: var(--gray-600);
-        }
-
-        /* Stats grid — 2 cols on mobile */
-        @media (max-width: 575px) {
-            .stats-grid > [class*="col-"] {
-                flex: 0 0 50%;
-                max-width: 50%;
-            }
-        }
-    </style>
     <?php HookManager::doAction('app_head'); ?>
 </head>
 <body>
@@ -289,7 +223,7 @@ Navbar::display([
 <?php HookManager::doAction('dashboard_header'); ?>
 <?php 
 HeroSection::display([
-    'title' => '<i class="fas fa-tachometer-alt me-3"></i>Dashboard',
+    'title' => 'Dashboard',
     'subtitle' => 'Visão completa da produção científica da UMC',
     'badge' => 'Visualizações e Estatísticas',
     'badge_icon' => 'chart-line',
@@ -298,7 +232,7 @@ HeroSection::display([
 ?>
 
 <!-- Estatísticas Principais -->
-<section class="py-5" style="background: var(--gray-100);">
+<section class="page-section page-section-gray">
     <div class="container">
         <!-- Cards de Estatísticas — 2 cols mobile, 4 desktop -->
         <div class="row g-3 g-md-4 mb-5 stats-grid">
@@ -340,7 +274,7 @@ HeroSection::display([
                     'value' => $stats['projetos'],
                     'label' => 'Projetos',
                     'icon' => 'flask',
-                    'colors' => ['#14b8a6', '#0d9488'],
+                    'colors' => ['#059669', '#047857'],
                     'link' => '/projetos.php',
                     'delay' => '0.3s'
                 ]); ?>
@@ -350,9 +284,9 @@ HeroSection::display([
         <!-- Gráficos -->
         <div class="row g-3 g-md-4 mb-5">
             <!-- Produções por Ano -->
-            <div class="col-12 col-lg-6 fade-in-up" style="animation-delay: 0.4s;">
+            <div class="col-12 col-lg-6 fade-in-up" style="animation-delay:0.4s">
                 <div class="dashboard-chart-card">
-                    <h5><i class="fas fa-chart-line me-2" style="color: var(--primary);" aria-hidden="true"></i>Produções por Ano</h5>
+                    <h5><i class="fas fa-chart-line me-2" aria-hidden="true"></i>Produções por Ano</h5>
                     <div class="chart-container">
                         <canvas id="chartProducoesPorAno" aria-label="Gráfico de produções por ano"></canvas>
                     </div>
@@ -360,9 +294,9 @@ HeroSection::display([
             </div>
 
             <!-- Produções por Qualis -->
-            <div class="col-12 col-lg-6 fade-in-up" style="animation-delay: 0.5s;">
+            <div class="col-12 col-lg-6 fade-in-up" style="animation-delay:0.5s">
                 <div class="dashboard-chart-card">
-                    <h5><i class="fas fa-star me-2" style="color: #10b981;" aria-hidden="true"></i>Distribuição por Qualis</h5>
+                    <h5><i class="fas fa-star me-2" aria-hidden="true"></i>Distribuição por Qualis</h5>
                     <div class="chart-container">
                         <canvas id="chartProducoesPorQualis" aria-label="Gráfico de distribuição por Qualis"></canvas>
                     </div>
@@ -372,9 +306,9 @@ HeroSection::display([
 
         <!-- Produções por PPG -->
         <div class="row g-3 g-md-4 mb-5">
-            <div class="col-12 fade-in-up" style="animation-delay: 0.6s;">
+            <div class="col-12 fade-in-up" style="animation-delay:0.6s">
                 <div class="dashboard-chart-card">
-                    <h5><i class="fas fa-university me-2" style="color: var(--secondary);" aria-hidden="true"></i>Produções por PPG</h5>
+                    <h5><i class="fas fa-university me-2" aria-hidden="true"></i>Produções por PPG</h5>
                     <div class="chart-container">
                         <canvas id="chartProducoesPorPPG" aria-label="Gráfico de produções por PPG"></canvas>
                     </div>
@@ -385,15 +319,15 @@ HeroSection::display([
         <!-- Cards de Acesso Rápido -->
         <div class="row g-3 g-md-4">
             <div class="col-12">
-                <h5 class="fw-bold mb-3" style="color: var(--gray-900);">
-                    <i class="fas fa-bolt me-2" style="color: var(--accent);" aria-hidden="true"></i>Acesso Rápido
+                <h5 class="fw-bold mb-3">
+                    <i class="fas fa-bolt me-2" aria-hidden="true"></i>Acesso Rápido
                 </h5>
             </div>
 
-            <div class="col-12 col-md-4 fade-in-up" style="animation-delay: 0.7s;">
+            <div class="col-12 col-md-4 fade-in-up" style="animation-delay:0.7s">
                 <a href="/login.php" class="quick-card" aria-label="Importar Lattes">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="quick-card-icon" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark));">
+                        <div class="quick-card-icon qci-blue">
                             <i class="fas fa-upload" aria-hidden="true"></i>
                         </div>
                         <div>
@@ -404,10 +338,10 @@ HeroSection::display([
                 </a>
             </div>
 
-            <div class="col-12 col-md-4 fade-in-up" style="animation-delay: 0.8s;">
+            <div class="col-12 col-md-4 fade-in-up" style="animation-delay:0.8s">
                 <a href="/index_umc.php" class="quick-card" aria-label="Buscar Produções">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="quick-card-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+                        <div class="quick-card-icon qci-green">
                             <i class="fas fa-search" aria-hidden="true"></i>
                         </div>
                         <div>
@@ -418,10 +352,10 @@ HeroSection::display([
                 </a>
             </div>
 
-            <div class="col-12 col-md-4 fade-in-up" style="animation-delay: 0.9s;">
+            <div class="col-12 col-md-4 fade-in-up" style="animation-delay:0.9s">
                 <a href="/login.php" class="quick-card" aria-label="Administração">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="quick-card-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                        <div class="quick-card-icon qci-amber">
                             <i class="fas fa-cog" aria-hidden="true"></i>
                         </div>
                         <div>

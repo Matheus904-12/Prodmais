@@ -52,14 +52,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a56db 0%, #1e429f 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
         }
-        
+
         .recovery-card {
             background: white;
             border-radius: 20px;
@@ -68,51 +68,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             max-width: 500px;
             width: 100%;
         }
-        
+
         .logo-section {
             text-align: center;
             margin-bottom: 2rem;
         }
-        
+
         .logo-section h1 {
             font-size: 2.5rem;
             font-weight: 900;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #1a56db, #1e429f);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 0.5rem;
         }
-        
+
         .icon-circle {
             width: 80px;
             height: 80px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #1a56db, #1e429f);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 1rem;
         }
-        
+
         .icon-circle i {
             font-size: 2rem;
             color: white;
         }
-        
+
         .form-control {
             padding: 0.875rem 1rem;
             border-radius: 12px;
             border: 2px solid #e2e8f0;
             transition: all 0.3s ease;
         }
-        
+
         .form-control:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #1a56db;
+            box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.1);
         }
-        
+
         .btn-recovery {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #1a56db, #1e429f);
             color: white;
             border: none;
             padding: 1rem;
@@ -121,37 +121,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             transition: all 0.3s ease;
             width: 100%;
         }
-        
+
         .btn-recovery:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 20px rgba(26, 86, 219, 0.4);
         }
-        
+
         .back-link {
             text-align: center;
             margin-top: 1.5rem;
         }
-        
+
         .back-link a {
-            color: #667eea;
+            color: #1a56db;
             text-decoration: none;
             font-weight: 600;
         }
-        
+
         .back-link a:hover {
             text-decoration: underline;
         }
-        
+
         .info-box {
             background: #f0f4ff;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #1a56db;
             padding: 1rem;
             border-radius: 8px;
             margin-bottom: 1.5rem;
         }
-        
+
         .info-box i {
-            color: #667eea;
+            color: #1a56db;
             margin-right: 0.5rem;
         }
     </style>
@@ -178,7 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="info-box">
         <i class="fas fa-info-circle"></i>
         <strong>Como funciona:</strong>
-        <p class="mb-0 mt-2" style="font-size: 0.875rem;">Digite seu email cadastrado e enviaremos um link para redefinir sua senha. O link expira em 1 hora.</p>
+        <p class="mb-0 mt-2 small">Digite seu email cadastrado e enviaremos um link para redefinir sua senha. O link expira em 1 hora.</p>
     </div>
     
     <form method="POST">
@@ -190,7 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                    class="form-control" 
                    id="email" 
                    name="email" 
-                   placeholder="seu.email@umc.br" 
+                   placeholder="nome@exemplo.com" 
                    required
                    autocomplete="email">
         </div>

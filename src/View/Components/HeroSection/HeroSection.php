@@ -14,10 +14,10 @@ class HeroSection extends Component {
         $elasticsearch_available = $this->getProp('elasticsearch_available', true);
         
         $gradientMap = [
-            'primary' => 'linear-gradient(135deg, #1a56db 0%, #0369a1 50%, #0891b2 100%)',
-            'success' => 'linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%)',
-            'info' => 'linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%)',
-            'lavender' => 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%)'
+            'primary'  => 'linear-gradient(160deg, #1a56db 0%, #0369a1 60%, #0891b2 100%)',
+            'success'  => 'linear-gradient(160deg, #065f46 0%, #047857 50%, #059669 100%)',
+            'info'     => 'linear-gradient(160deg, #1d4ed8 0%, #2563eb 50%, #3b82f6 100%)',
+            'lavender' => 'linear-gradient(160deg, #1e3a8a 0%, #1d4ed8 50%, #1a56db 100%)',
         ];
         
         $gradient = $gradientMap[$variant] ?? $gradientMap['primary'];

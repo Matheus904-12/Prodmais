@@ -170,6 +170,14 @@ $usuario = $auth->getUsuarioLogado();
             border-radius: 12px;
             margin-bottom: 2rem;
         }
+        .user-info i { color: #1e40af; font-size: 1.25rem; }
+        .brand-text {
+            font-size: 1.75rem; font-weight: 900;
+            background: linear-gradient(135deg, #1a56db 0%, #0369a1 50%, #0ea5e9 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; letter-spacing: -0.5px;
+        }
+        .brand-text span { color: #0ea5e9; font-weight: 900; }
         
         .password-strength {
             height: 4px;
@@ -194,8 +202,8 @@ $usuario = $auth->getUsuarioLogado();
                  height="45" 
                  class="me-2"
                  onerror="this.style.display='none'">
-            <div class="brand-text" style="font-size: 1.75rem; font-weight: 900; background: linear-gradient(135deg, #1a56db 0%, #0369a1 50%, #0ea5e9 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: -0.5px;">
-                Prod<span style="color: #0ea5e9; font-weight: 900;">mais</span>
+            <div class="brand-text">
+                Prod<span>mais</span>
             </div>
         </a>
         <div class="ms-auto">
@@ -217,7 +225,7 @@ $usuario = $auth->getUsuarioLogado();
         </div>
         
         <div class="user-info">
-            <i class="fas fa-user-circle me-2" style="color: #1e40af; font-size: 1.25rem;"></i>
+            <i class="fas fa-user-circle me-2"></i>
             <strong><?php echo htmlspecialchars($usuario['nome_completo'] ?: $usuario['username']); ?></strong>
         </div>
         
@@ -230,7 +238,7 @@ $usuario = $auth->getUsuarioLogado();
         <?php endif; ?>
         
         <div class="password-requirements">
-            <i class="fas fa-shield-alt me-2" style="color: #1e40af;"></i>
+            <i class="fas fa-shield-alt me-2"></i>
             <strong>Requisitos da nova senha:</strong>
             <ul class="mb-0 mt-2">
                 <li>Minimo de 8 caracteres</li>

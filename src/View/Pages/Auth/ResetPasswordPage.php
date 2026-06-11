@@ -77,14 +77,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $token_valido) {
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a56db 0%, #1e429f 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
         }
-        
+
         .reset-card {
             background: white;
             border-radius: 20px;
@@ -93,37 +93,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $token_valido) {
             max-width: 500px;
             width: 100%;
         }
-        
+
         .logo-section {
             text-align: center;
             margin-bottom: 2rem;
         }
-        
+
         .logo-section h1 {
             font-size: 2.5rem;
             font-weight: 900;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #1a56db, #1e429f);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 0.5rem;
         }
-        
+
         .icon-circle {
             width: 80px;
             height: 80px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #1a56db, #1e429f);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 1rem;
         }
-        
+
         .icon-circle i {
             font-size: 2rem;
             color: white;
         }
-        
+
         .form-control {
             padding: 0.875rem 1rem;
             padding-right: 3rem;
@@ -131,12 +131,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $token_valido) {
             border: 2px solid #e2e8f0;
             transition: all 0.3s ease;
         }
-        
+
         .form-control:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #1a56db;
+            box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.1);
         }
-        
+
         .password-toggle {
             position: absolute;
             right: 15px;
@@ -146,13 +146,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $token_valido) {
             color: #94a3b8;
             transition: color 0.3s;
         }
-        
+
         .password-toggle:hover {
-            color: #667eea;
+            color: #1a56db;
         }
-        
+
         .btn-reset {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #1a56db, #1e429f);
             color: white;
             border: none;
             padding: 1rem;
@@ -160,12 +160,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $token_valido) {
             font-weight: 700;
             transition: all 0.3s ease;
             width: 100%;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
-        
         .btn-reset:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 20px rgba(26, 86, 219, 0.4);
+            color: white;
         }
+        .btn-reset--auto { width: auto; padding: 0.75rem 2rem; }
         
         .password-requirements {
             background: #f0f4ff;
@@ -204,11 +209,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $token_valido) {
         }
         
         .back-link a {
-            color: #667eea;
+            color: #1a56db;
             text-decoration: none;
             font-weight: 600;
         }
-        
+
         .back-link a:hover {
             text-decoration: underline;
         }
@@ -247,7 +252,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $token_valido) {
     <?php if ($token_valido): ?>
     
     <div class="password-requirements">
-        <i class="fas fa-shield-alt me-2" style="color: #667eea;"></i>
+        <i class="fas fa-shield-alt me-2"></i>
         <strong>Requisitos da senha:</strong>
         <ul>
             <li>Minimo de 8 caracteres</li>
@@ -295,7 +300,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $token_valido) {
         <i class="fas fa-check-circle"></i>
         <h4 class="mb-3">Senha Redefinida!</h4>
         <p class="mb-4">Sua senha foi alterada com sucesso. Voce ja pode fazer login com a nova senha.</p>
-        <a href="/login.php" class="btn btn-reset" style="width: auto; padding: 0.75rem 2rem;">
+        <a href="/login.php" class="btn btn-reset btn-reset--auto">
             <i class="fas fa-sign-in-alt me-2"></i>Ir para Login
         </a>
     </div>

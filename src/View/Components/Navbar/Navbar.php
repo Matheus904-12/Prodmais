@@ -9,18 +9,18 @@ class Navbar extends Component {
         $activePage = $this->getProp('active_page', 'home');
         
         ?>
-        <nav class="navbar navbar-expand-lg navbar-elegant">
+        <nav class="navbar navbar-expand-lg navbar-elegant" aria-label="Navegação principal">
             <div class="container">
-                <a class="navbar-brand d-flex align-items-center" href="/">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/03/Logo_umc1.png" 
-                         alt="UMC Logo" 
-                         height="45" 
-                         class="me-2"
+                <!-- Brand -->
+                <a class="navbar-brand" href="/index_umc.php" title="Página inicial Prodmais">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/03/Logo_umc1.png"
+                         alt="Universidade de Mogi das Cruzes"
+                         class="navbar-logo"
                          onerror="this.style.display='none'">
-                    <div class="brand-text">
-                        Prod<span class="highlight">mais</span>
-                    </div>
+                    <div class="brand-text">Prod<span class="highlight">mais</span></div>
                 </a>
+
+                <!-- Toggler mobile -->
                 <button class="navbar-toggler"
                         type="button"
                         data-bs-toggle="collapse"
@@ -32,38 +32,53 @@ class Navbar extends Component {
                     <span class="navbar-toggler-bar"></span>
                     <span class="navbar-toggler-bar"></span>
                 </button>
+
+                <!-- Links -->
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
+                    <ul class="navbar-nav ms-auto align-items-center">
                         <li class="nav-item">
-                            <a class="nav-link-elegant <?php echo $activePage === 'home' ? 'active' : ''; ?>" href="/index_umc.php">
-                                <i class="fas fa-home me-1"></i> Início
+                            <a class="nav-link-elegant <?php echo $activePage === 'home' ? 'active' : ''; ?>"
+                               href="/index_umc.php"
+                               <?php echo $activePage === 'home' ? 'aria-current="page"' : ''; ?>>
+                                <i class="fas fa-home" aria-hidden="true"></i> Início
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link-elegant <?php echo $activePage === 'pesquisadores' ? 'active' : ''; ?>" href="/pesquisadores.php">
-                                <i class="fas fa-users me-1"></i> Pesquisadores
+                            <a class="nav-link-elegant <?php echo $activePage === 'pesquisadores' ? 'active' : ''; ?>"
+                               href="/pesquisadores.php"
+                               <?php echo $activePage === 'pesquisadores' ? 'aria-current="page"' : ''; ?>>
+                                <i class="fas fa-users" aria-hidden="true"></i> Pesquisadores
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link-elegant <?php echo $activePage === 'ppgs' ? 'active' : ''; ?>" href="/ppgs.php">
-                                <i class="fas fa-university me-1"></i> PPGs
+                            <a class="nav-link-elegant <?php echo $activePage === 'ppgs' ? 'active' : ''; ?>"
+                               href="/ppgs.php"
+                               <?php echo $activePage === 'ppgs' ? 'aria-current="page"' : ''; ?>>
+                                <i class="fas fa-university" aria-hidden="true"></i> PPGs
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link-elegant <?php echo $activePage === 'projetos' ? 'active' : ''; ?>" href="/projetos.php">
-                                <i class="fas fa-project-diagram me-1"></i> Projetos
+                            <a class="nav-link-elegant <?php echo $activePage === 'projetos' ? 'active' : ''; ?>"
+                               href="/projetos.php"
+                               <?php echo $activePage === 'projetos' ? 'aria-current="page"' : ''; ?>>
+                                <i class="fas fa-flask" aria-hidden="true"></i> Projetos
                             </a>
                         </li>
                         <?php if ($mostrar_link_dashboard): ?>
                         <li class="nav-item">
-                            <a class="nav-link-elegant <?php echo $activePage === 'dashboard' ? 'active' : ''; ?>" href="/dashboard.php">
-                                <i class="fas fa-chart-line me-1"></i> Dashboard
+                            <a class="nav-link-elegant <?php echo $activePage === 'dashboard' ? 'active' : ''; ?>"
+                               href="/dashboard.php"
+                               <?php echo $activePage === 'dashboard' ? 'aria-current="page"' : ''; ?>>
+                                <i class="fas fa-chart-line" aria-hidden="true"></i> Dashboard
                             </a>
                         </li>
                         <?php endif; ?>
+                        <li class="nav-item d-none d-lg-flex align-items-center">
+                            <span class="nav-divider" aria-hidden="true"></span>
+                        </li>
                         <li class="nav-item">
-                            <a class="nav-link-elegant" href="/login.php">
-                                <i class="fas fa-cog me-1"></i> Admin
+                            <a class="nav-cta-admin" href="/login.php">
+                                <i class="fas fa-lock" aria-hidden="true"></i> Área Admin
                             </a>
                         </li>
                     </ul>

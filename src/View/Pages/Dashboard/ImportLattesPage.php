@@ -8,6 +8,9 @@ require_once __DIR__ . '/../../../../config/config_umc.php';
 require_once __DIR__ . '/../../../../src/UmcFunctions.php';
 require_once __DIR__ . '/../src/LattesImporter.php';
 
+use App\View\Components\Navbar\Navbar;
+use App\View\Components\Footer\Footer;
+
 $message = '';
 $error = '';
 $result = null;
@@ -80,15 +83,7 @@ $ppgs = getAllPPGs();
     <link href="/css/prodmais-elegant.css" rel="stylesheet">
 
     <style>
-        body {
-            padding-top: 80px;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: var(--gray-100);
-        }
-
-        .nav-item {
-            padding-left: 15px;
-        }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
 
         .upload-zone {
             border: 3px dashed var(--gray-300);
@@ -101,263 +96,142 @@ $ppgs = getAllPPGs();
             position: relative;
             overflow: hidden;
         }
-
         .upload-zone::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05));
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, rgba(26,86,219,0.05), rgba(30,66,159,0.05));
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-
         .upload-zone:hover {
-            border-color: #6366f1;
+            border-color: var(--primary);
             transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(99, 102, 241, 0.2);
+            box-shadow: 0 12px 32px rgba(26,86,219,0.2);
         }
-
-        .upload-zone:hover::before {
-            opacity: 1;
-        }
-
+        .upload-zone:hover::before { opacity: 1; }
         .upload-zone.dragover {
-            border-color: #8b5cf6;
-            background: rgba(139, 92, 246, 0.05);
+            border-color: var(--primary-dark);
+            background: rgba(30,66,159,0.05);
             transform: scale(1.02);
-            box-shadow: 0 16px 40px rgba(139, 92, 246, 0.25);
+            box-shadow: 0 16px 40px rgba(26,86,219,0.25);
         }
-
-        .upload-zone i {
-            color: #6366f1;
-            font-size: 4rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .upload-zone h5 {
-            font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: 0.75rem;
-        }
-        
-        .upload-zone p {
-            color: var(--gray-600);
-            font-size: 0.938rem;
-        }
+        .upload-zone i { color: var(--primary); font-size: 4rem; margin-bottom: 1.5rem; }
+        .upload-zone h5 { font-weight: 700; color: var(--gray-900); margin-bottom: 0.75rem; }
+        .upload-zone p  { color: var(--gray-600); font-size: 0.938rem; }
 
         .result-card {
             background: white;
             border-radius: 10px;
             padding: 30px;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
             margin-bottom: 20px;
         }
-
         .result-header {
-            border-bottom: 3px solid var(--umc-azul-royal);
+            border-bottom: 3px solid var(--primary);
             padding-bottom: 15px;
             margin-bottom: 25px;
         }
-
-        .result-header h4 {
-            color: var(--umc-azul-escuro);
-            font-weight: 700;
-            margin: 0;
-        }
-
+        .result-header h4 { color: var(--primary-dark); font-weight: 700; margin: 0; }
         .result-stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
             margin-top: 20px;
         }
-
         .stat-item {
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             padding: 20px;
             border-radius: 8px;
-            border-left: 4px solid var(--umc-azul-claro);
+            border-left: 4px solid var(--primary-light);
             transition: all 0.3s;
         }
-
-        .stat-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 12px rgba(0, 75, 147, 0.15);
-        }
-
-        .stat-item .stat-icon {
-            font-size: 2rem;
-            color: var(--umc-azul-royal);
-            margin-bottom: 10px;
-        }
-
-        .stat-item .stat-number {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--umc-azul-escuro);
-            margin: 0;
-        }
-
-        .stat-item .stat-label {
-            color: #666;
-            font-size: 0.9rem;
-            margin: 0;
-        }
+        .stat-item:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(26,86,219,0.15); }
+        .stat-item .stat-icon { font-size: 2rem; color: var(--primary); margin-bottom: 10px; }
+        .stat-item .stat-number { font-size: 2rem; font-weight: 700; color: var(--primary-dark); margin: 0; }
+        .stat-item .stat-label  { color: #666; font-size: 0.9rem; margin: 0; }
 
         .page-header {
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
             color: white;
             padding: 4rem 0 3rem;
             position: relative;
             overflow: hidden;
         }
-
         .page-header::before {
             content: '';
             position: absolute;
-            top: 20%;
-            left: 10%;
-            width: 300px;
-            height: 300px;
-            background: rgba(255, 255, 255, 0.1);
+            top: 20%; left: 10%;
+            width: 300px; height: 300px;
+            background: rgba(255,255,255,0.1);
             border-radius: 50%;
             filter: blur(80px);
         }
-
         .page-header::after {
             content: '';
             position: absolute;
-            bottom: 20%;
-            right: 10%;
-            width: 400px;
-            height: 400px;
-            background: rgba(255, 255, 255, 0.1);
+            bottom: 20%; right: 10%;
+            width: 400px; height: 400px;
+            background: rgba(255,255,255,0.1);
             border-radius: 50%;
             filter: blur(100px);
         }
-
-        .page-header h1 {
-            font-weight: 900;
-            margin-bottom: 1rem;
-            font-size: 3.5rem;
-            letter-spacing: -0.02em;
-            line-height: 1.2;
-        }
-        
-        .page-header .lead {
-            font-size: 1.25rem;
-            opacity: 0.95;
-            font-weight: 400;
-        }
+        .page-header h1 { font-weight: 900; margin-bottom: 1rem; font-size: 3.5rem; letter-spacing: -0.02em; line-height: 1.2; }
+        .page-header .lead { font-size: 1.25rem; opacity: 0.95; font-weight: 400; }
 
         .card-umc-custom {
             background: white;
             border-radius: 16px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
             border: 1px solid var(--gray-200);
             overflow: hidden;
         }
-
         .card-header-umc {
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
             color: white;
             padding: 1.75rem 2rem;
             border: none;
         }
-
-        .card-header-umc h4 {
-            margin: 0;
-            font-weight: 800;
-            font-size: 1.25rem;
-        }
-        
+        .card-header-umc h4 { margin: 0; font-weight: 800; font-size: 1.25rem; }
         .card-umc {
             background: white;
             border-radius: 16px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
             border: 1px solid var(--gray-200);
         }
-        
         .btn-umc-primary {
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
             border: none;
             padding: 0.75rem 2rem;
             border-radius: 12px;
             font-weight: 700;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: 0 4px 12px rgba(26,86,219,0.3);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
         }
-        
-        .btn-umc-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
-            color: white;
-        }
-        
+        .btn-umc-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(26,86,219,0.4); color: white; }
         .btn-umc-outline {
             background: white;
-            color: #6366f1;
-            border: 2px solid #6366f1;
+            color: var(--primary);
+            border: 2px solid var(--primary);
             padding: 0.75rem 2rem;
             border-radius: 12px;
             font-weight: 700;
             transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
         }
-        
-        .btn-umc-outline:hover {
-            background: #6366f1;
-            color: white;
-            transform: translateY(-2px);
-        }
+        .btn-umc-outline:hover { background: var(--primary); color: white; transform: translateY(-2px); }
     </style>
 </head>
 
 <body>
-    <!-- Navbar Elegante -->
-    <nav class="navbar navbar-expand-lg navbar-elegant fixed-top">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="/">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/0/03/Logo_umc1.png" 
-                     alt="UMC Logo" 
-                     height="45" 
-                     class="me-2"
-                     onerror="this.style.display='none'">
-                <strong style="font-size: 1.5rem; background: linear-gradient(135deg, #6366f1, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Prodmais</strong>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link-elegant" href="/index_umc.php"><i class="fas fa-home me-1"></i> Início</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link-elegant" href="/pesquisadores.php"><i class="fas fa-users me-1"></i> Pesquisadores</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link-elegant" href="/ppgs.php"><i class="fas fa-university me-1"></i> PPGs</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link-elegant" href="/projetos.php"><i class="fas fa-project-diagram me-1"></i> Projetos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link-elegant active" href="/importar_lattes.php"><i class="fas fa-file-upload me-1"></i> Importar</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link-elegant" href="/dashboard.php"><i class="fas fa-chart-line me-1"></i> Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link-elegant" href="/login.php"><i class="fas fa-cog me-1"></i> Admin</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+
+<?php Navbar::display(['active_page' => 'importar', 'mostrar_link_dashboard' => $mostrar_link_dashboard ?? true]); ?>
 
     <!-- Page Header -->
     <div class="page-header">
@@ -641,39 +515,7 @@ $ppgs = getAllPPGs();
         </div>
     </div>
 
-    <!-- Footer Elegante -->
-    <footer class="footer-elegant">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4 mb-4">
-                    <h5>Universidade de Mogi das Cruzes</h5>
-                    <p style="color: var(--gray-400); line-height: 1.6;">Sistema de Gestão da Produção Científica dos Programas de Pós-Graduação</p>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <h5>Links Úteis</h5>
-                    <ul style="list-style: none; padding: 0;">
-                        <li style="margin-bottom: 0.5rem;"><a href="/index_umc.php">Início</a></li>
-                        <li style="margin-bottom: 0.5rem;"><a href="/pesquisadores.php">Pesquisadores</a></li>
-                        <li style="margin-bottom: 0.5rem;"><a href="/ppgs.php">PPGs</a></li>
-                        <li style="margin-bottom: 0.5rem;"><a href="/projetos.php">Projetos</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <h5>Integrações</h5>
-                    <ul style="list-style: none; padding: 0;">
-                        <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: #10b981;"></i> Plataforma Lattes</li>
-                        <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: #10b981;"></i> ORCID</li>
-                        <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: #10b981;"></i> OpenAlex</li>
-                    </ul>
-                </div>
-            </div>
-            <hr style="border-color: var(--gray-700); margin: 2rem 0;">
-            <div class="text-center">
-                <p class="mb-1">&copy; <?= date('Y') ?> Universidade de Mogi das Cruzes - PIVIC 2025</p>
-                <p style="font-size: 0.875rem; color: var(--gray-500);">Desenvolvido com excelência seguindo conformidade LGPD e padrões CAPES</p>
-            </div>
-        </div>
-    </footer>
+<?php Footer::display(); ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
