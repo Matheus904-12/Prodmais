@@ -1,12 +1,10 @@
 <?php
-/**
- * PRODMAIS UMC - Trocar Senha
- * Pagina para usuario logado alterar senha
- */
-
 session_start();
 
-// Verificar autenticacao
+/**
+ * PRODMAIS UMC — Alterar Senha (usuário logado)
+ */
+
 if (!isset($_SESSION['user_id'])) {
     header('Location: /login.php');
     exit;
@@ -15,34 +13,44 @@ if (!isset($_SESSION['user_id'])) {
 require_once __DIR__ . '/../../../../config/config_umc.php';
 require_once __DIR__ . '/../../../../src/Domain/Security/AuthManager.php';
 
-// Conexao com banco
+$host    = getenv('MYSQL_HOST') ?: 'db';
+$db_name = getenv('MYSQL_DB')   ?: 'prodmais_umc';
+$db_user = getenv('MYSQL_USER') ?: 'prodmais';
+$db_pass = getenv('MYSQL_PASS') ?: 'prodmais123';
+
 try {
-    $db = new PDO("mysql:host=localhost;dbname=prodmais_umc;charset=utf8mb4", "root", "");
+    $db = new PDO("mysql:host=$host;dbname=$db_name;charset=utf8mb4", $db_user, $db_pass);
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    die("Erro de conexao: " . $e->getMessage());
+    die("Erro de conexão: " . $e->getMessage());
 }
 
-$auth = new AuthManager($db);
-$mensagem = '';
-$tipo_mensagem = '';
+$auth        = new AuthManager($db);
+$mensagem    = '';
+$tipo        = '';
+$concluido   = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $senha_atual = $_POST['senha_atual'] ?? '';
-    $nova_senha = $_POST['nova_senha'] ?? '';
+    $senha_atual     = $_POST['senha_atual']     ?? '';
+    $nova_senha      = $_POST['nova_senha']      ?? '';
     $confirmar_senha = $_POST['confirmar_senha'] ?? '';
-    
-    if ($nova_senha !== $confirmar_senha) {
-        $mensagem = 'As senhas nao coincidem';
-        $tipo_mensagem = 'danger';
+
+    if (strlen($nova_senha) < 8) {
+        $mensagem = 'A nova senha deve ter pelo menos 8 caracteres.';
+        $tipo = 'error';
+    } elseif ($nova_senha !== $confirmar_senha) {
+        $mensagem = 'As senhas não coincidem.';
+        $tipo = 'error';
     } else {
         $resultado = $auth->trocarSenha($_SESSION['user_id'], $senha_atual, $nova_senha);
-        $mensagem = $resultado['mensagem'];
-        $tipo_mensagem = $resultado['sucesso'] ? 'success' : 'danger';
+        $mensagem  = $resultado['mensagem'];
+        $tipo      = $resultado['sucesso'] ? 'success' : 'error';
+        $concluido = $resultado['sucesso'];
     }
 }
 
 $usuario = $auth->getUsuarioLogado();
+$nome_exibido = $usuario['nome_completo'] ?? $usuario['username'] ?? 'Usuário';
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -50,297 +58,629 @@ $usuario = $auth->getUsuarioLogado();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="/img/umc-favicon.png">
-    <title>Trocar Senha - Prodmais UMC</title>
-    
-    <!-- Bootstrap CSS -->
+    <title>Alterar Senha — Prodmais UMC</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- CSS Elegante -->
-    <link rel="stylesheet" href="/css/prodmais-elegant.css">
-    <link rel="stylesheet" href="/css/umc-theme.css">
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--gray-100);
-            padding-top: 80px;
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --blue-900: #0f1f4b;
+            --blue-600: #1a56db;
+            --blue-500: #3b82f6;
+            --blue-400: #60a5fa;
+            --gray-50:  #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-700: #334155;
+            --gray-900: #0f172a;
+            --green-400: #34d399;
+            --green-500: #10b981;
+            --red-50:   #fef2f2;
+            --red-200:  #fecaca;
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --ease: cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
-        .change-password-container {
-            max-width: 600px;
-            margin: 3rem auto;
+
+        html { overflow-x: clip; }
+        body { font-family: var(--font); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+
+        .auth-shell { display: flex; min-height: 100vh; }
+
+        /* ── BRAND PANEL ── */
+        .brand-panel {
+            flex: 0 0 42%;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            align-self: flex-start;
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(59,130,246,.18) 0%, transparent 55%),
+                radial-gradient(ellipse at 80% 80%, rgba(30,64,175,.20) 0%, transparent 55%),
+                linear-gradient(160deg, var(--blue-900) 0%, #0d1b4a 50%, #0a1535 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 3rem 3rem 2.5rem;
+            overflow: hidden;
         }
-        
-        .card-password {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            padding: 3rem;
-            border: 1px solid var(--gray-200);
+
+        .brand-panel::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+            background-size: 48px 48px;
+            pointer-events: none;
         }
-        
-        .header-section {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .icon-circle {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #1e40af, #3b82f6);
+
+        .brand-panel::after {
+            content: '';
+            position: absolute;
+            bottom: -80px; right: -80px;
+            width: 320px; height: 320px;
             border-radius: 50%;
+            background: radial-gradient(circle, rgba(59,130,246,.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .brand-top { position: relative; z-index: 1; }
+
+        .brand-logo-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 3rem;
+        }
+
+        .brand-logo-row img {
+            height: 40px;
+            filter: brightness(0) invert(1);
+            opacity: 0.9;
+        }
+
+        .brand-logo-text { font-size: 1.25rem; font-weight: 800; color: white; letter-spacing: -0.3px; }
+        .brand-logo-text span { color: var(--blue-400); }
+
+        .brand-icon-wrap {
+            width: 64px; height: 64px;
+            border-radius: 18px;
+            background: rgba(255,255,255,.08);
+            border: 1px solid rgba(255,255,255,.12);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 1rem;
+            margin-bottom: 1.75rem;
         }
-        
-        .icon-circle i {
-            font-size: 2rem;
-            color: white;
-        }
-        
-        .header-section h2 {
-            color: #1e3a8a;
+
+        .brand-icon-wrap i { font-size: 1.75rem; color: var(--blue-400); }
+
+        .brand-headline {
+            font-size: clamp(1.6rem, 2.5vw, 2.2rem);
             font-weight: 800;
-            margin-bottom: 0.5rem;
-        }
-        
-        .form-control {
-            padding: 0.875rem 1rem;
-            padding-right: 3rem;
-            border-radius: 12px;
-            border: 2px solid #e2e8f0;
-            transition: all 0.3s ease;
-        }
-        
-        .form-control:focus {
-            border-color: #1e40af;
-            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
-        }
-        
-        .password-toggle {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: #94a3b8;
-            transition: color 0.3s;
-        }
-        
-        .password-toggle:hover {
-            color: #1e40af;
-        }
-        
-        .btn-change {
-            background: linear-gradient(135deg, #1e40af, #3b82f6);
             color: white;
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: 12px;
-            font-weight: 700;
-            transition: all 0.3s ease;
-            width: 100%;
+            line-height: 1.2;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.75rem;
         }
-        
-        .btn-change:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.3);
+
+        .brand-sub {
+            font-size: 1rem;
+            color: rgba(255,255,255,.55);
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
         }
-        
-        .password-requirements {
-            background: #f0f4ff;
-            border-left: 4px solid #1e40af;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            font-size: 0.875rem;
-        }
-        
-        .user-info {
-            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
+
+        /* User chip no brand panel */
+        .brand-user-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.625rem;
+            background: rgba(255,255,255,.07);
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: 999px;
+            padding: 0.5rem 1rem 0.5rem 0.625rem;
             margin-bottom: 2rem;
         }
-        .user-info i { color: #1e40af; font-size: 1.25rem; }
-        .brand-text {
-            font-size: 1.75rem; font-weight: 900;
-            background: linear-gradient(135deg, #1a56db 0%, #0369a1 50%, #0ea5e9 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            background-clip: text; letter-spacing: -0.5px;
+
+        .brand-user-chip .avatar {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--blue-500), var(--blue-400));
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .brand-text span { color: #0ea5e9; font-weight: 900; }
-        
-        .password-strength {
+
+        .brand-user-chip .avatar i { font-size: 0.75rem; color: white; }
+        .brand-user-chip span { font-size: 0.825rem; font-weight: 500; color: rgba(255,255,255,.8); }
+
+        .brand-features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .brand-features li { display: flex; align-items: flex-start; gap: 0.75rem; }
+
+        .brand-features li .fi {
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            background: rgba(52,211,153,.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .brand-features li .fi i { font-size: 0.6rem; color: var(--green-400); }
+        .brand-features li span { font-size: 0.925rem; color: rgba(255,255,255,.75); line-height: 1.5; }
+
+        .brand-bottom { position: relative; z-index: 1; }
+
+        .brand-quote {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,.35);
+            border-top: 1px solid rgba(255,255,255,.08);
+            padding-top: 1.5rem;
+            font-style: italic;
+        }
+
+        /* ── FORM PANEL ── */
+        .form-panel {
+            flex: 1;
+            background: white;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 3rem 2.5rem;
+        }
+
+        .form-inner { max-width: 440px; width: 100%; margin: 0 auto; }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray-500);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            margin-bottom: 2.5rem;
+            transition: color 200ms var(--ease);
+        }
+
+        .back-link:hover { color: var(--blue-600); }
+
+        .form-heading {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            letter-spacing: -0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-subheading {
+            font-size: 0.925rem;
+            color: var(--gray-500);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        /* Field */
+        .field { margin-bottom: 1.25rem; }
+
+        .field label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .field-wrap { position: relative; }
+
+        .field input {
+            width: 100%;
+            padding: 0.875rem 3rem 0.875rem 1rem;
+            border: 1.5px solid var(--gray-200);
+            border-radius: 10px;
+            font-family: var(--font);
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            background: var(--gray-50);
+            transition: border-color 200ms var(--ease), box-shadow 200ms var(--ease), background 200ms var(--ease);
+            outline: none;
+        }
+
+        .field input:focus {
+            border-color: var(--blue-600);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(26,86,219,.08);
+        }
+
+        .field input::placeholder { color: var(--gray-400); }
+
+        .toggle-eye {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--gray-400);
+            padding: 4px;
+            line-height: 1;
+            transition: color 150ms var(--ease);
+        }
+
+        .toggle-eye:hover { color: var(--blue-600); }
+
+        .strength-wrap {
+            margin-top: 0.5rem;
             height: 4px;
             border-radius: 2px;
-            margin-top: 0.5rem;
-            transition: all 0.3s;
+            background: var(--gray-100);
+            overflow: hidden;
         }
-        
-        .strength-weak { background: #ef4444; width: 33%; }
-        .strength-medium { background: #f59e0b; width: 66%; }
-        .strength-strong { background: #10b981; width: 100%; }
+
+        .strength-bar {
+            height: 100%;
+            border-radius: 2px;
+            width: 0;
+            transition: width 300ms var(--ease), background 300ms var(--ease);
+        }
+
+        .strength-label {
+            font-size: 0.75rem;
+            margin-top: 0.375rem;
+            color: var(--gray-400);
+            font-weight: 500;
+            min-height: 1rem;
+        }
+
+        .match-indicator {
+            font-size: 0.75rem;
+            margin-top: 0.375rem;
+            font-weight: 500;
+            min-height: 1rem;
+        }
+
+        /* Divider */
+        .section-divider {
+            height: 1px;
+            background: var(--gray-100);
+            margin: 1.5rem 0;
+        }
+
+        /* Feedback */
+        .msg {
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .msg-error   { background: var(--red-50);  border: 1px solid var(--red-200);   color: #991b1b; }
+        .msg-success { background: #f0fdf4;         border: 1px solid #bbf7d0;          color: #166534; }
+        .msg i { margin-top: 1px; flex-shrink: 0; }
+
+        /* Submit */
+        .btn-submit {
+            width: 100%;
+            padding: 0.9rem 1.5rem;
+            background: linear-gradient(135deg, var(--blue-600), var(--blue-700, #1e429f));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-family: var(--font);
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 220ms var(--ease);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 14px rgba(26,86,219,.3);
+            margin-top: 1.5rem;
+        }
+
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,86,219,.4); }
+        .btn-submit:active { transform: translateY(0); }
+        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        /* Success state */
+        .success-state { text-align: center; padding: 2rem 0; }
+
+        .success-icon {
+            width: 72px; height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--green-500), #059669);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 8px 24px rgba(16,185,129,.3);
+            animation: scaleIn 400ms var(--ease);
+        }
+
+        .success-icon i { font-size: 2rem; color: white; }
+
+        .success-state h3 {
+            font-size: 1.375rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: 0.75rem;
+        }
+
+        .success-state p {
+            color: var(--gray-500);
+            font-size: 0.925rem;
+            line-height: 1.6;
+            max-width: 340px;
+            margin: 0 auto 2rem;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 2rem;
+            background: linear-gradient(135deg, var(--blue-600), var(--blue-700, #1e429f));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-family: var(--font);
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 220ms var(--ease);
+            box-shadow: 0 4px 14px rgba(26,86,219,.3);
+        }
+
+        .btn-action:hover { color: white; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,86,219,.4); }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.6); opacity: 0; }
+            to   { transform: scale(1);   opacity: 1; }
+        }
+
+        @media (max-width: 767px) {
+            .auth-shell { flex-direction: column; }
+            .brand-panel { position: static; height: auto; padding: 2rem 1.5rem; flex: none; }
+            .brand-headline { font-size: 1.4rem; }
+            .brand-sub, .brand-features, .brand-bottom { display: none; }
+            .form-panel { padding: 2rem 1.25rem; }
+        }
     </style>
 </head>
 <body>
 
-<!-- Navbar Elegante -->
-<nav class="navbar navbar-expand-lg navbar-elegant fixed-top">
-    <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="/">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/0/03/Logo_umc1.png" 
-                 alt="UMC Logo" 
-                 height="45" 
-                 class="me-2"
-                 onerror="this.style.display='none'">
-            <div class="brand-text">
-                Prod<span>mais</span>
-            </div>
-        </a>
-        <div class="ms-auto">
-            <a href="/admin.php" class="btn btn-sm btn-outline-primary">
-                <i class="fas fa-arrow-left me-2"></i>Voltar
-            </a>
-        </div>
-    </div>
-</nav>
+<div class="auth-shell">
 
-<div class="change-password-container">
-    <div class="card-password">
-        <div class="header-section">
-            <div class="icon-circle">
+    <!-- ── BRAND PANEL ── -->
+    <aside class="brand-panel">
+        <div class="brand-top">
+            <div class="brand-logo-row">
+                <img src="/img/umc-logo.png" alt="UMC" onerror="this.style.display='none'">
+                <span class="brand-logo-text">Prod<span>mais</span></span>
+            </div>
+
+            <div class="brand-user-chip">
+                <div class="avatar"><i class="fas fa-user"></i></div>
+                <span><?= htmlspecialchars($nome_exibido) ?></span>
+            </div>
+
+            <div class="brand-icon-wrap">
                 <i class="fas fa-key"></i>
             </div>
-            <h2>Trocar Senha</h2>
-            <p class="text-muted">Atualize sua senha de acesso ao sistema</p>
-        </div>
-        
-        <div class="user-info">
-            <i class="fas fa-user-circle me-2"></i>
-            <strong><?php echo htmlspecialchars($usuario['nome_completo'] ?: $usuario['username']); ?></strong>
-        </div>
-        
-        <?php if ($mensagem): ?>
-        <div class="alert alert-<?php echo $tipo_mensagem; ?> alert-dismissible fade show" role="alert">
-            <i class="fas fa-<?php echo $tipo_mensagem === 'success' ? 'check-circle' : 'exclamation-triangle'; ?> me-2"></i>
-            <?php echo htmlspecialchars($mensagem); ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-        <?php endif; ?>
-        
-        <div class="password-requirements">
-            <i class="fas fa-shield-alt me-2"></i>
-            <strong>Requisitos da nova senha:</strong>
-            <ul class="mb-0 mt-2">
-                <li>Minimo de 8 caracteres</li>
-                <li>Diferente da senha atual</li>
-                <li>Combine letras, numeros e simbolos</li>
+
+            <h1 class="brand-headline">Mantenha sua<br>conta segura</h1>
+            <p class="brand-sub">
+                Trocar a senha regularmente é uma boa prática.
+                Escolha algo único que só você saiba.
+            </p>
+
+            <ul class="brand-features">
+                <li>
+                    <div class="fi"><i class="fas fa-check"></i></div>
+                    <span>Deve ser diferente da senha atual</span>
+                </li>
+                <li>
+                    <div class="fi"><i class="fas fa-check"></i></div>
+                    <span>Armazenada com hash bcrypt seguro</span>
+                </li>
+                <li>
+                    <div class="fi"><i class="fas fa-check"></i></div>
+                    <span>Todas as suas sessões continuam ativas</span>
+                </li>
             </ul>
         </div>
-        
-        <form method="POST" id="changePasswordForm">
-            <div class="mb-3 position-relative">
-                <label for="senha_atual" class="form-label fw-bold">
-                    <i class="fas fa-lock me-2"></i>Senha Atual
-                </label>
-                <input type="password" 
-                       class="form-control" 
-                       id="senha_atual" 
-                       name="senha_atual" 
-                       required>
-                <i class="fas fa-eye password-toggle" id="toggleAtual" onclick="togglePassword('senha_atual', 'toggleAtual')"></i>
+
+        <div class="brand-bottom">
+            <p class="brand-quote">
+                Universidade de Mogi das Cruzes &mdash; Sistema de Gestão Científica
+            </p>
+        </div>
+    </aside>
+
+    <!-- ── FORM PANEL ── -->
+    <main class="form-panel">
+        <div class="form-inner">
+
+            <a href="/admin.php" class="back-link">
+                <i class="fas fa-arrow-left"></i>
+                Voltar ao painel
+            </a>
+
+            <?php if ($concluido): ?>
+
+            <div class="success-state">
+                <div class="success-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <h3>Senha alterada!</h3>
+                <p>Sua senha foi atualizada com sucesso. Use-a no próximo login.</p>
+                <a href="/admin.php" class="btn-action">
+                    <i class="fas fa-th-large"></i>
+                    Ir ao painel
+                </a>
             </div>
-            
-            <div class="mb-3 position-relative">
-                <label for="nova_senha" class="form-label fw-bold">
-                    <i class="fas fa-key me-2"></i>Nova Senha
-                </label>
-                <input type="password" 
-                       class="form-control" 
-                       id="nova_senha" 
-                       name="nova_senha" 
-                       required
-                       minlength="8">
-                <i class="fas fa-eye password-toggle" id="toggleNova" onclick="togglePassword('nova_senha', 'toggleNova')"></i>
-                <div class="password-strength" id="strengthBar"></div>
+
+            <?php else: ?>
+
+            <h2 class="form-heading">Alterar senha</h2>
+            <p class="form-subheading">
+                Confirme a senha atual e escolha uma nova para continuar.
+            </p>
+
+            <?php if ($mensagem): ?>
+            <div class="msg msg-<?= $tipo === 'success' ? 'success' : 'error' ?>" role="alert">
+                <i class="fas fa-<?= $tipo === 'success' ? 'check-circle' : 'exclamation-circle' ?>"></i>
+                <span><?= htmlspecialchars($mensagem) ?></span>
             </div>
-            
-            <div class="mb-4 position-relative">
-                <label for="confirmar_senha" class="form-label fw-bold">
-                    <i class="fas fa-check-double me-2"></i>Confirmar Nova Senha
-                </label>
-                <input type="password" 
-                       class="form-control" 
-                       id="confirmar_senha" 
-                       name="confirmar_senha" 
-                       required
-                       minlength="8">
-                <i class="fas fa-eye password-toggle" id="toggleConfirm" onclick="togglePassword('confirmar_senha', 'toggleConfirm')"></i>
-            </div>
-            
-            <button type="submit" class="btn btn-change">
-                <i class="fas fa-save me-2"></i>Salvar Nova Senha
-            </button>
-        </form>
-    </div>
+            <?php endif; ?>
+
+            <form method="POST" id="changeForm" novalidate>
+                <div class="field">
+                    <label for="senha_atual">Senha atual</label>
+                    <div class="field-wrap">
+                        <input type="password" id="senha_atual" name="senha_atual"
+                               placeholder="Sua senha atual"
+                               required autocomplete="current-password">
+                        <button type="button" class="toggle-eye" aria-label="Mostrar senha atual"
+                                onclick="togglePwd('senha_atual', this)">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <div class="field">
+                    <label for="nova_senha">Nova senha</label>
+                    <div class="field-wrap">
+                        <input type="password" id="nova_senha" name="nova_senha"
+                               placeholder="Mínimo 8 caracteres"
+                               required minlength="8" autocomplete="new-password">
+                        <button type="button" class="toggle-eye" aria-label="Mostrar nova senha"
+                                onclick="togglePwd('nova_senha', this)">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="strength-wrap">
+                        <div class="strength-bar" id="strengthBar"></div>
+                    </div>
+                    <div class="strength-label" id="strengthLabel"></div>
+                </div>
+
+                <div class="field">
+                    <label for="confirmar_senha">Confirmar nova senha</label>
+                    <div class="field-wrap">
+                        <input type="password" id="confirmar_senha" name="confirmar_senha"
+                               placeholder="Repita a nova senha"
+                               required minlength="8" autocomplete="new-password">
+                        <button type="button" class="toggle-eye" aria-label="Mostrar confirmação"
+                                onclick="togglePwd('confirmar_senha', this)">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="match-indicator" id="matchIndicator"></div>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-lock"></i>
+                    Salvar nova senha
+                </button>
+            </form>
+
+            <?php endif; ?>
+
+        </div>
+    </main>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-function togglePassword(inputId, iconId) {
+function togglePwd(inputId, btn) {
     const input = document.getElementById(inputId);
-    const icon = document.getElementById(iconId);
-    
-    if (input.type === 'password') {
-        input.type = 'text';
-        icon.classList.remove('fa-eye');
-        icon.classList.add('fa-eye-slash');
-    } else {
-        input.type = 'password';
-        icon.classList.remove('fa-eye-slash');
-        icon.classList.add('fa-eye');
-    }
+    const icon  = btn.querySelector('i');
+    const isHidden = input.type === 'password';
+    input.type = isHidden ? 'text' : 'password';
+    icon.classList.toggle('fa-eye',       !isHidden);
+    icon.classList.toggle('fa-eye-slash',  isHidden);
 }
 
-// Medidor de forca da senha
-document.getElementById('nova_senha').addEventListener('input', function(e) {
-    const senha = e.target.value;
-    const strengthBar = document.getElementById('strengthBar');
-    
-    let strength = 0;
-    if (senha.length >= 8) strength++;
-    if (senha.match(/[a-z]/) && senha.match(/[A-Z]/)) strength++;
-    if (senha.match(/[0-9]/)) strength++;
-    if (senha.match(/[^a-zA-Z0-9]/)) strength++;
-    
-    strengthBar.className = 'password-strength';
-    if (strength <= 2) {
-        strengthBar.classList.add('strength-weak');
-    } else if (strength === 3) {
-        strengthBar.classList.add('strength-medium');
-    } else {
-        strengthBar.classList.add('strength-strong');
-    }
+const novaSenha      = document.getElementById('nova_senha');
+const confirmarSenha = document.getElementById('confirmar_senha');
+const strengthBar    = document.getElementById('strengthBar');
+const strengthLabel  = document.getElementById('strengthLabel');
+const matchIndicator = document.getElementById('matchIndicator');
+
+const levels = [
+    { color: '',        label: '' },
+    { color: '#ef4444', label: 'Muito fraca' },
+    { color: '#f59e0b', label: 'Fraca' },
+    { color: '#3b82f6', label: 'Boa' },
+    { color: '#10b981', label: 'Forte' },
+];
+
+function calcStrength(v) {
+    let s = 0;
+    if (v.length >= 8) s++;
+    if (v.match(/[a-z]/) && v.match(/[A-Z]/)) s++;
+    if (v.match(/[0-9]/)) s++;
+    if (v.match(/[^a-zA-Z0-9]/)) s++;
+    return s;
+}
+
+novaSenha?.addEventListener('input', () => {
+    const v = novaSenha.value;
+    const s = v ? calcStrength(v) : 0;
+    const lv = levels[s] || levels[0];
+    strengthBar.style.width = s ? (s * 25) + '%' : '0';
+    strengthBar.style.background = lv.color;
+    strengthLabel.textContent = lv.label;
+    strengthLabel.style.color = lv.color || '#94a3b8';
+    checkMatch();
 });
 
-// Validar senhas iguais
-document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
-    const nova = document.getElementById('nova_senha').value;
-    const confirmar = document.getElementById('confirmar_senha').value;
-    
-    if (nova !== confirmar) {
+confirmarSenha?.addEventListener('input', checkMatch);
+
+function checkMatch() {
+    if (!confirmarSenha.value) { matchIndicator.textContent = ''; return; }
+    const match = novaSenha.value === confirmarSenha.value;
+    matchIndicator.textContent = match ? '✓ Senhas coincidem' : '✗ Senhas não coincidem';
+    matchIndicator.style.color = match ? '#10b981' : '#ef4444';
+}
+
+document.getElementById('changeForm')?.addEventListener('submit', function(e) {
+    if (novaSenha.value !== confirmarSenha.value) {
         e.preventDefault();
-        alert('As senhas nao coincidem!');
-        return false;
+        matchIndicator.textContent = '✗ Senhas não coincidem';
+        matchIndicator.style.color = '#ef4444';
+        confirmarSenha.focus();
     }
 });
 </script>

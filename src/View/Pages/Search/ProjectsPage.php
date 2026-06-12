@@ -88,39 +88,174 @@ Navbar::display([
     'mostrar_link_dashboard' => $mostrar_link_dashboard ?? true,
 ]);
 ?>
+<?php renderNavbarAuthBadge(); ?>
 
-<?php
-HeroSection::display([
-    'title'      => 'Projetos de Pesquisa',
-    'subtitle'   => 'Conheça os projetos desenvolvidos pelos PPGs da Universidade de Mogi das Cruzes',
-    'badge'      => number_format($total) . ' Projetos',
-    'badge_icon' => 'flask',
-    'variant'    => 'success',
-]);
-?>
+<!-- ══ Hero Projetos ══ -->
+<style>
+.proj-hero {
+    background: #070d1f;
+    background-image:
+        radial-gradient(ellipse 55% 65% at 5% 75%, rgba(5,150,105,.12), transparent),
+        radial-gradient(ellipse 40% 40% at 92% 10%, rgba(13,148,136,.09), transparent),
+        radial-gradient(ellipse 30% 30% at 50% 92%, rgba(16,185,129,.07), transparent);
+    position: relative; overflow: hidden;
+    padding: 5.5rem 0 3.5rem;
+}
+.proj-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+    pointer-events: none;
+}
+.proj-hero-stats {
+    display: flex; align-items: center; justify-content: center; gap: 0;
+    margin-top: 2.5rem;
+    border: 1px solid rgba(255,255,255,.1); border-radius: 14px;
+    overflow: hidden; background: rgba(255,255,255,.04);
+    backdrop-filter: blur(8px); max-width: 360px; margin-left: auto; margin-right: auto;
+}
+.proj-hero-stat { flex:1; padding: 1.1rem 1.25rem; text-align: center; }
+.proj-hero-stat + .proj-hero-stat { border-left: 1px solid rgba(255,255,255,.1); }
+.proj-hero-stat-num { font-size: 1.875rem; font-weight: 900; color: #f1f5f9; line-height: 1; letter-spacing: -1px; margin-bottom: .2rem; }
+.proj-hero-stat-lbl { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: rgba(241,245,249,.4); }
+
+/* ── Filter sidebar premium ── */
+.proj-filter-panel {
+    background: white;
+    border-radius: 20px;
+    border: 1px solid rgba(0,0,0,.07);
+    box-shadow: 0 2px 14px rgba(0,0,0,.07);
+    overflow: hidden;
+}
+.proj-filter-header {
+    background: linear-gradient(135deg,#065f46,#0d9488);
+    padding: 1rem 1.25rem;
+    display: flex; align-items: center; gap: .5rem;
+    color: white; font-weight: 700; font-size: .9rem;
+}
+.proj-filter-body { padding: 1.25rem; }
+.proj-filter-group { margin-bottom: 1.1rem; }
+.proj-filter-label { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #64748b; margin-bottom: .4rem; display: block; }
+.proj-filter-input, .proj-filter-select {
+    width: 100%; border: 1.5px solid rgba(0,0,0,.1); border-radius: 10px;
+    padding: .55rem .875rem; font-size: .875rem; color: #1e293b; background: white;
+    transition: border-color .2s; appearance: none;
+}
+.proj-filter-input:focus, .proj-filter-select:focus { outline: none; border-color: #0d9488; box-shadow: 0 0 0 3px rgba(13,148,136,.1); }
+.proj-filter-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right .875rem center; }
+.proj-filter-btn {
+    display: block; width: 100%; border: none; border-radius: 10px; padding: .7rem 1rem;
+    background: linear-gradient(135deg,#059669,#0d9488); color: white; font-weight: 700; font-size: .875rem;
+    cursor: pointer; transition: filter .2s, transform .2s;
+    box-shadow: 0 4px 12px rgba(5,150,105,.25);
+}
+.proj-filter-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.proj-filter-divider { border: none; border-top: 1px solid #f1f5f9; margin: 1rem 0; }
+.proj-filter-count { text-align: center; }
+.proj-filter-count-num { font-size: 2rem; font-weight: 900; color: #059669; line-height: 1; letter-spacing: -1px; }
+.proj-filter-count-lbl { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #94a3b8; }
+.proj-filter-clear { display: block; text-align: center; margin-top: .75rem; font-size: .8rem; font-weight: 600; color: #94a3b8; text-decoration: none; transition: color .2s; }
+.proj-filter-clear:hover { color: #ef4444; }
+
+/* ── Project cards ── */
+.proj-section { background: #f8fafc; padding: 4rem 0 5rem; }
+.proj-card {
+    background: white; border-radius: 20px;
+    border: 1px solid rgba(0,0,0,.07);
+    box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 1rem;
+    transition: transform .22s ease, box-shadow .22s ease;
+}
+.proj-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,.12); }
+.proj-card-title { font-size: 1.05rem; font-weight: 700; color: #0f172a; margin: 0 0 .75rem; line-height: 1.35; }
+.proj-meta { display: flex; flex-wrap: wrap; gap: .6rem; margin: .75rem 0; }
+.proj-meta-item { display: flex; align-items: center; gap: .35rem; font-size: .8rem; color: #64748b; font-weight: 500; }
+.proj-meta-item i { color: #059669; font-size: .75rem; }
+.proj-badge-ppg { display: inline-flex; align-items: center; gap: .35rem; font-size: .72rem; font-weight: 700; padding: .3rem .75rem; border-radius: 100px; background: rgba(5,150,105,.1); color: #065f46; }
+.proj-status-badge { display: inline-flex; align-items: center; gap: .35rem; font-size: .72rem; font-weight: 700; padding: .3rem .75rem; border-radius: 100px; white-space: nowrap; }
+.proj-status-badge.concluido  { background: rgba(5,150,105,.12); color: #065f46; }
+.proj-status-badge.andamento  { background: rgba(59,130,246,.12); color: #1e40af; }
+.proj-status-badge.ativo      { background: rgba(16,185,129,.12); color: #065f46; }
+.proj-status-badge i { font-size: .5rem; }
+.proj-btn-detail {
+    display: inline-flex; align-items: center; gap: .4rem;
+    background: linear-gradient(135deg,#059669,#0d9488); color: white; border: none;
+    border-radius: 10px; padding: .55rem 1.1rem; font-size: .8rem; font-weight: 700;
+    cursor: pointer; transition: filter .2s, transform .2s;
+    box-shadow: 0 3px 10px rgba(5,150,105,.22);
+}
+.proj-btn-detail:hover { filter: brightness(1.08); transform: translateY(-1px); }
+
+/* ── Empty state ── */
+.proj-empty {
+    text-align: center; padding: 4rem 2rem;
+    background: white; border-radius: 20px;
+    border: 1px solid rgba(0,0,0,.07);
+}
+.proj-empty i { font-size: 3.5rem; color: #cbd5e1; margin-bottom: 1.25rem; display: block; }
+.proj-empty h4 { font-weight: 700; color: #1e293b; margin-bottom: .5rem; }
+.proj-empty p { color: #94a3b8; margin: 0; }
+</style>
+
+<section class="proj-hero">
+    <div class="container text-center" style="position:relative;z-index:1;">
+
+        <div style="display:inline-flex;align-items:center;gap:.5rem;background:rgba(5,150,105,.15);border:1px solid rgba(5,150,105,.3);border-radius:100px;padding:.375rem 1rem;font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6ee7b7;margin-bottom:1.75rem;">
+            <i class="fas fa-flask" style="font-size:.7rem;"></i>
+            Pesquisa & Inovação · UMC
+        </div>
+
+        <h1 style="font-size:clamp(2.4rem,5vw,4rem);font-weight:900;line-height:1.05;letter-spacing:-2px;color:#f1f5f9;margin:0 0 1rem;">
+            Projetos de<br>
+            <span style="background:linear-gradient(135deg,#34d399 0%,#0d9488 55%,#60a5fa 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Pesquisa</span>
+        </h1>
+
+        <p style="font-size:1rem;color:rgba(241,245,249,.5);max-width:480px;margin:0 auto;line-height:1.6;">
+            Conheça os projetos desenvolvidos pelos Programas de Pós-Graduação da UMC
+        </p>
+
+        <div class="proj-hero-stats">
+            <div class="proj-hero-stat">
+                <div class="proj-hero-stat-num"><?= number_format($total) ?></div>
+                <div class="proj-hero-stat-lbl">Projetos</div>
+            </div>
+            <div class="proj-hero-stat">
+                <div class="proj-hero-stat-num"><?= count($ppgs_umc) ?></div>
+                <div class="proj-hero-stat-lbl">Programas PPG</div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<!-- ══ /Hero Projetos ══ -->
 
 <!-- Projetos Section -->
-<section class="page-section page-section-gray">
+<section class="proj-section">
     <div class="container">
         <div class="row g-4">
             <!-- Sidebar de Filtros -->
             <div class="col-lg-3">
-                <div class="filter-panel">
-                    <p class="filter-panel-title"><i class="fas fa-filter" aria-hidden="true"></i>Filtros</p>
-
+                <div class="proj-filter-panel">
+                    <div class="proj-filter-header">
+                        <i class="fas fa-filter" aria-hidden="true"></i>
+                        Filtros
+                    </div>
+                    <div class="proj-filter-body">
                     <form method="GET" action="/projetos.php" id="filterForm">
 
-                        <div class="filter-group">
-                            <label class="filter-group-label" for="filterCoord">Coordenador</label>
+                        <div class="proj-filter-group">
+                            <label class="proj-filter-label" for="filterCoord">Coordenador</label>
                             <input type="text" name="coordenador" id="filterCoord"
-                                   class="form-control form-control-sm"
+                                   class="proj-filter-input"
                                    placeholder="Nome do coordenador"
                                    value="<?php echo htmlspecialchars($coordenador); ?>">
                         </div>
 
-                        <div class="filter-group">
-                            <label class="filter-group-label" for="filterStatus">Status</label>
-                            <select name="status" id="filterStatus" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <div class="proj-filter-group">
+                            <label class="proj-filter-label" for="filterStatus">Status</label>
+                            <select name="status" id="filterStatus" class="proj-filter-select" onchange="this.form.submit()">
                                 <option value="">Todos</option>
                                 <option value="Em andamento" <?php echo $status === 'Em andamento' ? 'selected' : ''; ?>>Em Andamento</option>
                                 <option value="Concluído"    <?php echo $status === 'Concluído'    ? 'selected' : ''; ?>>Concluído</option>
@@ -128,9 +263,9 @@ HeroSection::display([
                             </select>
                         </div>
 
-                        <div class="filter-group">
-                            <label class="filter-group-label" for="filterPPG">PPG</label>
-                            <select name="ppg" id="filterPPG" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <div class="proj-filter-group">
+                            <label class="proj-filter-label" for="filterPPG">PPG</label>
+                            <select name="ppg" id="filterPPG" class="proj-filter-select" onchange="this.form.submit()">
                                 <option value="">Todos</option>
                                 <?php foreach ($ppgs_umc as $ppg_item): ?>
                                 <option value="<?php echo htmlspecialchars($ppg_item['nome']); ?>"
@@ -141,49 +276,50 @@ HeroSection::display([
                             </select>
                         </div>
 
-                        <div class="filter-group">
-                            <label class="filter-group-label">Ano de Início</label>
+                        <div class="proj-filter-group">
+                            <label class="proj-filter-label">Ano de Início</label>
                             <div class="row g-2">
                                 <div class="col-6">
-                                    <input type="number" name="ano_inicio" class="form-control form-control-sm" placeholder="De"
+                                    <input type="number" name="ano_inicio" class="proj-filter-input" placeholder="De"
                                            min="2000" max="<?php echo date('Y'); ?>" value="<?php echo htmlspecialchars($ano_inicio); ?>">
                                 </div>
                                 <div class="col-6">
-                                    <input type="number" name="ano_fim" class="form-control form-control-sm" placeholder="Até"
+                                    <input type="number" name="ano_fim" class="proj-filter-input" placeholder="Até"
                                            min="2000" max="<?php echo date('Y'); ?>" value="<?php echo htmlspecialchars($ano_fim); ?>">
                                 </div>
                             </div>
                         </div>
 
-                        <div class="filter-group">
-                            <label class="filter-group-label" for="filterLimit">Exibir</label>
-                            <select name="limit" id="filterLimit" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <div class="proj-filter-group">
+                            <label class="proj-filter-label" for="filterLimit">Exibir</label>
+                            <select name="limit" id="filterLimit" class="proj-filter-select" onchange="this.form.submit()">
                                 <option value="20"  <?php echo $limit === 20  ? 'selected' : ''; ?>>20 por página</option>
                                 <option value="50"  <?php echo $limit === 50  ? 'selected' : ''; ?>>50 por página</option>
                                 <option value="100" <?php echo $limit === 100 ? 'selected' : ''; ?>>100 por página</option>
                             </select>
                         </div>
 
-                        <button type="submit" class="btn-primary-ds btn-primary-ds--sm w-100">
+                        <button type="submit" class="proj-filter-btn">
                             <i class="fas fa-search me-1" aria-hidden="true"></i>Aplicar Filtros
                         </button>
 
                         <?php if (!empty($status) || !empty($ppg) || !empty($ano_inicio) || !empty($ano_fim) || !empty($coordenador)): ?>
-                        <a href="/projetos.php" class="filter-link-clear">
+                        <a href="/projetos.php" class="proj-filter-clear">
                             <i class="fas fa-times me-1" aria-hidden="true"></i>Limpar Filtros
                         </a>
                         <?php endif; ?>
                     </form>
 
-                    <hr class="filter-divider">
-                    <div class="text-center">
-                        <div class="filter-count-value"><?php echo number_format($total); ?></div>
-                        <div class="stat-card-label"><?php echo $total === 1 ? 'Projeto' : 'Projetos'; ?></div>
+                    <hr class="proj-filter-divider">
+                    <div class="proj-filter-count">
+                        <div class="proj-filter-count-num"><?php echo number_format($total); ?></div>
+                        <div class="proj-filter-count-lbl"><?php echo $total === 1 ? 'Projeto' : 'Projetos'; ?></div>
                         <?php if ($page > 1 || $total > $limit): ?>
-                        <p class="filter-count-sub">
-                            Mostrando <?php echo number_format($from + 1); ?>–<?php echo number_format(min($from + $limit, $total)); ?>
+                        <p style="font-size:.75rem;color:#94a3b8;margin:.5rem 0 0;">
+                            Exibindo <?php echo number_format($from + 1); ?>–<?php echo number_format(min($from + $limit, $total)); ?>
                         </p>
                         <?php endif; ?>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -191,25 +327,28 @@ HeroSection::display([
             <!-- Lista de Projetos -->
             <div class="col-lg-9">
                 <?php if (empty($projetos)): ?>
-                <div class="empty-state">
-                    <i class="fas fa-flask empty-state-icon" aria-hidden="true"></i>
-                    <h4 class="empty-state-title"><?php echo $total === 0 ? 'Nenhum projeto cadastrado' : 'Nenhum projeto encontrado'; ?></h4>
-                    <p class="empty-state-sub"><?php echo $total === 0 ? 'Os projetos serão exibidos assim que forem importados.' : 'Tente ajustar os filtros para ver mais resultados.'; ?></p>
+                <div class="proj-empty">
+                    <i class="fas fa-flask" aria-hidden="true"></i>
+                    <h4><?php echo $total === 0 ? 'Nenhum projeto cadastrado' : 'Nenhum projeto encontrado'; ?></h4>
+                    <p><?php echo $total === 0 ? 'Os projetos serão exibidos assim que forem importados.' : 'Tente ajustar os filtros para ver mais resultados.'; ?></p>
                 </div>
                 <?php else: ?>
 
                 <?php foreach ($projetos as $idx => $projeto):
                     $s = strtolower($projeto['status'] ?? '');
-                    if (strpos($s, 'conclu') !== false)       $status_class = 'concluido';
-                    elseif (strpos($s, 'andamento') !== false) $status_class = 'andamento';
-                    elseif (strpos($s, 'ativo') !== false)     $status_class = 'ativo';
-                    else                                        $status_class = 'ativo';
+                    if (strpos($s, 'conclu') !== false) {
+                        $status_class = 'concluido';
+                    } elseif (strpos($s, 'andamento') !== false) {
+                        $status_class = 'andamento';
+                    } else {
+                        $status_class = 'ativo';
+                    }
                 ?>
-                <div class="project-card fade-in-up" style="animation-delay:<?php echo min($idx * 0.05, 0.5); ?>s">
-                    <div class="project-card-header">
-                        <h5 class="project-card-title"><?php echo htmlspecialchars($projeto['titulo'] ?? 'Sem título'); ?></h5>
+                <div class="proj-card fade-in-up" style="animation-delay:<?php echo min($idx * 0.05, 0.5); ?>s">
+                    <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
+                        <h5 class="proj-card-title"><?php echo htmlspecialchars($projeto['titulo'] ?? 'Sem título'); ?></h5>
                         <?php if (!empty($projeto['status'])): ?>
-                        <span class="project-status-badge <?php echo $status_class; ?> flex-shrink-0">
+                        <span class="proj-status-badge <?php echo $status_class; ?> flex-shrink-0">
                             <i class="fas fa-circle" aria-hidden="true"></i>
                             <?php echo htmlspecialchars($projeto['status']); ?>
                         </span>
@@ -217,29 +356,29 @@ HeroSection::display([
                     </div>
 
                     <?php if (!empty($projeto['ppg'])): ?>
-                    <div>
-                        <span class="badge-elegant badge-primary badge-xs">
-                            <i class="fas fa-graduation-cap me-1" aria-hidden="true"></i><?php echo htmlspecialchars($projeto['ppg']); ?>
+                    <div style="margin-bottom:.625rem;">
+                        <span class="proj-badge-ppg">
+                            <i class="fas fa-graduation-cap" aria-hidden="true"></i><?php echo htmlspecialchars($projeto['ppg']); ?>
                         </span>
                     </div>
                     <?php endif; ?>
 
-                    <div class="project-card-meta">
+                    <div class="proj-meta">
                         <?php if (!empty($projeto['coordenador'])): ?>
-                        <span class="project-meta-item"><i class="fas fa-user-tie" aria-hidden="true"></i><?php echo htmlspecialchars($projeto['coordenador']); ?></span>
+                        <span class="proj-meta-item"><i class="fas fa-user-tie" aria-hidden="true"></i><?php echo htmlspecialchars($projeto['coordenador']); ?></span>
                         <?php endif; ?>
                         <?php if (!empty($projeto['ano_inicio'])): ?>
-                        <span class="project-meta-item"><i class="fas fa-calendar-alt" aria-hidden="true"></i><?php echo htmlspecialchars($projeto['ano_inicio']); ?><?php if (!empty($projeto['ano_fim'])): ?> – <?php echo htmlspecialchars($projeto['ano_fim']); ?><?php endif; ?></span>
+                        <span class="proj-meta-item"><i class="fas fa-calendar-alt" aria-hidden="true"></i><?php echo htmlspecialchars($projeto['ano_inicio']); ?><?php if (!empty($projeto['ano_fim'])): echo ' – ' . htmlspecialchars($projeto['ano_fim']); endif; ?></span>
                         <?php endif; ?>
                         <?php if (!empty($projeto['equipe'])): ?>
-                        <span class="project-meta-item"><i class="fas fa-users" aria-hidden="true"></i><?php echo is_array($projeto['equipe']) ? count($projeto['equipe']) : (substr_count($projeto['equipe'],',') + 1); ?> membros</span>
+                        <span class="proj-meta-item"><i class="fas fa-users" aria-hidden="true"></i><?php echo is_array($projeto['equipe']) ? count($projeto['equipe']) : (substr_count($projeto['equipe'],',') + 1); ?> membros</span>
                         <?php endif; ?>
                     </div>
 
                     <div class="d-flex justify-content-end">
-                        <button type="button" class="btn-primary-ds btn-primary-ds--sm"
+                        <button type="button" class="proj-btn-detail"
                                 data-bs-toggle="modal" data-bs-target="#modalProjeto<?php echo $idx; ?>">
-                            <i class="fas fa-eye me-1" aria-hidden="true"></i>Ver Detalhes
+                            <i class="fas fa-eye" aria-hidden="true"></i>Ver Detalhes
                         </button>
                     </div>
                 </div>

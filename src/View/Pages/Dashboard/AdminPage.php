@@ -1,24 +1,42 @@
 <?php
-session_start();
-require_once __DIR__.'/../vendor/autoload.php';
-
-// Include required services
-if (!class_exists('LogService')) {
-    require_once __DIR__ . '/../src/LogService.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
 require_once __DIR__ . '/../../../../config/config_umc.php';
 require_once __DIR__ . '/../../../../src/UmcFunctions.php';
-require_once __DIR__ . '/../src/LattesImporter.php';
+require_once __DIR__ . '/../../../../vendor/autoload.php';
 
-$config = require __DIR__ . '/../config/config.php';
+use App\View\Components\Navbar\Navbar;
+use App\View\Components\Footer\Footer;
 
-if (empty($_SESSION['user'])) {
-    header('Location: login.php');
-    exit;
+if (!class_exists('LogService')) {
+    require_once __DIR__ . '/../../../../src/LogService.php';
 }
 
-$log = new LogService($config);
+if (!class_exists('LattesImporter')) {
+    require_once __DIR__ . '/../../../../src/LattesImporter.php';
+}
+
+$config_legacy = [];
+if (file_exists(__DIR__ . '/../../../../config/config.php')) {
+    $config_legacy = require_once __DIR__ . '/../../../../config/config.php';
+    if (!is_array($config_legacy)) {
+        $config_legacy = [];
+    }
+}
+
+// Aceita user_id (canônico) ou user (legado) como prova de autenticação
+if (empty($_SESSION['user_id']) && empty($_SESSION['user'])) {
+    header('Location: /login.php');
+    exit;
+}
+// Compatibilidade: garante que $_SESSION['user'] existe para código legado abaixo
+if (empty($_SESSION['user']) && !empty($_SESSION['username'])) {
+    $_SESSION['user'] = $_SESSION['username'];
+}
+
+$log = new LogService($config_legacy);
 $log->log($_SESSION['user'], 'Acesso à área administrativa');
 
 if (isset($_POST['expunge'])) {
@@ -99,16 +117,96 @@ $ppgs = getAllPPGs();
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
+    <!-- AdminPage premium styles -->
     <style>
-        .navbar-brand .brand-text {
-            font-size: 1.75rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #fbbf24 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -0.5px;
-        }
+    /* ── Hero ── */
+    .adm-hero {
+        background: #070d1f;
+        background-image:
+            radial-gradient(ellipse 60% 70% at 15% 65%, rgba(99,102,241,.13), transparent),
+            radial-gradient(ellipse 40% 40% at 88% 12%, rgba(139,92,246,.10), transparent),
+            radial-gradient(ellipse 30% 30% at 55% 88%, rgba(79,70,229,.08), transparent);
+        position: relative; overflow: hidden;
+        padding: 5.5rem 0 3.5rem;
+    }
+    .adm-hero::before {
+        content: ''; position: absolute; inset: 0;
+        background-image: radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
+        background-size: 28px 28px; pointer-events: none;
+    }
+    /* ── Tabs ── */
+    .adm-tabs {
+        display: flex; gap: .375rem;
+        background: white; border: 1px solid rgba(0,0,0,.08);
+        border-radius: 16px; padding: .625rem;
+        box-shadow: 0 2px 12px rgba(0,0,0,.06);
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+    }
+    .adm-tab-btn {
+        flex: 1; min-width: 140px;
+        display: flex; align-items: center; justify-content: center; gap: .5rem;
+        border: none; background: transparent; border-radius: 10px;
+        padding: .75rem 1.25rem; font-size: .875rem; font-weight: 600; color: #64748b;
+        cursor: pointer; transition: all .2s ease; white-space: nowrap;
+        font-family: 'Inter', sans-serif;
+    }
+    .adm-tab-btn:hover { background: #f1f5f9; color: #4f46e5; }
+    .adm-tab-btn.active {
+        background: linear-gradient(135deg,#4f46e5,#6366f1); color: white;
+        box-shadow: 0 4px 14px rgba(79,70,229,.3);
+    }
+    /* ── Cards ── */
+    .adm-card { background: white; border-radius: 20px; border: 1px solid rgba(0,0,0,.07); box-shadow: 0 2px 12px rgba(0,0,0,.06); overflow: hidden; margin-bottom: 1.5rem; }
+    .adm-card-header { background: linear-gradient(135deg,#1e1b4b,#312e81); padding: 1.25rem 1.75rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .adm-card-header h5 { margin: 0; color: white; font-weight: 700; font-size: 1rem; }
+    .adm-card-body { padding: 1.75rem; }
+    /* ── Info box ── */
+    .adm-info-box { background: rgba(79,70,229,.06); border-left: 4px solid #6366f1; border-radius: 0 12px 12px 0; padding: 1.25rem 1.5rem; margin-bottom: 1.75rem; }
+    .adm-info-box h6 { color: #312e81; font-weight: 700; margin-bottom: .75rem; }
+    .adm-info-box ol { margin: 0; padding-left: 1.25rem; color: #1e1b4b; }
+    /* ── Upload zone ── */
+    .adm-upload-zone { border: 2px dashed rgba(99,102,241,.35); border-radius: 18px; padding: 3rem 2rem; text-align: center; cursor: pointer; background: rgba(99,102,241,.03); transition: all .25s ease; position: relative; }
+    .adm-upload-zone:hover { border-color: #6366f1; background: rgba(99,102,241,.07); transform: translateY(-3px); box-shadow: 0 12px 32px rgba(99,102,241,.15); }
+    .adm-upload-zone.dragover { border-color: #4f46e5; background: rgba(99,102,241,.1); }
+    .adm-upload-zone i { color: #6366f1; font-size: 3.5rem; margin-bottom: 1.25rem; display: block; }
+    .adm-upload-zone h5 { font-weight: 700; color: #1e293b; margin-bottom: .5rem; }
+    .adm-upload-zone p { color: #64748b; font-size: .9rem; margin: 0; }
+    /* ── Stat items (import result) ── */
+    .adm-stat-item { background: linear-gradient(135deg,#ede9fe,#ddd6fe); padding: 1.5rem; border-radius: 14px; border-left: 4px solid #6366f1; transition: transform .2s ease; }
+    .adm-stat-item:hover { transform: translateY(-3px); }
+    .adm-stat-item .stat-number { font-size: 2rem; font-weight: 800; color: #312e81; margin: 0; }
+    .adm-stat-item .stat-label { color: #4338ca; font-size: .875rem; margin: 0; }
+    /* ── Success result card ── */
+    .adm-success { background: rgba(5,150,105,.07); border: 1px solid rgba(5,150,105,.2); border-radius: 14px; padding: 1.75rem; margin-bottom: 1.5rem; }
+    .adm-success h4 { color: #065f46; font-weight: 700; margin-bottom: 1.25rem; }
+    /* ── Form controls ── */
+    .adm-form-label { font-size: .875rem; font-weight: 600; color: #374151; margin-bottom: .5rem; display: block; }
+    .adm-form-select { width: 100%; border: 1.5px solid rgba(0,0,0,.12); border-radius: 10px; padding: .65rem 1rem; font-size: .9rem; color: #1e293b; background: white; transition: border-color .2s; }
+    .adm-form-select:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,.12); }
+    /* ── Buttons ── */
+    .adm-btn-primary { display: block; width: 100%; background: linear-gradient(135deg,#4f46e5,#6366f1); color: white; border: none; border-radius: 12px; padding: .9rem 2rem; font-size: .95rem; font-weight: 700; cursor: pointer; transition: filter .2s, transform .2s; box-shadow: 0 4px 14px rgba(79,70,229,.3); font-family: 'Inter', sans-serif; }
+    .adm-btn-primary:hover { filter: brightness(1.08); transform: translateY(-2px); }
+    .adm-btn-bulk { background: linear-gradient(135deg,#4f46e5,#6366f1); color: white; border: none; border-radius: 12px; padding: .9rem 2rem; font-size: .95rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; box-shadow: 0 4px 14px rgba(79,70,229,.3); }
+    .adm-btn-danger { background: linear-gradient(135deg,#dc2626,#ef4444); color: white !important; }
+    /* ── Log table ── */
+    .adm-table { width: 100%; border-collapse: collapse; }
+    .adm-table th { background: #1e1b4b; color: white; font-size: .75rem; letter-spacing: .05em; text-transform: uppercase; padding: .875rem 1rem; text-align: left; }
+    .adm-table td { padding: .75rem 1rem; font-size: .875rem; color: #374151; border-bottom: 1px solid #f1f5f9; }
+    .adm-table tbody tr:last-child td { border-bottom: none; }
+    .adm-table tbody tr:hover td { background: rgba(99,102,241,.04); }
+    .adm-table-wrap { border-radius: 12px; overflow: hidden; border: 1px solid rgba(0,0,0,.08); }
+    .adm-badge { display: inline-flex; align-items: center; padding: .2rem .65rem; border-radius: 100px; font-size: .68rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+    .adm-badge-info    { background: rgba(59,130,246,.12); color: #1d4ed8; }
+    .adm-badge-warning { background: rgba(245,158,11,.12); color: #b45309; }
+    .adm-badge-error   { background: rgba(239,68,68,.12);  color: #b91c1c; }
+    /* ── Alert info ── */
+    .adm-alert-info { background: rgba(79,70,229,.06); border: 1px solid rgba(99,102,241,.2); border-radius: 14px; padding: 1.25rem 1.5rem; }
+    .adm-alert-info h6 { color: #312e81; font-weight: 700; margin-bottom: .5rem; }
+    .adm-alert-info p { color: #1e1b4b; margin: 0; font-size: .9rem; line-height: 1.6; }
+    .adm-alert-info a { color: #4f46e5; font-weight: 600; }
+    /* ── Section bg ── */
+    .adm-section { background: #f8fafc; padding: 3rem 0 5rem; }
     </style>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -121,9 +219,9 @@ $ppgs = getAllPPGs();
         body {
             padding-top: 0;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: var(--gray-100);
+            background: #f8fafc;
         }
-        
+        /* legacy block kept for compatibility — overridden by adm-* classes above */
         .hero-admin {
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
             padding: 4rem 0 3rem;
@@ -312,61 +410,76 @@ $ppgs = getAllPPGs();
 </head>
 
 <body>
-    <!-- Hero Section -->
-    <section class="hero-admin">
-        <div class="container text-center">
-            <h1><i class="fas fa-cog me-3"></i>Administração</h1>
-            <p>Gestão de Pesquisadores e Base de Dados</p>
+<?php
+Navbar::display(['active_page' => 'admin', 'mostrar_link_dashboard' => $mostrar_link_dashboard ?? true]);
+?>
+<?php renderNavbarAuthBadge(); ?>
+
+<!-- ══ Hero Admin ══ -->
+<section class="adm-hero">
+    <div class="container text-center" style="position:relative;z-index:1;">
+
+        <div style="display:inline-flex;align-items:center;gap:.5rem;background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3);border-radius:100px;padding:.375rem 1rem;font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#a5b4fc;margin-bottom:1.75rem;">
+            <i class="fas fa-shield-alt" style="font-size:.7rem;"></i>
+            Área Restrita · Administração
         </div>
-    </section>
-    
-    <div class="container mb-5">
-        <div class="row">
-            <div class="col-md-10 offset-md-1">
+
+        <h1 style="font-size:clamp(2.2rem,5vw,3.75rem);font-weight:900;line-height:1.05;letter-spacing:-2px;color:#f1f5f9;margin:0 0 1rem;">
+            <i class="fas fa-cog me-3" style="color:#6366f1;"></i>Administração
+        </h1>
+
+        <p style="font-size:1rem;color:rgba(241,245,249,.5);max-width:500px;margin:0 auto;line-height:1.6;">
+            Gestão de Pesquisadores, Currículos Lattes e Logs do Sistema
+        </p>
+
+        <?php if (!empty($_SESSION['username'])): ?>
+        <div style="margin-top:2rem;display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:100px;padding:.5rem 1.25rem;font-size:.82rem;color:rgba(241,245,249,.7);">
+            <i class="fas fa-user-circle" style="color:#a5b4fc;"></i>
+            Logado como <strong style="color:#c7d2fe;margin-left:.25rem;"><?= htmlspecialchars($_SESSION['username']) ?></strong>
+        </div>
+        <?php endif; ?>
+
+    </div>
+</section>
+<!-- ══ /Hero Admin ══ -->
+
+<section class="adm-section">
+    <div class="container">
+        <div class="col-md-10 offset-md-1">
                 
                 <?php if (!empty($msg)) echo "<div class='alert alert-success'><i class='bi bi-check-circle'></i> $msg</div>"; ?>
                 <?php if (!empty($msg_error)) echo "<div class='alert alert-danger'><i class='bi bi-exclamation-triangle'></i> $msg_error</div>"; ?>
                 
                 <!-- Navegação por abas -->
-                <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="researcher-tab" data-bs-toggle="tab" data-bs-target="#researcher" type="button" role="tab">
-                            <i class="bi bi-person-plus"></i> Adicionar Pesquisador
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="bulk-tab" data-bs-toggle="tab" data-bs-target="#bulk" type="button" role="tab">
-                            <i class="bi bi-upload"></i> Upload em Lote
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="logs-tab" data-bs-toggle="tab" data-bs-target="#logs" type="button" role="tab">
-                            <i class="bi bi-file-text"></i> Logs do Sistema
-                        </button>
-                    </li>
-                </ul>
+                <div class="adm-tabs" id="adminTabs" role="tablist">
+                    <button class="adm-tab-btn active" id="researcher-tab" data-bs-toggle="tab" data-bs-target="#researcher" type="button" role="tab">
+                        <i class="fas fa-user-plus" aria-hidden="true"></i> Adicionar Pesquisador
+                    </button>
+                    <button class="adm-tab-btn" id="bulk-tab" data-bs-toggle="tab" data-bs-target="#bulk" type="button" role="tab">
+                        <i class="fas fa-upload" aria-hidden="true"></i> Upload em Lote
+                    </button>
+                    <button class="adm-tab-btn" id="logs-tab" data-bs-toggle="tab" data-bs-target="#logs" type="button" role="tab">
+                        <i class="fas fa-file-alt" aria-hidden="true"></i> Logs do Sistema
+                    </button>
+                </div>
 
                 <div class="tab-content" id="adminTabContent">
                     <!-- Aba: Adicionar Pesquisador Individual -->
                     <div class="tab-pane fade show active" id="researcher" role="tabpanel">
                         <?php if ($import_result): ?>
-                            <div class="result-card">
-                                <h4 style="color: #059669; margin-bottom: 1.5rem;">
-                                    <i class="fas fa-check-circle"></i> Importação Concluída com Sucesso!
-                                </h4>
+                            <div class="adm-success mb-4">
+                                <h4><i class="fas fa-check-circle me-2" aria-hidden="true"></i>Importação Concluída!</h4>
 
                                 <?php if (isset($import_result['pesquisador_nome'])): ?>
-                                    <div class="mb-4">
-                                        <div class="d-flex align-items-center">
-                                            <div class="me-3" style="font-size: 3rem; color: #f59e0b;">
-                                                <i class="fas fa-user-graduate"></i>
-                                            </div>
-                                            <div>
-                                                <h5 style="margin: 0; color: #1f2937;"><?= htmlspecialchars($import_result['pesquisador_nome']) ?></h5>
-                                                <?php if (isset($import_result['ppg'])): ?>
-                                                    <p style="margin: 0; color: #6b7280;">PPG: <?= htmlspecialchars($import_result['ppg']) ?></p>
-                                                <?php endif; ?>
-                                            </div>
+                                    <div class="d-flex align-items-center gap-3 mb-4">
+                                        <div style="width:56px;height:56px;border-radius:16px;background:rgba(99,102,241,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                            <i class="fas fa-user-graduate" style="color:#6366f1;font-size:1.5rem;" aria-hidden="true"></i>
+                                        </div>
+                                        <div>
+                                            <div style="font-weight:700;color:#0f172a;font-size:1rem;"><?= htmlspecialchars($import_result['pesquisador_nome']) ?></div>
+                                            <?php if (isset($import_result['ppg'])): ?>
+                                                <div style="color:#64748b;font-size:.875rem;">PPG: <?= htmlspecialchars($import_result['ppg']) ?></div>
+                                            <?php endif; ?>
                                         </div>
                                     </div>
                                 <?php endif; ?>
@@ -374,25 +487,23 @@ $ppgs = getAllPPGs();
                                 <div class="row g-3">
                                     <?php if (isset($import_result['total_producoes']) && $import_result['total_producoes'] > 0): ?>
                                         <div class="col-md-4">
-                                            <div class="stat-item">
+                                            <div class="adm-stat-item">
                                                 <p class="stat-number"><?= $import_result['total_producoes'] ?></p>
                                                 <p class="stat-label">Produções Indexadas</p>
                                             </div>
                                         </div>
                                     <?php endif; ?>
-
                                     <?php if (isset($import_result['artigos']) && $import_result['artigos'] > 0): ?>
                                         <div class="col-md-4">
-                                            <div class="stat-item">
+                                            <div class="adm-stat-item">
                                                 <p class="stat-number"><?= $import_result['artigos'] ?></p>
                                                 <p class="stat-label">Artigos Publicados</p>
                                             </div>
                                         </div>
                                     <?php endif; ?>
-
                                     <?php if (isset($import_result['livros']) && $import_result['livros'] > 0): ?>
                                         <div class="col-md-4">
-                                            <div class="stat-item">
+                                            <div class="adm-stat-item">
                                                 <p class="stat-number"><?= $import_result['livros'] ?></p>
                                                 <p class="stat-label">Livros</p>
                                             </div>
@@ -400,54 +511,44 @@ $ppgs = getAllPPGs();
                                     <?php endif; ?>
                                 </div>
 
-                                <div class="mt-4 text-center">
-                                    <a href="pesquisadores.php" class="btn btn-primary me-2">
-                                        <i class="fas fa-users me-2"></i>Ver Pesquisadores
+                                <div class="mt-4 d-flex gap-2 flex-wrap">
+                                    <a href="/pesquisadores.php" style="display:inline-flex;align-items:center;gap:.4rem;background:linear-gradient(135deg,#4f46e5,#6366f1);color:white;border-radius:10px;padding:.6rem 1.25rem;font-size:.875rem;font-weight:700;text-decoration:none;">
+                                        <i class="fas fa-users" aria-hidden="true"></i>Ver Pesquisadores
                                     </a>
-                                    <a href="admin.php" class="btn btn-outline-secondary">
-                                        <i class="fas fa-plus me-2"></i>Importar Outro Currículo
+                                    <a href="/admin.php" style="display:inline-flex;align-items:center;gap:.4rem;border:1.5px solid rgba(99,102,241,.3);color:#4f46e5;border-radius:10px;padding:.6rem 1.25rem;font-size:.875rem;font-weight:700;text-decoration:none;">
+                                        <i class="fas fa-plus" aria-hidden="true"></i>Importar Outro
                                     </a>
                                 </div>
 
                                 <?php if (isset($import_result['total_producoes']) && $import_result['total_producoes'] == 0): ?>
-                                <div class="alert mt-4" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-left: 4px solid #3b82f6; border-radius: 8px;" role="alert">
-                                    <h6 style="color: #1e40af; font-weight: 700; margin-bottom: 0.5rem;">
-                                        <i class="fas fa-info-circle me-2"></i>Sobre as estatísticas do Dashboard
-                                    </h6>
-                                    <p style="color: #1e3a8a; margin-bottom: 0; font-size: 0.9rem; line-height: 1.5;">
-                                        O pesquisador <strong><?= htmlspecialchars($import_result['pesquisador_nome']) ?></strong> foi cadastrado com <strong>0 produções</strong> — exatamente como consta no currículo Lattes importado.
-                                        <br><br>
-                                        O <strong>Dashboard</strong> exibe os totais <strong>globais de toda a base</strong>, incluindo produções de todos os outros pesquisadores já cadastrados. Por isso você pode ver números maiores que zero ao navegar para o Dashboard.
-                                        <br><br>
-                                        Para ver apenas as produções deste pesquisador, acesse a página <a href="pesquisadores.php" style="color: #1d4ed8; font-weight: 600;">Pesquisadores</a> e clique no perfil dele.
-                                    </p>
+                                <div class="adm-alert-info mt-4">
+                                    <h6><i class="fas fa-info-circle me-2" aria-hidden="true"></i>Sobre as estatísticas do Dashboard</h6>
+                                    <p>O pesquisador <strong><?= htmlspecialchars($import_result['pesquisador_nome'] ?? '') ?></strong> foi cadastrado com <strong>0 produções</strong> — exatamente como consta no Lattes importado. O Dashboard exibe totais globais de toda a base. Para ver apenas produções deste pesquisador, acesse a página <a href="/pesquisadores.php">Pesquisadores</a>.</p>
                                 </div>
                                 <?php endif; ?>
                             </div>
                         <?php endif; ?>
                         
-                        <div class="card">
-                            <div class="card-header">
-                                <h5><i class="bi bi-person-plus"></i> Adicionar Novo Pesquisador UMC</h5>
+                        <div class="adm-card">
+                            <div class="adm-card-header">
+                                <h5><i class="fas fa-user-plus me-2" aria-hidden="true"></i>Adicionar Novo Pesquisador UMC</h5>
                             </div>
-                            <div class="card-body">
-                                <div class="alert" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 4px solid #f59e0b; border-radius: 8px; margin-bottom: 2rem;">
-                                    <h6 style="color: #92400e; font-weight: 600; margin-bottom: 1rem;">
-                                        <i class="fas fa-info-circle me-2"></i>Como exportar currículo Lattes
-                                    </h6>
-                                    <ol style="margin-bottom: 0; padding-left: 20px; color: #78350f;">
-                                        <li>Acesse a <a href="http://lattes.cnpq.br/" target="_blank" style="color: #b45309; font-weight: 500;">Plataforma Lattes <i class="fas fa-external-link-alt fa-xs"></i></a></li>
+                            <div class="adm-card-body">
+                                <div class="adm-info-box">
+                                    <h6><i class="fas fa-info-circle me-2"></i>Como exportar currículo Lattes</h6>
+                                    <ol>
+                                        <li>Acesse a <a href="http://lattes.cnpq.br/" target="_blank" rel="noopener" style="color:#4f46e5;font-weight:600;">Plataforma Lattes <i class="fas fa-external-link-alt fa-xs"></i></a></li>
                                         <li>Faça login e acesse seu currículo completo</li>
                                         <li>No menu, clique em <strong>"Exportar currículo"</strong> ou <strong>"Baixar XML"</strong></li>
                                         <li>Salve o arquivo XML no seu computador</li>
                                         <li>Faça o upload do arquivo no formulário abaixo</li>
                                     </ol>
                                 </div>
-                                
+
                                 <form method="post" enctype="multipart/form-data" id="uploadForm">
                                     <div class="mb-3">
-                                        <label for="ppg" class="form-label">Programa de Pós-Graduação *</label>
-                                        <select class="form-select" id="ppg" name="ppg" required>
+                                        <label for="ppg" class="adm-form-label">Programa de Pós-Graduação *</label>
+                                        <select class="adm-form-select" id="ppg" name="ppg" required>
                                             <option value="">Selecione o PPG</option>
                                             <?php foreach ($ppgs as $ppg): ?>
                                                 <option value="<?= htmlspecialchars($ppg['nome']) ?>"><?= htmlspecialchars($ppg['nome']) ?></option>
@@ -456,44 +557,35 @@ $ppgs = getAllPPGs();
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="area" class="form-label">Área de Concentração (opcional)</label>
-                                        <select class="form-select" id="area" name="area">
+                                        <label for="area" class="adm-form-label">Área de Concentração (opcional)</label>
+                                        <select class="adm-form-select" id="area" name="area">
                                             <option value="">Selecione...</option>
                                         </select>
-                                        <small class="text-muted">Selecione primeiro o PPG</small>
+                                        <small style="color:#94a3b8;font-size:.8rem;">Selecione primeiro o PPG</small>
                                     </div>
 
                                     <div class="mb-4">
-                                        <label class="form-label">Arquivo XML do Lattes *</label>
-                                        <div class="upload-zone" id="uploadZone">
-                                            <i class="fas fa-cloud-upload-alt"></i>
+                                        <label class="adm-form-label">Arquivo XML do Lattes *</label>
+                                        <div class="adm-upload-zone" id="uploadZone">
+                                            <i class="fas fa-cloud-upload-alt" aria-hidden="true"></i>
                                             <h5>Arraste o arquivo aqui ou clique para selecionar</h5>
-                                            <p>Arquivo XML exportado da Plataforma Lattes</p>
-                                            <input type="file"
-                                                id="lattes_xml"
-                                                name="lattes_xml"
-                                                style="display: none;"
-                                                accept=".xml">
-                                            <small class="text-muted">Tamanho máximo: 50MB</small>
+                                            <p>Arquivo XML exportado da Plataforma Lattes · Máx. 50 MB</p>
+                                            <input type="file" id="lattes_xml" name="lattes_xml" style="display:none;" accept=".xml">
                                         </div>
                                         <div id="fileInfo" class="mt-2 d-none">
-                                            <div class="alert alert-info mb-0">
-                                                <i class="fas fa-file-alt me-2"></i>
+                                            <div style="background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:10px;padding:.75rem 1rem;font-size:.875rem;color:#312e81;">
+                                                <i class="fas fa-file-alt me-2" aria-hidden="true"></i>
                                                 <strong id="fileName"></strong> (<span id="fileSize"></span>)
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="d-grid gap-2">
-                                        <button type="submit" name="upload_researcher" class="btn btn-warning btn-lg" id="submitBtn" style="padding: 15px;">
-                                            <i class="fas fa-cloud-upload-alt me-2"></i>
-                                            Importar Currículo Lattes
-                                        </button>
-                                        <button type="button" class="btn btn-outline-secondary btn-lg" id="processingBtn" style="display: none; padding: 15px;" disabled>
-                                            <span class="spinner-border spinner-border-sm me-2"></span>
-                                            Processando... Isso pode levar alguns minutos
-                                        </button>
-                                    </div>
+                                    <button type="submit" name="upload_researcher" class="adm-btn-primary" id="submitBtn">
+                                        <i class="fas fa-cloud-upload-alt me-2" aria-hidden="true"></i>Importar Currículo Lattes
+                                    </button>
+                                    <button type="button" class="adm-btn-primary" id="processingBtn" style="display:none;opacity:.7;cursor:not-allowed;" disabled>
+                                        <span class="spinner-border spinner-border-sm me-2"></span>Processando…
+                                    </button>
                                 </form>
                             </div>
                         </div>
@@ -501,47 +593,41 @@ $ppgs = getAllPPGs();
 
                     <!-- Aba: Upload em Lote -->
                     <div class="tab-pane fade" id="bulk" role="tabpanel">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5><i class="bi bi-upload"></i> Upload em Lote</h5>
+                        <div class="adm-card">
+                            <div class="adm-card-header">
+                                <h5><i class="fas fa-upload me-2" aria-hidden="true"></i>Upload em Lote</h5>
                             </div>
-                            <div class="card-body">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <form action="api/upload_and_index.php" method="post" enctype="multipart/form-data" id="upload-form">
-                            <div class="mb-3">
-                                <label for="lattes_files" class="form-label">Selecione múltiplos arquivos (.xml ou .pdf)</label>
-                                <input class="form-control" type="file" id="lattes_files" name="lattes_files[]" multiple required accept=".xml,.pdf">
-                                <div class="form-text">Você pode selecionar múltiplos arquivos de uma vez para processamento em lote.</div>
-                            </div>
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-warning btn-lg">
-                                    <i class="bi bi-cloud-upload"></i> Processar Múltiplos Arquivos
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div id="upload-status" class="mt-4"></div>
+                            <div class="adm-card-body">
+                                <form action="api/upload_and_index.php" method="post" enctype="multipart/form-data" id="upload-form">
+                                    <div class="mb-4">
+                                        <label for="lattes_files" class="adm-form-label">Selecione múltiplos arquivos (.xml ou .pdf)</label>
+                                        <input class="adm-form-select" type="file" id="lattes_files" name="lattes_files[]" multiple required accept=".xml,.pdf" style="padding:.55rem .875rem;">
+                                        <small style="color:#94a3b8;font-size:.8rem;display:block;margin-top:.375rem;">Você pode selecionar múltiplos arquivos de uma vez para processamento em lote.</small>
+                                    </div>
+                                    <button type="submit" class="adm-btn-bulk">
+                                        <i class="fas fa-cloud-upload-alt me-2" aria-hidden="true"></i>Processar Múltiplos Arquivos
+                                    </button>
+                                </form>
+                                <div id="upload-status" class="mt-4"></div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Aba: Logs do Sistema -->
                     <div class="tab-pane fade" id="logs" role="tabpanel">
-                        <div class="card">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <h5><i class="bi bi-file-text"></i> Logs do Sistema</h5>
+                        <div class="adm-card">
+                            <div class="adm-card-header">
+                                <h5><i class="fas fa-file-alt me-2" aria-hidden="true"></i>Logs do Sistema</h5>
                                 <form method="post" class="d-inline">
-                                    <button name="expunge" value="1" class="btn btn-warning btn-sm">
-                                        <i class="bi bi-trash"></i> Expurgar Logs Antigos
+                                    <button name="expunge" value="1" class="adm-btn-primary adm-btn-danger" style="width:auto;padding:.5rem 1.1rem;font-size:.8rem;">
+                                        <i class="fas fa-trash me-1" aria-hidden="true"></i>Expurgar Antigos
                                     </button>
                                 </form>
                             </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-striped table-sm">
-                                        <thead class="table-dark">
+                            <div class="adm-card-body" style="padding:0;">
+                                <div class="table-responsive adm-table-wrap">
+                                    <table class="adm-table">
+                                        <thead>
                                             <tr>
                                                 <th>Nível</th>
                                                 <th>Usuário/Sistema</th>
@@ -554,17 +640,17 @@ $ppgs = getAllPPGs();
                             $logs = $log->getLogs(100);
                             foreach ($logs as $row) {
                                 $level = $row['level'] ?? 'INFO';
-                                $badge_class = $level === 'ERROR' ? 'bg-danger' : ($level === 'WARNING' ? 'bg-warning' : 'bg-info');
-                                $user = $row['user'] ?? $row['level'] ?? 'Sistema';
-                                $action = $row['action'] ?? $row['message'] ?? 'N/A';
-                                $timestamp = $row['timestamp'] ?? 'N/A';
-                                
-                                echo "<tr>";
-                                echo "<td><span class='badge $badge_class'>$level</span></td>";
-                                echo "<td>$user</td>";
-                                echo "<td>$action</td>";
-                                echo "<td>$timestamp</td>";
-                                echo "</tr>";
+                                if ($level === 'ERROR') {
+                                $badge_cls = 'adm-badge adm-badge-error';
+                            } elseif ($level === 'WARNING') {
+                                $badge_cls = 'adm-badge adm-badge-warning';
+                            } else {
+                                $badge_cls = 'adm-badge adm-badge-info';
+                            }
+                                $user = htmlspecialchars($row['user'] ?? $row['level'] ?? 'Sistema');
+                                $action = htmlspecialchars($row['action'] ?? $row['message'] ?? 'N/A');
+                                $timestamp = htmlspecialchars($row['timestamp'] ?? 'N/A');
+                                echo "<tr><td><span class='{$badge_cls}'>{$level}</span></td><td>{$user}</td><td>{$action}</td><td>{$timestamp}</td></tr>";
                             }
                             ?>
                                         </tbody>
@@ -574,19 +660,22 @@ $ppgs = getAllPPGs();
                         </div>
                     </div>
                 </div>
-                
-                <!-- Botão de voltar -->
+
                 <div class="text-center mt-4">
-                    <a href="index_umc.php" class="btn btn-secondary">
-                        <i class="bi bi-arrow-left"></i> Voltar ao Início
+                    <a href="/" class="adm-back-link">
+                        <i class="fas fa-arrow-left" aria-hidden="true"></i> Voltar ao Início
                     </a>
                 </div>
+                <style>.adm-back-link{display:inline-flex;align-items:center;gap:.5rem;color:#64748b;font-size:.875rem;font-weight:600;text-decoration:none;padding:.6rem 1.25rem;border:1.5px solid rgba(0,0,0,.1);border-radius:10px;transition:all .2s}.adm-back-link:hover,.adm-back-link:focus{border-color:#6366f1;color:#4f46e5}</style>
             </div>
         </div>
     </div>
+</section>
+
+<?php Footer::display(); ?>
 
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- JavaScript para Administração -->
     <script>
