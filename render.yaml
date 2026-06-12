@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: prodmais-umc
+    runtime: php
+    plan: free
+    branch: main
+    buildCommand: composer install --no-dev --optimize-autoloader
+    startCommand: bash start.sh
+    envVars:
+      - key: PHP_VERSION
+        value: 8.2
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: LGPD_ENABLED
+        value: true
+      - key: DATA_RETENTION_YEARS
+        value: 10
+      - key: UMC_PROGRAMS
+        value: "Biotecnologia,Engenharia Biomédica,Políticas Públicas,Ciência e Tecnologia em Saúde"
+    healthCheckPath: /api/health.php
+    autoDeploy: true
