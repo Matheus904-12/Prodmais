@@ -92,109 +92,286 @@ Navbar::display([
     'mostrar_link_dashboard' => $mostrar_link_dashboard ?? true,
 ]);
 ?>
+<?php renderNavbarAuthBadge(); ?>
 
-<?php
-HeroSection::display([
-    'title'      => 'Resultados da Busca',
-    'subtitle'   => 'Sistema de Busca Multi-Índice com Elasticsearch',
-    'badge'      => number_format($total_results) . ' resultado' . ($total_results != 1 ? 's' : '') . ' encontrado' . ($total_results != 1 ? 's' : ''),
-    'badge_icon' => 'search',
-    'variant'    => 'primary',
-]);
-?>
+<!-- ══ Hero Presearch ══ -->
+<style>
+.presearch-hero {
+    background: #070d1f;
+    background-image:
+        radial-gradient(ellipse 50% 50% at 20% 60%, rgba(59,130,246,.12), transparent),
+        radial-gradient(ellipse 40% 40% at 80% 20%, rgba(99,102,241,.09), transparent);
+    position: relative;
+    overflow: hidden;
+    padding: 4.5rem 0 3.5rem;
+}
+.presearch-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+    pointer-events: none;
+}
+.presearch-query {
+    display: inline-flex;
+    align-items: center;
+    gap: .6rem;
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 12px;
+    padding: .75rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    max-width: 600px;
+    margin: 0 auto 1.5rem;
+    word-break: break-word;
+}
+.presearch-query i { color: #60a5fa; font-size: .9rem; flex-shrink: 0; }
+.presearch-total {
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: rgba(241,245,249,.4);
+    margin-bottom: .5rem;
+}
 
-<!-- Resultados por Categoria -->
-<section class="page-section page-section-gray">
-    <div class="container">
+/* Category Cards */
+.presearch-section {
+    background: #f8fafc;
+    padding: 3.5rem 0 4rem;
+}
+.prescat-card {
+    background: white;
+    border-radius: 20px;
+    border: 1px solid rgba(0,0,0,.07);
+    box-shadow: 0 1px 3px rgba(0,0,0,.05), 0 4px 12px rgba(0,0,0,.04);
+    padding: 2rem 1.75rem 1.75rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: transform .22s ease, box-shadow .22s ease;
+    position: relative;
+    overflow: hidden;
+}
+.prescat-card:hover { transform: translateY(-6px); box-shadow: 0 12px 32px rgba(0,0,0,.11); }
+.prescat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+}
+.prescat-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.375rem;
+    margin-bottom: 1.25rem;
+    flex-shrink: 0;
+}
+.prescat-count {
+    font-size: 3rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -2px;
+    margin-bottom: .375rem;
+}
+.prescat-label {
+    font-size: .95rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: .375rem;
+}
+.prescat-desc {
+    font-size: .8rem;
+    color: #94a3b8;
+    line-height: 1.5;
+    flex: 1;
+    margin-bottom: 1.5rem;
+}
+.prescat-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    width: 100%;
+    padding: .75rem 1rem;
+    border-radius: 12px;
+    font-size: .875rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: filter .2s ease, transform .2s ease;
+    color: white;
+}
+.prescat-btn:hover { filter: brightness(1.1); transform: translateY(-1px); color: white; }
+.prescat-btn:disabled, .prescat-btn.disabled {
+    background: #e2e8f0 !important;
+    color: #94a3b8 !important;
+    cursor: not-allowed;
+    filter: none;
+    transform: none;
+}
 
-        <!-- Cabeçalho de busca -->
-        <div class="search-info-card mb-5">
-            <div class="search-term-display">
-                <p class="search-term-text">
-                    <i class="fas fa-quote-left me-2" aria-hidden="true"></i>
-                    <?php echo htmlspecialchars($search_term); ?>
-                    <i class="fas fa-quote-right ms-2" aria-hidden="true"></i>
-                </p>
-            </div>
-            <div class="text-center">
-                <div class="stats-badge">
-                    <i class="fas fa-database" aria-hidden="true"></i>
-                    <span><?php echo number_format($total_results); ?> resultado<?php echo $total_results != 1 ? 's' : ''; ?> encontrado<?php echo $total_results != 1 ? 's' : ''; ?> em 3 índices</span>
-                </div>
-            </div>
+/* Refine section */
+.presearch-refine {
+    background: white;
+    border: 1px solid rgba(0,0,0,.07);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,.04);
+}
+.presearch-refine-inner {
+    display: flex;
+    align-items: center;
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 14px;
+    overflow: hidden;
+    transition: border-color .2s, box-shadow .2s;
+}
+.presearch-refine-inner:focus-within {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59,130,246,.1);
+}
+.presearch-refine-inner input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    padding: .9rem 1.125rem;
+    font-size: .9375rem;
+    color: #0f172a;
+}
+.presearch-refine-inner input::placeholder { color: #94a3b8; }
+.presearch-refine-submit {
+    background: linear-gradient(135deg, #1a56db, #0369a1);
+    border: none;
+    color: white;
+    padding: .7rem 1.5rem;
+    font-size: .875rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin: .375rem;
+    border-radius: 10px;
+    white-space: nowrap;
+    transition: filter .2s;
+}
+.presearch-refine-submit:hover { filter: brightness(1.1); }
+</style>
+
+<section class="presearch-hero">
+    <div class="container text-center" style="position:relative;z-index:1;">
+
+        <div class="presearch-total">
+            <?php if ($total_results > 0): ?>
+                <i class="fas fa-check-circle" style="color:#34d399;margin-right:.4rem;"></i>
+                <?= number_format($total_results) ?> resultado<?= $total_results != 1 ? 's' : '' ?> encontrado<?= $total_results != 1 ? 's' : '' ?> em 3 índices
+            <?php else: ?>
+                <i class="fas fa-times-circle" style="color:#f87171;margin-right:.4rem;"></i>
+                Nenhum resultado encontrado
+            <?php endif; ?>
         </div>
 
-        <!-- Cards de categoria -->
-        <div class="row g-4 mb-5">
+        <div style="font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(241,245,249,.35);margin-bottom:.75rem;">Você buscou por</div>
+        <div class="presearch-query">
+            <i class="fas fa-search"></i>
+            <?= htmlspecialchars($search_term) ?>
+        </div>
+
+    </div>
+</section>
+<!-- ══ /Hero ══ -->
+
+<!-- ══ Category Cards ══ -->
+<section class="presearch-section">
+    <div class="container">
+
+        <div class="row g-4 mb-4">
 
             <!-- Produções Científicas -->
             <div class="col-md-4">
-                <div class="result-category">
-                    <div class="category-icon">
-                        <i class="fas fa-file-alt" aria-hidden="true"></i>
+                <div class="prescat-card" style="--accent:#1a56db;">
+                    <div class="prescat-card" style="display:contents;">
+                        <style>.prescat-card:nth-child(1)::before{background:linear-gradient(90deg,#1a56db,#0369a1);}</style>
                     </div>
-                    <div class="result-count"><?php echo number_format($count_producoes); ?></div>
-                    <div class="result-label">Produções Científicas</div>
-                    <p>Artigos, livros, capítulos e trabalhos em eventos</p>
+                    <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#1a56db,#0369a1);"></div>
+                    <div class="prescat-icon" style="background:#dbeafe;">
+                        <i class="fas fa-microscope" style="color:#1a56db;" aria-hidden="true"></i>
+                    </div>
+                    <div class="prescat-count" style="color:#1a56db;"><?= number_format($count_producoes) ?></div>
+                    <div class="prescat-label">Produções Científicas</div>
+                    <div class="prescat-desc">Artigos, livros, capítulos e trabalhos em eventos indexados via Lattes</div>
                     <?php if ($count_producoes > 0): ?>
-                    <form action="/result.php" method="POST">
-                        <input type="hidden" name="search" value="<?php echo htmlspecialchars($search_term); ?>">
-                        <button type="submit" class="btn-cat">
-                            <i class="fas fa-arrow-right me-2" aria-hidden="true"></i>Ver Produções
+                    <form action="/result.php" method="POST" style="margin:0;">
+                        <input type="hidden" name="search" value="<?= htmlspecialchars($search_term) ?>">
+                        <button type="submit" class="prescat-btn" style="background:linear-gradient(135deg,#1a56db,#0369a1);">
+                            <i class="fas fa-arrow-right" aria-hidden="true"></i> Ver produções
                         </button>
                     </form>
                     <?php else: ?>
-                    <button class="btn-cat" disabled>
-                        <i class="fas fa-times me-2" aria-hidden="true"></i>Sem resultados
-                    </button>
+                    <span class="prescat-btn disabled">
+                        <i class="fas fa-times" aria-hidden="true"></i> Sem resultados
+                    </span>
                     <?php endif; ?>
                 </div>
             </div>
 
             <!-- Pesquisadores -->
             <div class="col-md-4">
-                <div class="result-category">
-                    <div class="category-icon">
-                        <i class="fas fa-users" aria-hidden="true"></i>
+                <div class="prescat-card">
+                    <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#059669,#0d9488);"></div>
+                    <div class="prescat-icon" style="background:#d1fae5;">
+                        <i class="fas fa-users" style="color:#059669;" aria-hidden="true"></i>
                     </div>
-                    <div class="result-count"><?php echo number_format($count_pesquisadores); ?></div>
-                    <div class="result-label">Pesquisadores</div>
-                    <p>Docentes permanentes e colaboradores</p>
+                    <div class="prescat-count" style="color:#059669;"><?= number_format($count_pesquisadores) ?></div>
+                    <div class="prescat-label">Pesquisadores</div>
+                    <div class="prescat-desc">Docentes permanentes e colaboradores dos programas de pós-graduação</div>
                     <?php if ($count_pesquisadores > 0): ?>
-                    <form action="/pesquisadores.php" method="GET">
-                        <input type="hidden" name="q" value="<?php echo htmlspecialchars($search_term); ?>">
-                        <button type="submit" class="btn-cat">
-                            <i class="fas fa-arrow-right me-2" aria-hidden="true"></i>Ver Pesquisadores
+                    <form action="/pesquisadores.php" method="GET" style="margin:0;">
+                        <input type="hidden" name="q" value="<?= htmlspecialchars($search_term) ?>">
+                        <button type="submit" class="prescat-btn" style="background:linear-gradient(135deg,#059669,#0d9488);">
+                            <i class="fas fa-arrow-right" aria-hidden="true"></i> Ver pesquisadores
                         </button>
                     </form>
                     <?php else: ?>
-                    <button class="btn-cat" disabled>
-                        <i class="fas fa-times me-2" aria-hidden="true"></i>Sem resultados
-                    </button>
+                    <span class="prescat-btn disabled">
+                        <i class="fas fa-times" aria-hidden="true"></i> Sem resultados
+                    </span>
                     <?php endif; ?>
                 </div>
             </div>
 
             <!-- Projetos -->
             <div class="col-md-4">
-                <div class="result-category">
-                    <div class="category-icon">
-                        <i class="fas fa-project-diagram" aria-hidden="true"></i>
+                <div class="prescat-card">
+                    <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#7c3aed,#5b21b6);"></div>
+                    <div class="prescat-icon" style="background:#ede9fe;">
+                        <i class="fas fa-project-diagram" style="color:#7c3aed;" aria-hidden="true"></i>
                     </div>
-                    <div class="result-count"><?php echo number_format($count_projetos); ?></div>
-                    <div class="result-label">Projetos de Pesquisa</div>
-                    <p>Projetos em andamento e concluídos</p>
+                    <div class="prescat-count" style="color:#7c3aed;"><?= number_format($count_projetos) ?></div>
+                    <div class="prescat-label">Projetos de Pesquisa</div>
+                    <div class="prescat-desc">Projetos institucionais em andamento e concluídos pelos pesquisadores UMC</div>
                     <?php if ($count_projetos > 0): ?>
-                    <form action="/projetos.php" method="POST">
-                        <input type="hidden" name="search" value="<?php echo htmlspecialchars($search_term); ?>">
-                        <button type="submit" class="btn-cat">
-                            <i class="fas fa-arrow-right me-2" aria-hidden="true"></i>Ver Projetos
+                    <form action="/projetos.php" method="POST" style="margin:0;">
+                        <input type="hidden" name="search" value="<?= htmlspecialchars($search_term) ?>">
+                        <button type="submit" class="prescat-btn" style="background:linear-gradient(135deg,#7c3aed,#5b21b6);">
+                            <i class="fas fa-arrow-right" aria-hidden="true"></i> Ver projetos
                         </button>
                     </form>
                     <?php else: ?>
-                    <button class="btn-cat" disabled>
-                        <i class="fas fa-times me-2" aria-hidden="true"></i>Sem resultados
-                    </button>
+                    <span class="prescat-btn disabled">
+                        <i class="fas fa-times" aria-hidden="true"></i> Sem resultados
+                    </span>
                     <?php endif; ?>
                 </div>
             </div>
@@ -202,42 +379,36 @@ HeroSection::display([
         </div>
 
         <!-- Refinar busca -->
-        <div class="row">
-            <div class="col-12">
-                <div class="refine-search-card">
-                    <div class="text-center mb-3">
-                        <h5 class="mb-2">
-                            <i class="fas fa-search-plus me-2" aria-hidden="true"></i>
-                            Refinar sua busca
-                        </h5>
-                        <p class="text-muted">Digite novos termos para uma busca mais específica</p>
-                    </div>
-                    <form action="/presearch.php" method="POST">
-                        <div class="input-group input-group-lg search-refine-group">
-                            <span class="input-group-text bg-white border-0">
-                                <i class="fas fa-search" aria-hidden="true"></i>
-                            </span>
-                            <input type="search" name="search" class="form-control border-0"
-                                   placeholder="Ex: biotecnologia, genômica, saúde pública..."
-                                   value="<?php echo htmlspecialchars($search_term); ?>"
-                                   required
-                                   aria-label="Novo termo de busca">
-                            <button type="submit" class="btn-cat">
-                                <i class="fas fa-search me-2" aria-hidden="true"></i>Nova Busca
-                            </button>
-                        </div>
-                    </form>
-                    <div class="text-center mt-3">
-                        <a href="/index_umc.php" class="btn-outline-ds">
-                            <i class="fas fa-home me-2" aria-hidden="true"></i>Voltar ao Início
-                        </a>
-                    </div>
+        <div class="presearch-refine">
+            <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.125rem;">
+                <div style="width:36px;height:36px;border-radius:10px;background:#eff6ff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="fas fa-search-plus" style="color:#1a56db;font-size:.85rem;" aria-hidden="true"></i>
                 </div>
+                <div>
+                    <div style="font-size:.875rem;font-weight:700;color:#0f172a;">Refinar busca</div>
+                    <div style="font-size:.775rem;color:#94a3b8;">Tente outros termos para resultados mais específicos</div>
+                </div>
+                <a href="/" style="margin-left:auto;font-size:.8rem;font-weight:600;color:#64748b;text-decoration:none;display:flex;align-items:center;gap:.35rem;">
+                    <i class="fas fa-home" style="font-size:.7rem;" aria-hidden="true"></i> Início
+                </a>
             </div>
+            <form action="/presearch.php" method="POST">
+                <div class="presearch-refine-inner">
+                    <input type="search" name="search"
+                           placeholder="Ex: biotecnologia, genômica, saúde pública..."
+                           value="<?= htmlspecialchars($search_term) ?>"
+                           required
+                           aria-label="Refinar busca">
+                    <button type="submit" class="presearch-refine-submit">
+                        <i class="fas fa-search" aria-hidden="true"></i> Buscar
+                    </button>
+                </div>
+            </form>
         </div>
 
     </div>
 </section>
+<!-- ══ /Category Cards ══ -->
 
 <?php Footer::display(); ?>
 

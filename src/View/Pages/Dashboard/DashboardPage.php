@@ -213,26 +213,133 @@ if (!empty($producoes_por_qualis)) {
 </head>
 <body>
 
-<?php 
+<?php
 Navbar::display([
     'active_page' => 'dashboard',
     'mostrar_link_dashboard' => true
-]); 
+]);
 ?>
+<?php renderNavbarAuthBadge(); ?>
 
 <?php HookManager::doAction('dashboard_header'); ?>
-<?php 
-HeroSection::display([
-    'title' => 'Dashboard',
-    'subtitle' => 'Visão completa da produção científica da UMC',
-    'badge' => 'Visualizações e Estatísticas',
-    'badge_icon' => 'chart-line',
-    'variant' => 'success'
-]); 
-?>
+
+<!-- ══ Hero Dashboard ══ -->
+<style>
+.dash-hero {
+    background: #070d1f;
+    background-image:
+        radial-gradient(ellipse 60% 70% at 5% 65%, rgba(26,86,219,.13), transparent),
+        radial-gradient(ellipse 45% 45% at 88% 12%, rgba(2,132,199,.10), transparent),
+        radial-gradient(ellipse 35% 35% at 55% 88%, rgba(16,185,129,.08), transparent);
+    position: relative; overflow: hidden;
+    padding: 5.5rem 0 3.5rem;
+}
+.dash-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+    pointer-events: none;
+}
+.dash-hero-stats {
+    display: flex; align-items: center; justify-content: center; gap: 0;
+    margin-top: 2.5rem;
+    border: 1px solid rgba(255,255,255,.1); border-radius: 14px;
+    overflow: hidden; background: rgba(255,255,255,.04);
+    backdrop-filter: blur(8px); max-width: 540px; margin-left: auto; margin-right: auto;
+}
+.dash-hero-stat { flex:1; padding: 1.1rem 1.25rem; text-align: center; }
+.dash-hero-stat + .dash-hero-stat { border-left: 1px solid rgba(255,255,255,.1); }
+.dash-hero-stat-num { font-size: 1.75rem; font-weight: 900; color: #f1f5f9; line-height: 1; letter-spacing: -1px; margin-bottom: .2rem; }
+.dash-hero-stat-lbl { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: rgba(241,245,249,.4); }
+
+/* ── Chart cards ── */
+.dash-chart-card {
+    background: white;
+    border-radius: 20px;
+    border: 1px solid rgba(0,0,0,.07);
+    box-shadow: 0 2px 14px rgba(0,0,0,.06);
+    padding: 1.75rem;
+    height: 100%;
+}
+.dash-chart-card h5 {
+    font-size: .9rem; font-weight: 700; color: #0f172a;
+    margin: 0 0 1.25rem;
+    display: flex; align-items: center; gap: .5rem;
+}
+.dash-chart-card h5 i { color: #1a56db; }
+.dash-chart-container { height: 280px; position: relative; }
+
+/* ── Quick access cards ── */
+.dash-quick-card {
+    display: flex; align-items: center; gap: 1rem;
+    background: white; border-radius: 18px;
+    border: 1px solid rgba(0,0,0,.07);
+    box-shadow: 0 2px 10px rgba(0,0,0,.05);
+    padding: 1.25rem 1.5rem;
+    text-decoration: none;
+    transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+}
+.dash-quick-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(0,0,0,.12); text-decoration: none; }
+.dash-quick-icon {
+    width: 48px; height: 48px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.25rem; flex-shrink: 0;
+}
+.dash-quick-icon.blue   { background: rgba(26,86,219,.12); color: #1a56db; }
+.dash-quick-icon.green  { background: rgba(5,150,105,.12); color: #059669; }
+.dash-quick-icon.indigo { background: rgba(99,102,241,.12); color: #4f46e5; }
+.dash-quick-label { font-size: .9rem; font-weight: 700; color: #0f172a; }
+.dash-quick-sub { font-size: .78rem; color: #64748b; }
+
+/* ── Stats section bg ── */
+.dash-section { background: #f8fafc; padding: 4rem 0 5rem; }
+.dash-section-title { font-size: .72rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: #1a56db; margin-bottom: .35rem; }
+.dash-section-h2 { font-size: clamp(1.3rem,2.5vw,1.75rem); font-weight: 900; color: #0f172a; margin: 0 0 .4rem; line-height: 1.1; }
+</style>
+
+<section class="dash-hero">
+    <div class="container text-center" style="position:relative;z-index:1;">
+
+        <div style="display:inline-flex;align-items:center;gap:.5rem;background:rgba(26,86,219,.15);border:1px solid rgba(26,86,219,.3);border-radius:100px;padding:.375rem 1rem;font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#93c5fd;margin-bottom:1.75rem;">
+            <i class="fas fa-chart-line" style="font-size:.7rem;"></i>
+            Estatísticas · Produção Científica
+        </div>
+
+        <h1 style="font-size:clamp(2.4rem,5vw,4rem);font-weight:900;line-height:1.05;letter-spacing:-2px;color:#f1f5f9;margin:0 0 1rem;">
+            Dashboard<br>
+            <span style="background:linear-gradient(135deg,#60a5fa 0%,#34d399 55%,#a78bfa 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">da UMC</span>
+        </h1>
+
+        <p style="font-size:1rem;color:rgba(241,245,249,.5);max-width:480px;margin:0 auto;line-height:1.6;">
+            Visão completa da produção científica dos Programas de Pós-Graduação
+        </p>
+
+        <div class="dash-hero-stats">
+            <div class="dash-hero-stat">
+                <div class="dash-hero-stat-num"><?= number_format($stats['producoes']) ?></div>
+                <div class="dash-hero-stat-lbl">Produções</div>
+            </div>
+            <div class="dash-hero-stat">
+                <div class="dash-hero-stat-num"><?= number_format($stats['pesquisadores']) ?></div>
+                <div class="dash-hero-stat-lbl">Pesquisadores</div>
+            </div>
+            <div class="dash-hero-stat">
+                <div class="dash-hero-stat-num"><?= $stats['ppgs'] ?></div>
+                <div class="dash-hero-stat-lbl">PPGs</div>
+            </div>
+            <div class="dash-hero-stat">
+                <div class="dash-hero-stat-num"><?= number_format($stats['projetos']) ?></div>
+                <div class="dash-hero-stat-lbl">Projetos</div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<!-- ══ /Hero Dashboard ══ -->
 
 <!-- Estatísticas Principais -->
-<section class="page-section page-section-gray">
+<section class="dash-section">
     <div class="container">
         <!-- Cards de Estatísticas — 2 cols mobile, 4 desktop -->
         <div class="row g-3 g-md-4 mb-5 stats-grid">
@@ -285,9 +392,9 @@ HeroSection::display([
         <div class="row g-3 g-md-4 mb-5">
             <!-- Produções por Ano -->
             <div class="col-12 col-lg-6 fade-in-up" style="animation-delay:0.4s">
-                <div class="dashboard-chart-card">
-                    <h5><i class="fas fa-chart-line me-2" aria-hidden="true"></i>Produções por Ano</h5>
-                    <div class="chart-container">
+                <div class="dash-chart-card">
+                    <h5><i class="fas fa-chart-line" aria-hidden="true"></i>Produções por Ano</h5>
+                    <div class="dash-chart-container">
                         <canvas id="chartProducoesPorAno" aria-label="Gráfico de produções por ano"></canvas>
                     </div>
                 </div>
@@ -295,9 +402,9 @@ HeroSection::display([
 
             <!-- Produções por Qualis -->
             <div class="col-12 col-lg-6 fade-in-up" style="animation-delay:0.5s">
-                <div class="dashboard-chart-card">
-                    <h5><i class="fas fa-star me-2" aria-hidden="true"></i>Distribuição por Qualis</h5>
-                    <div class="chart-container">
+                <div class="dash-chart-card">
+                    <h5><i class="fas fa-star" aria-hidden="true"></i>Distribuição por Qualis</h5>
+                    <div class="dash-chart-container">
                         <canvas id="chartProducoesPorQualis" aria-label="Gráfico de distribuição por Qualis"></canvas>
                     </div>
                 </div>
@@ -307,9 +414,9 @@ HeroSection::display([
         <!-- Produções por PPG -->
         <div class="row g-3 g-md-4 mb-5">
             <div class="col-12 fade-in-up" style="animation-delay:0.6s">
-                <div class="dashboard-chart-card">
-                    <h5><i class="fas fa-university me-2" aria-hidden="true"></i>Produções por PPG</h5>
-                    <div class="chart-container">
+                <div class="dash-chart-card">
+                    <h5><i class="fas fa-university" aria-hidden="true"></i>Produções por PPG</h5>
+                    <div class="dash-chart-container">
                         <canvas id="chartProducoesPorPPG" aria-label="Gráfico de produções por PPG"></canvas>
                     </div>
                 </div>
@@ -319,49 +426,42 @@ HeroSection::display([
         <!-- Cards de Acesso Rápido -->
         <div class="row g-3 g-md-4">
             <div class="col-12">
-                <h5 class="fw-bold mb-3">
-                    <i class="fas fa-bolt me-2" aria-hidden="true"></i>Acesso Rápido
-                </h5>
+                <span class="dash-section-title">Atalhos</span>
+                <h2 class="dash-section-h2">Acesso Rápido</h2>
             </div>
 
             <div class="col-12 col-md-4 fade-in-up" style="animation-delay:0.7s">
-                <a href="/login.php" class="quick-card" aria-label="Importar Lattes">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="quick-card-icon qci-blue">
-                            <i class="fas fa-upload" aria-hidden="true"></i>
-                        </div>
-                        <div>
-                            <div class="quick-card-label">Importar Lattes</div>
-                            <div class="quick-card-sub">Adicionar currículos</div>
-                        </div>
+                <a href="/admin.php" class="dash-quick-card">
+                    <div class="dash-quick-icon blue">
+                        <i class="fas fa-upload" aria-hidden="true"></i>
+                    </div>
+                    <div>
+                        <div class="dash-quick-label">Importar Lattes</div>
+                        <div class="dash-quick-sub">Adicionar currículos</div>
                     </div>
                 </a>
             </div>
 
             <div class="col-12 col-md-4 fade-in-up" style="animation-delay:0.8s">
-                <a href="/index_umc.php" class="quick-card" aria-label="Buscar Produções">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="quick-card-icon qci-green">
-                            <i class="fas fa-search" aria-hidden="true"></i>
-                        </div>
-                        <div>
-                            <div class="quick-card-label">Buscar Produções</div>
-                            <div class="quick-card-sub">Pesquisar na base</div>
-                        </div>
+                <a href="/" class="dash-quick-card">
+                    <div class="dash-quick-icon green">
+                        <i class="fas fa-search" aria-hidden="true"></i>
+                    </div>
+                    <div>
+                        <div class="dash-quick-label">Buscar Produções</div>
+                        <div class="dash-quick-sub">Pesquisar na base</div>
                     </div>
                 </a>
             </div>
 
             <div class="col-12 col-md-4 fade-in-up" style="animation-delay:0.9s">
-                <a href="/login.php" class="quick-card" aria-label="Administração">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="quick-card-icon qci-amber">
-                            <i class="fas fa-cog" aria-hidden="true"></i>
-                        </div>
-                        <div>
-                            <div class="quick-card-label">Administração</div>
-                            <div class="quick-card-sub">Gerenciar sistema</div>
-                        </div>
+                <a href="/admin.php" class="dash-quick-card">
+                    <div class="dash-quick-icon indigo">
+                        <i class="fas fa-cog" aria-hidden="true"></i>
+                    </div>
+                    <div>
+                        <div class="dash-quick-label">Administração</div>
+                        <div class="dash-quick-sub">Gerenciar sistema</div>
                     </div>
                 </a>
             </div>

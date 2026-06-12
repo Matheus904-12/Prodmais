@@ -16,7 +16,7 @@ services:
       - ./sql/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
       - ./sql/schema_auth.sql:/docker-entrypoint-initdb.d/02_schema_auth.sql
     ports:
-      - "3307:3306"
+      - "3308:3306"
     networks:
       - prodmais
     healthcheck:
@@ -34,7 +34,7 @@ services:
       PMA_PORT: 3306
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASS:-root}
     ports:
-      - "8081:80"
+      - "8082:80"
     depends_on:
       - db
     networks:
@@ -82,7 +82,7 @@ services:
     container_name: prodmais_web
     restart: always
     ports:
-      - "8080:80"
+      - "8090:80"
     volumes:
       - .:/var/www/html
       - /var/www/html/vendor

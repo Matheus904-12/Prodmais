@@ -51,18 +51,26 @@ class AuthManager {
         try {
             // Verificar se usuario esta bloqueado
             $stmt = $this->db->prepare("
-                SELECT id, username, email, password_hash, tentativas_login, bloqueado_ate, nome_completo
-                FROM usuarios_admin 
+                SELECT id, username, email, password_hash, tentativas_login, bloqueado_ate, nome_completo, status, papel
+                FROM usuarios_admin
                 WHERE username = ? OR email = ?
             ");
             $stmt->execute([$username, $username]);
             $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-            
+
             if (!$usuario) {
                 $this->registrarTentativa(null, $username, false, 'Usuario nao encontrado');
                 return ['sucesso' => false, 'mensagem' => 'Usuario ou senha invalidos'];
             }
-            
+
+            // Verificar status da conta
+            if ($usuario['status'] === 'pendente') {
+                return ['sucesso' => false, 'mensagem' => 'Sua conta aguarda aprovação de um administrador'];
+            }
+            if ($usuario['status'] === 'inativo') {
+                return ['sucesso' => false, 'mensagem' => 'Conta desativada. Entre em contato com o administrador'];
+            }
+
             // Verificar bloqueio
             if ($usuario['bloqueado_ate'] && strtotime($usuario['bloqueado_ate']) > time()) {
                 $tempo_restante = ceil((strtotime($usuario['bloqueado_ate']) - time()) / 60);
@@ -107,10 +115,12 @@ class AuthManager {
             
             // Configurar sessao
             session_regenerate_id(true);
-            $_SESSION['user_id'] = $usuario['id'];
-            $_SESSION['username'] = $usuario['username'];
+            $_SESSION['user_id']       = $usuario['id'];
+            $_SESSION['username']      = $usuario['username'];
+            $_SESSION['user']          = $usuario['username']; // compatibilidade com admin.php
             $_SESSION['nome_completo'] = $usuario['nome_completo'];
-            $_SESSION['criado_em'] = time();
+            $_SESSION['papel']         = $usuario['papel'];
+            $_SESSION['criado_em']     = time();
             $_SESSION['ultima_atividade'] = time();
             
             $this->registrarTentativa($usuario['id'], $username, true, null);
