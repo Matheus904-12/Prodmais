@@ -7,8 +7,12 @@
 
 namespace ProdmaisUMC;
 
-require_once __DIR__ . '/../config/config_umc.php';
-require_once __DIR__ . '/UmcFunctions.php';
+$_lattesImporter_root = dirname(__DIR__, 3); // src/Domain/Importers → project root
+if (!function_exists('getElasticsearchClient')) {
+    require_once $_lattesImporter_root . '/config/config_umc.php';
+    require_once $_lattesImporter_root . '/src/UmcFunctions.php';
+}
+unset($_lattesImporter_root);
 
 class LattesImporter {
     private $client;

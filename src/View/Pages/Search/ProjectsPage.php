@@ -95,9 +95,9 @@ Navbar::display([
 .proj-hero {
     background: #070d1f;
     background-image:
-        radial-gradient(ellipse 55% 65% at 5% 75%, rgba(5,150,105,.12), transparent),
-        radial-gradient(ellipse 40% 40% at 92% 10%, rgba(13,148,136,.09), transparent),
-        radial-gradient(ellipse 30% 30% at 50% 92%, rgba(16,185,129,.07), transparent);
+        radial-gradient(ellipse 55% 65% at 5% 75%, rgba(26,86,219,.12), transparent),
+        radial-gradient(ellipse 40% 40% at 92% 10%, rgba(59,130,246,.09), transparent),
+        radial-gradient(ellipse 30% 30% at 50% 92%, rgba(99,102,241,.07), transparent);
     position: relative; overflow: hidden;
     padding: 5.5rem 0 3.5rem;
 }
@@ -129,7 +129,7 @@ Navbar::display([
     overflow: hidden;
 }
 .proj-filter-header {
-    background: linear-gradient(135deg,#065f46,#0d9488);
+    background: linear-gradient(135deg,#1e3a8a,#1a56db);
     padding: 1rem 1.25rem;
     display: flex; align-items: center; gap: .5rem;
     color: white; font-weight: 700; font-size: .9rem;
@@ -142,18 +142,18 @@ Navbar::display([
     padding: .55rem .875rem; font-size: .875rem; color: #1e293b; background: white;
     transition: border-color .2s; appearance: none;
 }
-.proj-filter-input:focus, .proj-filter-select:focus { outline: none; border-color: #0d9488; box-shadow: 0 0 0 3px rgba(13,148,136,.1); }
+.proj-filter-input:focus, .proj-filter-select:focus { outline: none; border-color: #1a56db; box-shadow: 0 0 0 3px rgba(26,86,219,.1); }
 .proj-filter-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right .875rem center; }
 .proj-filter-btn {
     display: block; width: 100%; border: none; border-radius: 10px; padding: .7rem 1rem;
-    background: linear-gradient(135deg,#059669,#0d9488); color: white; font-weight: 700; font-size: .875rem;
+    background: linear-gradient(135deg,#1a56db,#0369a1); color: white; font-weight: 700; font-size: .875rem;
     cursor: pointer; transition: filter .2s, transform .2s;
-    box-shadow: 0 4px 12px rgba(5,150,105,.25);
+    box-shadow: 0 4px 12px rgba(26,86,219,.25);
 }
 .proj-filter-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
 .proj-filter-divider { border: none; border-top: 1px solid #f1f5f9; margin: 1rem 0; }
 .proj-filter-count { text-align: center; }
-.proj-filter-count-num { font-size: 2rem; font-weight: 900; color: #059669; line-height: 1; letter-spacing: -1px; }
+.proj-filter-count-num { font-size: 2rem; font-weight: 900; color: #1a56db; line-height: 1; letter-spacing: -1px; }
 .proj-filter-count-lbl { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #94a3b8; }
 .proj-filter-clear { display: block; text-align: center; margin-top: .75rem; font-size: .8rem; font-weight: 600; color: #94a3b8; text-decoration: none; transition: color .2s; }
 .proj-filter-clear:hover { color: #ef4444; }
@@ -172,8 +172,8 @@ Navbar::display([
 .proj-card-title { font-size: 1.05rem; font-weight: 700; color: #0f172a; margin: 0 0 .75rem; line-height: 1.35; }
 .proj-meta { display: flex; flex-wrap: wrap; gap: .6rem; margin: .75rem 0; }
 .proj-meta-item { display: flex; align-items: center; gap: .35rem; font-size: .8rem; color: #64748b; font-weight: 500; }
-.proj-meta-item i { color: #059669; font-size: .75rem; }
-.proj-badge-ppg { display: inline-flex; align-items: center; gap: .35rem; font-size: .72rem; font-weight: 700; padding: .3rem .75rem; border-radius: 100px; background: rgba(5,150,105,.1); color: #065f46; }
+.proj-meta-item i { color: #1a56db; font-size: .75rem; }
+.proj-badge-ppg { display: inline-flex; align-items: center; gap: .35rem; font-size: .72rem; font-weight: 700; padding: .3rem .75rem; border-radius: 100px; background: rgba(26,86,219,.1); color: #1e3a8a; }
 .proj-status-badge { display: inline-flex; align-items: center; gap: .35rem; font-size: .72rem; font-weight: 700; padding: .3rem .75rem; border-radius: 100px; white-space: nowrap; }
 .proj-status-badge.concluido  { background: rgba(5,150,105,.12); color: #065f46; }
 .proj-status-badge.andamento  { background: rgba(59,130,246,.12); color: #1e40af; }
@@ -181,10 +181,10 @@ Navbar::display([
 .proj-status-badge i { font-size: .5rem; }
 .proj-btn-detail {
     display: inline-flex; align-items: center; gap: .4rem;
-    background: linear-gradient(135deg,#059669,#0d9488); color: white; border: none;
+    background: linear-gradient(135deg,#1a56db,#0369a1); color: white; border: none;
     border-radius: 10px; padding: .55rem 1.1rem; font-size: .8rem; font-weight: 700;
     cursor: pointer; transition: filter .2s, transform .2s;
-    box-shadow: 0 3px 10px rgba(5,150,105,.22);
+    box-shadow: 0 3px 10px rgba(26,86,219,.22);
 }
 .proj-btn-detail:hover { filter: brightness(1.08); transform: translateY(-1px); }
 
@@ -202,14 +202,14 @@ Navbar::display([
 <section class="proj-hero">
     <div class="container text-center" style="position:relative;z-index:1;">
 
-        <div style="display:inline-flex;align-items:center;gap:.5rem;background:rgba(5,150,105,.15);border:1px solid rgba(5,150,105,.3);border-radius:100px;padding:.375rem 1rem;font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6ee7b7;margin-bottom:1.75rem;">
+        <div style="display:inline-flex;align-items:center;gap:.5rem;background:rgba(26,86,219,.15);border:1px solid rgba(26,86,219,.3);border-radius:100px;padding:.375rem 1rem;font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#93c5fd;margin-bottom:1.75rem;">
             <i class="fas fa-flask" style="font-size:.7rem;"></i>
             Pesquisa & Inovação · UMC
         </div>
 
         <h1 style="font-size:clamp(2.4rem,5vw,4rem);font-weight:900;line-height:1.05;letter-spacing:-2px;color:#f1f5f9;margin:0 0 1rem;">
             Projetos de<br>
-            <span style="background:linear-gradient(135deg,#34d399 0%,#0d9488 55%,#60a5fa 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Pesquisa</span>
+            <span style="background:linear-gradient(135deg,#60a5fa 0%,#1a56db 55%,#818cf8 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Pesquisa</span>
         </h1>
 
         <p style="font-size:1rem;color:rgba(241,245,249,.5);max-width:480px;margin:0 auto;line-height:1.6;">

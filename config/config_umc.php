@@ -5,34 +5,44 @@
  * Seguindo documentação PIVIC 2025
  */
 
-/* Exibir erros apenas em desenvolvimento */
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+// ============== AMBIENTE ============== //
+
+$app_env   = getenv('APP_ENV')   ?: 'development';
+$app_debug = filter_var(getenv('APP_DEBUG') ?: 'true', FILTER_VALIDATE_BOOLEAN);
+
+ini_set('display_errors',         $app_debug ? 1 : 0);
+ini_set('display_startup_errors', $app_debug ? 1 : 0);
+error_reporting($app_debug ? E_ALL : E_ALL & ~E_DEPRECATED & ~E_STRICT);
 
 // ============== ELASTICSEARCH ============== //
 
-/* Configuração do Elasticsearch */
-$hosts = ['elasticsearch:9200'];
-// $elasticsearch_user = "elastic";
-// $elasticsearch_password = "";
+$_es_raw = getenv('ES_HOST') ?: (getenv('ELASTICSEARCH_HOST') ?: 'elasticsearch:9200');
+// Garante que o prefixo http:// está presente
+$hosts = [preg_match('#^https?://#', $_es_raw) ? $_es_raw : 'http://' . $_es_raw];
 
 /* Índices do Elasticsearch */
-$index = "prodmais_umc";              // Produções científicas
-$index_cv = "prodmais_umc_cv";        // Currículos Lattes
-$index_ppg = "prodmais_umc_ppg";      // Programas de Pós-Graduação
-$index_projetos = "prodmais_umc_projetos";  // Projetos de Pesquisa
+$index          = getenv('ES_INDEX')          ?: 'prodmais_umc';
+$index_cv       = getenv('ES_INDEX_CV')       ?: 'prodmais_umc_cv';
+$index_ppg      = getenv('ES_INDEX_PPG')      ?: 'prodmais_umc_ppg';
+$index_projetos = getenv('ES_INDEX_PROJETOS') ?: 'prodmais_umc_projetos';
+
+// ============== MYSQL ============== //
+
+$mysql_host = getenv('MYSQL_HOST')     ?: (getenv('DB_HOST') ?: 'db');
+$mysql_db   = getenv('MYSQL_DB')       ?: (getenv('DB_NAME') ?: 'prodmais_umc');
+$mysql_user = getenv('MYSQL_USER')     ?: (getenv('DB_USER') ?: 'prodmais');
+$mysql_pass = getenv('MYSQL_PASS')     ?: (getenv('DB_PASS') ?: 'prodmais123');
+$mysql_port = (int)(getenv('MYSQL_PORT') ?: (getenv('DB_PORT') ?: 3306));
 
 // ============== URLS E CAMINHOS ============== //
 
-/* Endereço base (ajustar conforme servidor) */
-$url_base = "http://localhost:8000";
+$url_base = rtrim(getenv('APP_URL') ?: 'http://localhost:8000', '/');
 
 // ============== AUTENTICAÇÃO ============== //
 
-/* Login administrativo */
-$login_user = "admin";
-$login_password = "Admin@2025";
+/* Credenciais admin — ler de env vars; fallback apenas para dev local */
+$login_user     = getenv('ADMIN_USER')     ?: 'admin';
+$login_password = getenv('ADMIN_PASSWORD') ?: 'Admin@2025';
 
 // ============== INSTITUIÇÃO UMC ============== //
 
@@ -46,7 +56,7 @@ $branch_description = "Sistema de Gestão de Produção Científica dos Programa
 $slogan = 'Consolidação, Análise e Interoperabilidade de Dados Científicos';
 
 /* Imagem para redes sociais */
-$facebook_image = "http://localhost:8000/img/logo-umc.png";
+$facebook_image = $url_base . "/img/logo-umc.png";
 
 // ============== PROGRAMAS DE PÓS-GRADUAÇÃO UMC ============== //
 
@@ -177,7 +187,7 @@ $capes_indicators_enabled = true;
 // ============== DESENVOLVIMENTO ============== //
 
 /* Modo debug */
-$debug_mode = true;
+$debug_mode = $app_debug;
 
 /* Cache */
 $cache_enabled = true;

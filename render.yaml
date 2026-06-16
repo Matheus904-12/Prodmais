@@ -1,23 +1,37 @@
 services:
   - type: web
     name: prodmais-umc
-    runtime: php
+    runtime: docker
     plan: free
     branch: main
-    buildCommand: composer install --no-dev --optimize-autoloader
-    startCommand: bash start.sh
+    dockerfilePath: ./Dockerfile
     envVars:
-      - key: PHP_VERSION
-        value: 8.2
       - key: APP_ENV
         value: production
       - key: APP_DEBUG
-        value: false
-      - key: LGPD_ENABLED
-        value: true
-      - key: DATA_RETENTION_YEARS
-        value: 10
-      - key: UMC_PROGRAMS
-        value: "Biotecnologia,Engenharia Biomédica,Políticas Públicas,Ciência e Tecnologia em Saúde"
+        value: "false"
+      # MySQL — preencher com dados do banco gerenciado (ex: Aiven, Railway, PlanetScale)
+      - key: MYSQL_HOST
+        sync: false
+      - key: MYSQL_DB
+        value: prodmais_umc
+      - key: MYSQL_USER
+        sync: false
+      - key: MYSQL_PASS
+        sync: false
+      # Elasticsearch — usar Bonsai.io free tier ou deixar vazio (fallback MySQL)
+      # Formato: "meu-cluster.searchly.com:9200" ou vazio para desabilitar ES
+      - key: ES_HOST
+        value: ""
+      # URL pública do deploy (preencher após criar o serviço no Render)
+      - key: APP_URL
+        sync: false
+      # Admin
+      - key: ADMIN_USER
+        value: admin
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: SESSION_SECURE
+        value: "true"
     healthCheckPath: /api/health.php
     autoDeploy: true
