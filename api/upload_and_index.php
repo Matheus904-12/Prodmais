@@ -25,7 +25,7 @@ try {
     
     // Carrega o Importador se necessário
     if (!class_exists('\ProdmaisUMC\LattesImporter')) {
-        require_once dirname(__DIR__, 2) . '/src/LattesImporter.php';
+        require_once dirname(__DIR__, 2) . '/src/Domain/Importers/LattesImporter.php';
     }
 
     // --- Validação ---

@@ -4,16 +4,16 @@ require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 // Include required services
 if (!class_exists('ElasticsearchService')) {
-    require_once dirname(__DIR__, 2) . '/src/ElasticsearchService.php';
+    require_once dirname(__DIR__, 2) . '/src/Infrastructure/Elasticsearch/ElasticsearchService.php';
 }
 if (!class_exists('ExportService')) {
-    require_once dirname(__DIR__, 2) . '/src/ExportService.php';
+    require_once dirname(__DIR__, 2) . '/src/Domain/Services/ExportService.php';
 }
 
 $config = require dirname(__DIR__, 2) . '/config/config.php';
 
 // Validar formato
-$format = filter_input(INPUT_GET, 'format', FILTER_SANITIZE_STRING);
+$format = trim(strip_tags((string) filter_input(INPUT_GET, 'format')));
 $allowedFormats = ['bibtex', 'ris', 'csv', 'json', 'xml'];
 
 if (!$format || !in_array($format, $allowedFormats)) {
@@ -27,7 +27,7 @@ $filters = [];
 $filterFields = ['q', 'type', 'subtype', 'year', 'year_from', 'year_to', 'institution', 'language', 'area', 'author'];
 
 foreach ($filterFields as $field) {
-    $value = filter_input(INPUT_GET, $field, FILTER_SANITIZE_STRING);
+    $value = trim(strip_tags((string) filter_input(INPUT_GET, $field)));
     if ($value !== null && $value !== '') {
         if ($field === 'year' || $field === 'year_from' || $field === 'year_to') {
             $filters[$field] = filter_var($value, FILTER_VALIDATE_INT);
