@@ -18,6 +18,10 @@ if (!class_exists('\ProdmaisUMC\LattesImporter')) {
     require_once __DIR__ . '/../../../../src/Domain/Importers/LattesImporter.php';
 }
 
+if (!class_exists('LgpdComplianceService')) {
+    require_once __DIR__ . '/../../../../src/Domain/Security/LgpdComplianceService.php';
+}
+
 $config_legacy = [];
 if (file_exists(__DIR__ . '/../../../../config/config.php')) {
     $config_legacy = require_once __DIR__ . '/../../../../config/config.php';
@@ -38,6 +42,10 @@ if (empty($_SESSION['user']) && !empty($_SESSION['username'])) {
 
 $log = new LogService($config_legacy);
 $log->log($_SESSION['user'], 'Acesso à área administrativa');
+
+$lgpdService = new LgpdComplianceService($config_legacy);
+$dpiaReport = $lgpdService->generateDpiaReport();
+$complianceStatus = $lgpdService->getComplianceStatus();
 
 if (isset($_POST['expunge'])) {
     $log->expungeOld(365);
@@ -459,6 +467,9 @@ Navbar::display(['active_page' => 'admin', 'mostrar_link_dashboard' => $mostrar_
                     <button class="adm-tab-btn" id="logs-tab" data-bs-toggle="tab" data-bs-target="#logs" type="button" role="tab">
                         <i class="fas fa-file-alt" aria-hidden="true"></i> Logs do Sistema
                     </button>
+                    <button class="adm-tab-btn" id="lgpd-tab" data-bs-toggle="tab" data-bs-target="#lgpd" type="button" role="tab">
+                        <i class="fas fa-shield-alt" aria-hidden="true"></i> Conformidade LGPD
+                    </button>
                 </div>
 
                 <div class="tab-content" id="adminTabContent">
@@ -654,6 +665,66 @@ Navbar::display(['active_page' => 'admin', 'mostrar_link_dashboard' => $mostrar_
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Aba: Conformidade LGPD -->
+                    <div class="tab-pane fade" id="lgpd" role="tabpanel">
+                        <div class="adm-card">
+                            <div class="adm-card-header">
+                                <h5><i class="fas fa-shield-alt me-2" aria-hidden="true"></i>Status de Conformidade LGPD</h5>
+                            </div>
+                            <div class="adm-card-body">
+                                <p style="color:#64748b;margin-bottom:1.5rem;">
+                                    Última avaliação: <strong><?php echo htmlspecialchars($complianceStatus['last_assessment']); ?></strong>
+                                    &mdash; Status geral: <strong style="color:#059669;"><?php echo htmlspecialchars($complianceStatus['overall_status']); ?></strong>
+                                </p>
+                                <div class="row g-3">
+                                    <?php foreach ($complianceStatus['checks'] as $check): ?>
+                                    <div class="col-md-6">
+                                        <div class="adm-stat-item" style="display:flex;align-items:center;gap:.75rem;">
+                                            <i class="fas fa-check-circle" style="color:#059669;font-size:1.25rem;"></i>
+                                            <span style="color:#312e81;font-size:.875rem;"><?php echo htmlspecialchars($check['description']); ?></span>
+                                        </div>
+                                    </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="adm-card">
+                            <div class="adm-card-header">
+                                <h5><i class="fas fa-file-contract me-2" aria-hidden="true"></i>Relatório de Impacto à Proteção de Dados (DPIA)</h5>
+                                <a class="adm-btn-primary" style="width:auto;padding:.5rem 1.1rem;font-size:.8rem;text-decoration:none;"
+                                   download="dpia-prodmais-<?php echo htmlspecialchars($dpiaReport['metadata']['date']); ?>.json"
+                                   href="data:application/json;charset=utf-8,<?php echo rawurlencode(json_encode($dpiaReport, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)); ?>">
+                                    <i class="fas fa-download me-1" aria-hidden="true"></i>Baixar DPIA (JSON)
+                                </a>
+                            </div>
+                            <div class="adm-card-body">
+                                <p style="color:#64748b;"><?php echo htmlspecialchars($dpiaReport['project_description']['purpose'] ?? ''); ?></p>
+
+                                <h6 style="font-weight:700;color:#1e1b4b;margin-top:1.5rem;">Categorias de dados pessoais tratados</h6>
+                                <?php foreach ($dpiaReport['data_mapping']['personal_data_categories'] as $categoria): ?>
+                                <div class="adm-info-box" style="margin-bottom:.75rem;">
+                                    <strong><?php echo htmlspecialchars(implode(', ', $categoria['fields'])); ?></strong><br>
+                                    <span style="font-size:.85rem;color:#4338ca;">
+                                        Origem: <?php echo htmlspecialchars($categoria['source']); ?> &middot;
+                                        Base legal: <?php echo htmlspecialchars($categoria['legal_basis']); ?>
+                                    </span>
+                                </div>
+                                <?php endforeach; ?>
+
+                                <h6 style="font-weight:700;color:#1e1b4b;margin-top:1.5rem;">Recomendações</h6>
+                                <?php foreach ($dpiaReport['recommendations'] as $grupo => $itens): ?>
+                                <p style="margin-bottom:.375rem;"><strong style="color:#312e81;text-transform:capitalize;"><?php echo htmlspecialchars(str_replace('_', ' ', $grupo)); ?>:</strong></p>
+                                <ul style="color:#64748b;">
+                                    <?php foreach ($itens as $item): ?>
+                                    <li><?php echo htmlspecialchars($item); ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                                <?php endforeach; ?>
                             </div>
                         </div>
                     </div>
