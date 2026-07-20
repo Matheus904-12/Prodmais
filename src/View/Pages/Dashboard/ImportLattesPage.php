@@ -6,7 +6,7 @@
 
 require_once __DIR__ . '/../../../../config/config_umc.php';
 require_once __DIR__ . '/../../../../src/UmcFunctions.php';
-require_once __DIR__ . '/../src/LattesImporter.php';
+require_once __DIR__ . '/../../../../src/Domain/Importers/LattesImporter.php';
 
 use App\View\Components\Navbar\Navbar;
 use App\View\Components\Footer\Footer;

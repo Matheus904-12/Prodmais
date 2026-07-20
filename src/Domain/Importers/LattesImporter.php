@@ -7,8 +7,8 @@
 
 namespace ProdmaisUMC;
 
-require_once __DIR__ . '/../config/config_umc.php';
-require_once __DIR__ . '/UmcFunctions.php';
+require_once __DIR__ . '/../../../config/config_umc.php';
+require_once __DIR__ . '/../../UmcFunctions.php';
 
 class LattesImporter {
     private $client;

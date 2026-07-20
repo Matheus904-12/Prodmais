@@ -3,10 +3,10 @@
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 // Include required services
-require_once dirname(__DIR__) . '/src/ElasticsearchService.php';
-require_once dirname(__DIR__) . '/src/LattesParser.php';
-require_once dirname(__DIR__) . '/src/PdfParser.php';
-require_once dirname(__DIR__) . '/src/OpenAlexFetcher.php';
+require_once dirname(__DIR__) . '/src/Infrastructure/Elasticsearch/ElasticsearchService.php';
+require_once dirname(__DIR__) . '/src/Domain/Importers/LattesParser.php';
+require_once dirname(__DIR__) . '/src/Infrastructure/Storage/PdfParser.php';
+require_once dirname(__DIR__) . '/src/Infrastructure/External/OpenAlexFetcher.php';
 
 $config = require dirname(__DIR__) . '/config/config.php';
 $lattesXmlPath = $config['data_paths']['lattes_xml'];

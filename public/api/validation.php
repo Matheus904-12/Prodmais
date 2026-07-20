@@ -13,10 +13,10 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 // Include required services
 if (!class_exists('UmcValidationSystem')) {
-    require_once __DIR__ . '/../../src/UmcValidationSystem.php';
+    require_once __DIR__ . '/../../src/Domain/Validation/UmcValidationSystem.php';
 }
 if (!class_exists('LogService')) {
-    require_once __DIR__ . '/../../src/LogService.php';
+    require_once __DIR__ . '/../../src/Domain/Services/LogService.php';
 }
 
 // Headers CORS e JSON

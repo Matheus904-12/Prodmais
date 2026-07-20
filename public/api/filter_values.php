@@ -6,7 +6,7 @@ require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 // Include required services
 if (!class_exists('ElasticsearchService')) {
-    require_once dirname(__DIR__, 2) . '/src/ElasticsearchService.php';
+    require_once dirname(__DIR__, 2) . '/src/Infrastructure/Elasticsearch/ElasticsearchService.php';
 }
 
 $config = require dirname(__DIR__, 2) . '/config/config.php';

@@ -11,11 +11,11 @@ use App\View\Components\Navbar\Navbar;
 use App\View\Components\Footer\Footer;
 
 if (!class_exists('LogService')) {
-    require_once __DIR__ . '/../../../../src/LogService.php';
+    require_once __DIR__ . '/../../../../src/Domain/Services/LogService.php';
 }
 
-if (!class_exists('LattesImporter')) {
-    require_once __DIR__ . '/../../../../src/LattesImporter.php';
+if (!class_exists('\ProdmaisUMC\LattesImporter')) {
+    require_once __DIR__ . '/../../../../src/Domain/Importers/LattesImporter.php';
 }
 
 $config_legacy = [];

@@ -10,13 +10,13 @@ require_once '../vendor/autoload.php';
 
 // Include required services
 if (!class_exists('ElasticsearchService')) {
-    require_once '../src/ElasticsearchService.php';
+    require_once '../src/Infrastructure/Elasticsearch/ElasticsearchService.php';
 }
 if (!class_exists('UmcProgramService')) {
-    require_once '../src/UmcProgramService.php';
+    require_once '../src/Domain/Services/UmcProgramService.php';
 }
 if (!class_exists('CapesReportGenerator')) {
-    require_once '../src/CapesReportGenerator.php';
+    require_once '../src/Domain/Reports/CapesReportGenerator.php';
 }
 
 header('Content-Type: application/json');

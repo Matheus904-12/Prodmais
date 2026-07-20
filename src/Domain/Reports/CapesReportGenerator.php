@@ -17,14 +17,14 @@ class CapesReportGenerator
     public function __construct($config)
     {
         $this->config = $config;
-        $this->umcConfig = require __DIR__ . '/../config/umc_config.php';
-        
+        $this->umcConfig = require __DIR__ . '/../../../config/umc_config.php';
+
         // Include required services
         if (!class_exists('ElasticsearchService')) {
-            require_once __DIR__ . '/ElasticsearchService.php';
+            require_once __DIR__ . '/../../Infrastructure/Elasticsearch/ElasticsearchService.php';
         }
         if (!class_exists('UmcProgramService')) {
-            require_once __DIR__ . '/UmcProgramService.php';
+            require_once __DIR__ . '/../Services/UmcProgramService.php';
         }
         
         $this->elasticsearch = new ElasticsearchService($config);

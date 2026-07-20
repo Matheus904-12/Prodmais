@@ -4,10 +4,10 @@ require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 // Include required services
 if (!class_exists('ElasticsearchService')) {
-    require_once dirname(__DIR__, 2) . '/src/ElasticsearchService.php';
+    require_once dirname(__DIR__, 2) . '/src/Infrastructure/Elasticsearch/ElasticsearchService.php';
 }
 if (!class_exists('ExportService')) {
-    require_once dirname(__DIR__, 2) . '/src/ExportService.php';
+    require_once dirname(__DIR__, 2) . '/src/Domain/Services/ExportService.php';
 }
 
 $config = require dirname(__DIR__, 2) . '/config/config.php';

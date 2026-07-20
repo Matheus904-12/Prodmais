@@ -17,11 +17,11 @@ class UmcValidationSystem
     public function __construct($config)
     {
         $this->config = $config;
-        $this->umcConfig = require __DIR__ . '/../config/umc_config.php';
+        $this->umcConfig = require __DIR__ . '/../../../config/umc_config.php';
         
         // Include required services
         if (!class_exists('ElasticsearchService')) {
-            require_once __DIR__ . '/ElasticsearchService.php';
+            require_once __DIR__ . '/../../Infrastructure/Elasticsearch/ElasticsearchService.php';
         }
         
         $this->elasticsearch = new ElasticsearchService($config);
@@ -300,7 +300,7 @@ class UmcValidationSystem
             
             // Testar parsing
             if (!class_exists('LattesParser')) {
-                require_once __DIR__ . '/LattesParser.php';
+                require_once __DIR__ . '/../Importers/LattesParser.php';
             }
             $parser = new LattesParser($this->config);
             $result = $parser->parseLattes($testXmlPath);
@@ -367,7 +367,7 @@ class UmcValidationSystem
     private function testReportGeneration()
     {
         try {
-            require_once __DIR__ . '/CapesReportGenerator.php';
+            require_once __DIR__ . '/../Reports/CapesReportGenerator.php';
             $generator = new CapesReportGenerator($this->config);
             
             // Testar relatório para cada programa
