@@ -98,9 +98,15 @@ class LattesImporter {
             throw new \Exception("Arquivo XML não encontrado: $xml_file_path");
         }
 
+        // Rejeita DOCTYPE para evitar XXE/"billion laughs" em XML de upload
+        $head = file_get_contents($xml_file_path, false, null, 0, 1024);
+        if ($head !== false && stripos($head, '<!DOCTYPE') !== false) {
+            throw new \Exception("Arquivo XML inválido: declaração DOCTYPE não é permitida.");
+        }
+
         // Usar XMLReader para arquivos grandes (não carrega tudo na memória)
         libxml_use_internal_errors(true);
-        $xml = simplexml_load_file($xml_file_path, 'SimpleXMLElement', LIBXML_PARSEHUGE);
+        $xml = simplexml_load_file($xml_file_path, 'SimpleXMLElement', LIBXML_PARSEHUGE | LIBXML_NONET);
 
         if ($xml === false) {
             $errors = libxml_get_errors();
