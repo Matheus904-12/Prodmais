@@ -1151,7 +1151,35 @@ git push origin v2.0.0
 - GitLens
 - Docker
 
-### 14.3 Checklist de Deployment
+### 14.3 Elasticsearch e Kibana — Operação
+
+**Verificar Elasticsearch:**
+```bash
+curl http://localhost:9200
+curl http://localhost:9200/_cat/indices?v
+```
+
+Índices esperados: `prodmais_umc` (produções), `prodmais_umc_cv` (currículos),
+`prodmais_umc_ppg` (PPGs), `prodmais_umc_projetos` (projetos).
+
+**Buscar dados diretamente no índice:**
+```bash
+curl http://localhost:9200/prodmais_umc/_search?pretty
+```
+
+**Kibana** (opcional, para dashboards — sobe via `docker-compose up -d kibana`,
+perfil `heavy`): acessar `http://localhost:5601`.
+
+Configuração de Index Patterns no Kibana (Stack Management → Index Patterns):
+- `prodmais_umc*` — produções científicas (sem time field)
+- `prodmais_umc_cv*` — currículos/pesquisadores (sem time field)
+- `prodmais_umc_projetos*` — projetos (sem time field)
+
+**Problemas comuns:**
+- `No alive nodes` → Elasticsearch não subiu; verificar `docker-compose ps` e `docker-compose logs elasticsearch`.
+- `Out of memory` → aumentar memória do Docker (mínimo recomendado: 4GB) ou o `ES_JAVA_OPTS` no `docker-compose.yml`.
+
+### 14.4 Checklist de Deployment
 
 **Pré-deployment:**
 - [ ] Testes unitários passando

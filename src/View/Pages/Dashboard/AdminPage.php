@@ -598,8 +598,8 @@ Navbar::display(['active_page' => 'admin', 'mostrar_link_dashboard' => $mostrar_
                             <div class="adm-card-body">
                                 <form action="api/upload_and_index.php" method="post" enctype="multipart/form-data" id="upload-form">
                                     <div class="mb-4">
-                                        <label for="lattes_files" class="adm-form-label">Selecione múltiplos arquivos (.xml ou .pdf)</label>
-                                        <input class="adm-form-select" type="file" id="lattes_files" name="lattes_files[]" multiple required accept=".xml,.pdf" style="padding:.55rem .875rem;">
+                                        <label for="lattes_files" class="adm-form-label">Selecione múltiplos arquivos XML do Lattes</label>
+                                        <input class="adm-form-select" type="file" id="lattes_files" name="lattes_files[]" multiple required accept=".xml" style="padding:.55rem .875rem;">
                                         <small style="color:#94a3b8;font-size:.8rem;display:block;margin-top:.375rem;">Você pode selecionar múltiplos arquivos de uma vez para processamento em lote.</small>
                                     </div>
                                     <button type="submit" class="adm-btn-bulk">

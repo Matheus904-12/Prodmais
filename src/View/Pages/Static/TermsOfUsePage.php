@@ -87,9 +87,14 @@ use App\View\Components\Footer\Footer;
             padding: 2.5rem;
             margin-bottom: 1.75rem;
             scroll-margin-top: 5.5rem;
-            transition: box-shadow .3s ease;
+            height: auto;
+            transform: none;
+            transition: none;
         }
-        .content-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,.1); }
+        .content-card:hover {
+            transform: none;
+            box-shadow: 0 2px 12px rgba(0,0,0,.06);
+        }
         .content-card .section-header {
             display: flex;
             align-items: center;
@@ -239,10 +244,10 @@ use App\View\Components\Footer\Footer;
 
 <section class="page-section page-section-gray">
     <div class="container">
-        <div class="row g-4">
+        <div class="row g-4 align-items-start">
 
             <!-- Sidebar TOC -->
-            <div class="col-lg-3">
+            <div class="col-lg-3" style="align-self:flex-start;">
                 <!-- Mobile accordion -->
                 <details class="d-lg-none mb-3">
                     <summary class="btn btn-outline-secondary w-100 text-start fw-600">

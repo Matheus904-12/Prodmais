@@ -88,10 +88,13 @@ use App\View\Components\Footer\Footer;
             padding: 2.5rem;
             margin-bottom: 1.75rem;
             scroll-margin-top: 5.5rem;
-            transition: box-shadow .3s ease;
+            height: auto;
+            transform: none;
+            transition: none;
         }
         .content-card:hover {
-            box-shadow: 0 6px 24px rgba(0,0,0,.1);
+            transform: none;
+            box-shadow: 0 2px 12px rgba(0,0,0,.06);
         }
         .content-card .section-header {
             display: flex;

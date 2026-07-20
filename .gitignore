@@ -60,10 +60,8 @@ yarn-debug.log*
 yarn-error.log*
 package-lock.json
 
-# Cypress test artifacts (manter alguns exemplos)
-cypress/downloads/
-cypress/videos/
-cypress/screenshots/
+# Cypress (testes E2E, fora da imagem/deploy de produção)
+cypress/
 cypress.env.json
 
 # Ambiente
