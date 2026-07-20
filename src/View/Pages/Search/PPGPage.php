@@ -104,7 +104,7 @@ error_log("PPG.php - Debug Final: " . json_encode($debug_info));
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/prodmais-elegant.css">
+    <link rel="stylesheet" href="/css/prodmais-elegant.css?v=3">
     <link rel="stylesheet" href="/css/umc-theme.css">
     <style>
         .pagination-btn {
@@ -119,6 +119,13 @@ error_log("PPG.php - Debug Final: " . json_encode($debug_info));
         .pagination-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
         .modal-header-ds { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color: #fff; border: none; padding: 1.5rem 2rem; border-radius: var(--radius-xl) var(--radius-xl) 0 0; }
         .modal-content { border-radius: var(--radius-xl); border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.28); overflow: hidden; }
+        .filter-submit-btn {
+            display: block; width: 100%; border: none; border-radius: 10px; padding: .7rem 1rem;
+            background: linear-gradient(135deg,#059669,#0d9488); color: #fff; font-weight: 700; font-size: .85rem;
+            cursor: pointer; transition: filter .2s, transform .2s;
+            box-shadow: 0 4px 12px rgba(5,150,105,.25);
+        }
+        .filter-submit-btn:hover { filter: brightness(1.08); transform: translateY(-1px); color: #fff; }
     </style>
 </head>
 <body>
@@ -129,7 +136,6 @@ Navbar::display([
     'mostrar_link_dashboard' => $mostrar_link_dashboard ?? true,
 ]);
 ?>
-<?php renderNavbarAuthBadge(); ?>
 
 <?php
 HeroSection::display([
@@ -211,7 +217,7 @@ HeroSection::display([
                             </select>
                         </div>
 
-                        <button type="submit" class="btn-primary-ds w-100" style="font-size:0.85rem;padding:0.6rem;">
+                        <button type="submit" class="filter-submit-btn">
                             <i class="fas fa-search me-1" aria-hidden="true"></i>Aplicar Filtros
                         </button>
 

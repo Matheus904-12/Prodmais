@@ -6,14 +6,14 @@
  * Endpoint para filtros personalizados dos Programas de Pós-Graduação da UMC
  */
 
-require_once '../vendor/autoload.php';
+require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 // Include required services
 if (!class_exists('ElasticsearchService')) {
-    require_once '../src/Infrastructure/Elasticsearch/ElasticsearchService.php';
+    require_once dirname(__DIR__, 2) . '/src/Infrastructure/Elasticsearch/ElasticsearchService.php';
 }
 if (!class_exists('UmcProgramService')) {
-    require_once '../src/Domain/Services/UmcProgramService.php';
+    require_once dirname(__DIR__, 2) . '/src/Domain/Services/UmcProgramService.php';
 }
 
 header('Content-Type: application/json');
@@ -27,18 +27,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 try {
     // Carregar configurações
-    $config = require '../config/config.php';
-    $umcConfig = require '../config/umc_config.php';
+    $config = require dirname(__DIR__, 2) . '/config/config.php';
+    $umcConfig = require dirname(__DIR__, 2) . '/config/umc_config.php';
     
     // Inicializar serviços
     $umcService = new UmcProgramService($config);
-    $es = new ElasticsearchService($config);
+    $es = new ElasticsearchService($config['elasticsearch']);
     
     $action = $_GET['action'] ?? 'get_filters';
     
     switch ($action) {
         case 'get_filters':
-            echo json_encode(getCustomFilters($umcConfig, $es));
+            echo json_encode(getCustomFilters($umcConfig, $es, $config));
             break;
             
         case 'get_programs':
@@ -73,14 +73,14 @@ try {
 /**
  * Obter filtros customizados UMC
  */
-function getCustomFilters($umcConfig, $es)
+function getCustomFilters($umcConfig, $es, $config)
 {
     $filters = $umcConfig['custom_filters'];
-    
+
     // Enriquecer filtros com dados dinâmicos
     foreach ($filters as $key => &$filter) {
         if ($filter['type'] === 'select' && !isset($filter['options'])) {
-            $filter['options'] = getFilterValues($es, $umcConfig, $filter['field']);
+            $filter['options'] = getFilterValues($es, $config, $filter['field']);
         }
     }
     

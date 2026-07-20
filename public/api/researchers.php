@@ -11,10 +11,10 @@ if (!class_exists('ElasticsearchService')) {
 
 $config = require dirname(__DIR__, 2) . '/config/config.php';
 
-$query = filter_input(INPUT_GET, 'q', FILTER_SANITIZE_STRING);
-$area = filter_input(INPUT_GET, 'area', FILTER_SANITIZE_STRING);
-$institution = filter_input(INPUT_GET, 'institution', FILTER_SANITIZE_STRING);
-$city = filter_input(INPUT_GET, 'city', FILTER_SANITIZE_STRING);
+$query = trim(strip_tags((string) filter_input(INPUT_GET, 'q')));
+$area = trim(strip_tags((string) filter_input(INPUT_GET, 'area')));
+$institution = trim(strip_tags((string) filter_input(INPUT_GET, 'institution')));
+$city = trim(strip_tags((string) filter_input(INPUT_GET, 'city')));
 $size = filter_input(INPUT_GET, 'size', FILTER_VALIDATE_INT) ?: 20;
 
 try {

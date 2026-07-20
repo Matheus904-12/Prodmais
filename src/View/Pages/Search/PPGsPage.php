@@ -50,7 +50,7 @@ $total_producoes_geral = array_sum($ppg_stats);
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/prodmais-elegant.css">
+    <link rel="stylesheet" href="/css/prodmais-elegant.css?v=3">
     <link rel="stylesheet" href="/css/umc-theme.css">
 </head>
 <body>
@@ -61,7 +61,6 @@ Navbar::display([
     'mostrar_link_dashboard' => $mostrar_link_dashboard ?? true,
 ]);
 ?>
-<?php renderNavbarAuthBadge(); ?>
 
 <?php
 $ppg_palette = [
@@ -364,7 +363,7 @@ $ppg_palette = [
                             </span>
                             <span class="ppg-card-v2-count-lbl">produções</span>
                         </div>
-                        <a href="/ppg.php?codigo=<?= urlencode($codigo) ?>"
+                        <a href="/ppg.php?ppg=<?= urlencode($nome) ?>"
                            class="ppg-card-v2-cta"
                            style="background:linear-gradient(135deg,<?= $c['from'] ?>,<?= $c['to'] ?>);">
                             Ver programa <i class="fas fa-arrow-right" aria-hidden="true"></i>

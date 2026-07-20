@@ -80,59 +80,51 @@ $ppgs = getAllPPGs();
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="/css/umc-theme.css" rel="stylesheet">
-    <link href="/css/prodmais-elegant.css" rel="stylesheet">
+    <link href="/css/prodmais-elegant.css?v=3" rel="stylesheet">
 
     <style>
         body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
 
         .upload-zone {
-            border: 3px dashed var(--gray-300);
-            border-radius: 16px;
-            padding: 3rem;
+            border: 2px dashed rgba(99,102,241,.35);
+            border-radius: 18px;
+            padding: 3rem 2rem;
             text-align: center;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
-            background: white;
+            background: rgba(99,102,241,.03);
             position: relative;
             overflow: hidden;
         }
-        .upload-zone::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(135deg, rgba(26,86,219,0.05), rgba(30,66,159,0.05));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
         .upload-zone:hover {
-            border-color: var(--primary);
-            transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(26,86,219,0.2);
+            border-color: #6366f1;
+            background: rgba(99,102,241,.07);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(99,102,241,.15);
         }
-        .upload-zone:hover::before { opacity: 1; }
         .upload-zone.dragover {
-            border-color: var(--primary-dark);
-            background: rgba(30,66,159,0.05);
-            transform: scale(1.02);
-            box-shadow: 0 16px 40px rgba(26,86,219,0.25);
+            border-color: #4f46e5;
+            background: rgba(99,102,241,.1);
+            transform: scale(1.01);
         }
-        .upload-zone i { color: var(--primary); font-size: 4rem; margin-bottom: 1.5rem; }
-        .upload-zone h5 { font-weight: 700; color: var(--gray-900); margin-bottom: 0.75rem; }
-        .upload-zone p  { color: var(--gray-600); font-size: 0.938rem; }
+        .upload-zone i { color: #6366f1; font-size: 3.5rem; margin-bottom: 1.25rem; }
+        .upload-zone h5 { font-weight: 700; color: #1e293b; margin-bottom: 0.75rem; }
+        .upload-zone p  { color: #64748b; font-size: 0.938rem; }
 
         .result-card {
             background: white;
-            border-radius: 10px;
+            border-radius: 20px;
             padding: 30px;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 14px rgba(0,0,0,.07);
+            border: 1px solid rgba(0,0,0,.07);
             margin-bottom: 20px;
         }
         .result-header {
-            border-bottom: 3px solid var(--primary);
+            border-bottom: 3px solid #6366f1;
             padding-bottom: 15px;
             margin-bottom: 25px;
         }
-        .result-header h4 { color: var(--primary-dark); font-weight: 700; margin: 0; }
+        .result-header h4 { color: #312e81; font-weight: 700; margin: 0; }
         .result-stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -140,83 +132,76 @@ $ppgs = getAllPPGs();
             margin-top: 20px;
         }
         .stat-item {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            background: linear-gradient(135deg,#ede9fe,#ddd6fe);
             padding: 20px;
-            border-radius: 8px;
-            border-left: 4px solid var(--primary-light);
-            transition: all 0.3s;
+            border-radius: 14px;
+            border-left: 4px solid #6366f1;
+            transition: transform .2s ease;
         }
-        .stat-item:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(26,86,219,0.15); }
-        .stat-item .stat-icon { font-size: 2rem; color: var(--primary); margin-bottom: 10px; }
-        .stat-item .stat-number { font-size: 2rem; font-weight: 700; color: var(--primary-dark); margin: 0; }
-        .stat-item .stat-label  { color: #666; font-size: 0.9rem; margin: 0; }
+        .stat-item:hover { transform: translateY(-3px); }
+        .stat-item .stat-icon { font-size: 2rem; color: #4f46e5; margin-bottom: 10px; }
+        .stat-item .stat-number { font-size: 2rem; font-weight: 800; color: #312e81; margin: 0; }
+        .stat-item .stat-label  { color: #4338ca; font-size: 0.9rem; margin: 0; }
 
         .page-header {
-            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+            background: #070d1f;
+            background-image:
+                radial-gradient(ellipse 60% 70% at 15% 65%, rgba(99,102,241,.13), transparent),
+                radial-gradient(ellipse 40% 40% at 88% 12%, rgba(139,92,246,.10), transparent),
+                radial-gradient(ellipse 30% 30% at 55% 88%, rgba(79,70,229,.08), transparent);
             color: white;
-            padding: 4rem 0 3rem;
+            padding: 5.5rem 0 3.5rem;
             position: relative;
             overflow: hidden;
         }
         .page-header::before {
             content: '';
-            position: absolute;
-            top: 20%; left: 10%;
-            width: 300px; height: 300px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50%;
-            filter: blur(80px);
+            position: absolute; inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
+            background-size: 28px 28px;
+            pointer-events: none;
         }
-        .page-header::after {
-            content: '';
-            position: absolute;
-            bottom: 20%; right: 10%;
-            width: 400px; height: 400px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50%;
-            filter: blur(100px);
-        }
-        .page-header h1 { font-weight: 900; margin-bottom: 1rem; font-size: 3.5rem; letter-spacing: -0.02em; line-height: 1.2; }
-        .page-header .lead { font-size: 1.25rem; opacity: 0.95; font-weight: 400; }
+        .page-header h1 { font-weight: 900; margin-bottom: 1rem; font-size: clamp(2.2rem, 5vw, 3.25rem); letter-spacing: -0.02em; line-height: 1.15; position: relative; z-index: 1; }
+        .page-header .lead { font-size: 1.05rem; opacity: .7; font-weight: 400; position: relative; z-index: 1; }
 
         .card-umc-custom {
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-            border: 1px solid var(--gray-200);
+            border-radius: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.06);
+            border: 1px solid rgba(0,0,0,.07);
             overflow: hidden;
         }
         .card-header-umc {
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            background: linear-gradient(135deg,#1e1b4b,#312e81);
             color: white;
-            padding: 1.75rem 2rem;
+            padding: 1.25rem 1.75rem;
             border: none;
         }
-        .card-header-umc h4 { margin: 0; font-weight: 800; font-size: 1.25rem; }
+        .card-header-umc h4 { margin: 0; font-weight: 700; font-size: 1rem; }
         .card-umc {
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-            border: 1px solid var(--gray-200);
+            border-radius: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.06);
+            border: 1px solid rgba(0,0,0,.07);
         }
         .btn-umc-primary {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            background: linear-gradient(135deg,#4f46e5,#6366f1);
             color: white;
             border: none;
             padding: 0.75rem 2rem;
             border-radius: 12px;
             font-weight: 700;
             transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
-            box-shadow: 0 4px 12px rgba(26,86,219,0.3);
+            box-shadow: 0 4px 14px rgba(79,70,229,.3);
             text-decoration: none;
             display: inline-flex;
             align-items: center;
         }
-        .btn-umc-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(26,86,219,0.4); color: white; }
+        .btn-umc-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(79,70,229,.4); color: white; }
         .btn-umc-outline {
             background: white;
-            color: var(--primary);
-            border: 2px solid var(--primary);
+            color: #4f46e5;
+            border: 2px solid #4f46e5;
             padding: 0.75rem 2rem;
             border-radius: 12px;
             font-weight: 700;
@@ -225,7 +210,7 @@ $ppgs = getAllPPGs();
             display: inline-flex;
             align-items: center;
         }
-        .btn-umc-outline:hover { background: var(--primary); color: white; transform: translateY(-2px); }
+        .btn-umc-outline:hover { background: #4f46e5; color: white; transform: translateY(-2px); }
     </style>
 </head>
 
@@ -270,11 +255,11 @@ $ppgs = getAllPPGs();
                         <?php if (isset($result['pesquisador_nome'])): ?>
                             <div class="mb-4">
                                 <div class="d-flex align-items-center">
-                                    <div class="me-3" style="font-size: 3rem; color: var(--umc-azul-claro);">
+                                    <div class="me-3" style="font-size: 3rem; color: #6366f1;">
                                         <i class="fas fa-user-graduate"></i>
                                     </div>
                                     <div>
-                                        <h5 class="mb-1" style="color: var(--umc-azul-escuro); font-weight: 600;">
+                                        <h5 class="mb-1" style="color: #312e81; font-weight: 600;">
                                             <?= htmlspecialchars($result['pesquisador_nome']) ?>
                                         </h5>
                                         <p class="text-muted mb-0">Currículo Lattes indexado no sistema</p>
@@ -366,12 +351,12 @@ $ppgs = getAllPPGs();
                     <div class="card-body p-4">
 
                         <div class="mb-4">
-                            <div class="alert" style="background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-left: 4px solid var(--umc-azul-claro); border-radius: 8px;">
-                                <h6 style="color: var(--umc-azul-escuro); font-weight: 600;">
+                            <div class="alert" style="background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-left: 4px solid #6366f1; border-radius: 8px;">
+                                <h6 style="color: #312e81; font-weight: 600;">
                                     <i class="fas fa-info-circle me-2"></i>Como exportar seu currículo Lattes
                                 </h6>
                                 <ol style="margin-bottom: 0; padding-left: 20px;">
-                                    <li>Acesse a <a href="http://lattes.cnpq.br/" target="_blank" style="color: var(--umc-azul-royal); font-weight: 500;">Plataforma Lattes <i class="fas fa-external-link-alt fa-xs"></i></a></li>
+                                    <li>Acesse a <a href="http://lattes.cnpq.br/" target="_blank" style="color: #4f46e5; font-weight: 500;">Plataforma Lattes <i class="fas fa-external-link-alt fa-xs"></i></a></li>
                                     <li>Faça login e acesse seu currículo completo</li>
                                     <li>No menu, clique em <strong>"Exportar currículo"</strong> ou <strong>"Baixar XML"</strong></li>
                                     <li>Salve o arquivo XML no seu computador</li>
@@ -448,15 +433,15 @@ $ppgs = getAllPPGs();
                 <!-- Card de ajuda -->
                 <div class="card-umc mt-4">
                     <div class="card-body">
-                        <h5 style="color: var(--umc-azul-escuro); font-weight: 600; margin-bottom: 20px;">
+                        <h5 style="color: #312e81; font-weight: 600; margin-bottom: 20px;">
                             <i class="fas fa-question-circle me-2"></i>Dúvidas Frequentes
                         </h5>
                         <div class="accordion accordion-flush" id="faqAccordion">
                             <div class="accordion-item" style="border: none; border-bottom: 1px solid #e0e0e0;">
                                 <h2 class="accordion-header">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1"
-                                        style="color: var(--umc-azul-escuro); font-weight: 500;">
-                                        <i class="fas fa-file-export me-2" style="color: var(--umc-azul-claro);"></i>
+                                        style="color: #312e81; font-weight: 500;">
+                                        <i class="fas fa-file-export me-2" style="color: #6366f1;"></i>
                                         Como exportar meu currículo da Plataforma Lattes?
                                     </button>
                                 </h2>
@@ -469,8 +454,8 @@ $ppgs = getAllPPGs();
                             <div class="accordion-item" style="border: none; border-bottom: 1px solid #e0e0e0;">
                                 <h2 class="accordion-header">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2"
-                                        style="color: var(--umc-azul-escuro); font-weight: 500;">
-                                        <i class="fas fa-database me-2" style="color: var(--umc-azul-claro);"></i>
+                                        style="color: #312e81; font-weight: 500;">
+                                        <i class="fas fa-database me-2" style="color: #6366f1;"></i>
                                         Meu currículo é muito grande, vai funcionar?
                                     </button>
                                 </h2>
@@ -483,8 +468,8 @@ $ppgs = getAllPPGs();
                             <div class="accordion-item" style="border: none; border-bottom: 1px solid #e0e0e0;">
                                 <h2 class="accordion-header">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3"
-                                        style="color: var(--umc-azul-escuro); font-weight: 500;">
-                                        <i class="fas fa-cogs me-2" style="color: var(--umc-azul-claro);"></i>
+                                        style="color: #312e81; font-weight: 500;">
+                                        <i class="fas fa-cogs me-2" style="color: #6366f1;"></i>
                                         O que acontece após a importação?
                                     </button>
                                 </h2>
@@ -497,8 +482,8 @@ $ppgs = getAllPPGs();
                             <div class="accordion-item" style="border: none;">
                                 <h2 class="accordion-header">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4"
-                                        style="color: var(--umc-azul-escuro); font-weight: 500;">
-                                        <i class="fas fa-sync-alt me-2" style="color: var(--umc-azul-claro);"></i>
+                                        style="color: #312e81; font-weight: 500;">
+                                        <i class="fas fa-sync-alt me-2" style="color: #6366f1;"></i>
                                         Posso atualizar um currículo já importado?
                                     </button>
                                 </h2>

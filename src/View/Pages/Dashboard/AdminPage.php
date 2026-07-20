@@ -213,7 +213,7 @@ $ppgs = getAllPPGs();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link href="/css/umc-theme.css" rel="stylesheet">
-    <link href="/css/prodmais-elegant.css" rel="stylesheet">
+    <link href="/css/prodmais-elegant.css?v=3" rel="stylesheet">
     
     <style>
         body {
@@ -413,7 +413,6 @@ $ppgs = getAllPPGs();
 <?php
 Navbar::display(['active_page' => 'admin', 'mostrar_link_dashboard' => $mostrar_link_dashboard ?? true]);
 ?>
-<?php renderNavbarAuthBadge(); ?>
 
 <!-- ══ Hero Admin ══ -->
 <section class="adm-hero">

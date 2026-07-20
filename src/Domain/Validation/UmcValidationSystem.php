@@ -24,7 +24,7 @@ class UmcValidationSystem
             require_once __DIR__ . '/../../Infrastructure/Elasticsearch/ElasticsearchService.php';
         }
         
-        $this->elasticsearch = new ElasticsearchService($config);
+        $this->elasticsearch = new ElasticsearchService($config['elasticsearch']);
         $this->testResults = [];
     }
     
@@ -474,7 +474,7 @@ class UmcValidationSystem
     private function saveValidationReport($report)
     {
         $filename = 'validation_report_' . date('Y-m-d_H-i-s') . '.json';
-        $filepath = $this->config['data_paths']['logs'] ?? __DIR__ . '/../data/logs';
+        $filepath = $this->config['data_paths']['logs'] ?? __DIR__ . '/../../../data/logs';
         
         if (!is_dir(dirname($filepath))) {
             mkdir(dirname($filepath), 0755, true);

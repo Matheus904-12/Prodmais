@@ -253,7 +253,7 @@ class BrCrisIntegration
     public function getSyncStats()
     {
         // Buscar logs de sincronização
-        $logFile = $this->config['data_paths']['logs'] ?? __DIR__ . '/../data/logs.sqlite';
+        $logFile = $this->config['data_paths']['logs'] ?? __DIR__ . '/../../data/logs.sqlite';
         
         try {
             $pdo = new PDO("sqlite:$logFile");
@@ -329,7 +329,7 @@ class BrCrisIntegration
      */
     private function logSyncActivity($results)
     {
-        $logFile = $this->config['data_paths']['logs'] ?? __DIR__ . '/../data/logs.sqlite';
+        $logFile = $this->config['data_paths']['logs'] ?? __DIR__ . '/../../data/logs.sqlite';
         
         try {
             $pdo = new PDO("sqlite:$logFile");

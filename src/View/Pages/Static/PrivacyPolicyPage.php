@@ -23,7 +23,7 @@ use App\View\Components\Footer\Footer;
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/prodmais-elegant.css">
+    <link rel="stylesheet" href="/css/prodmais-elegant.css?v=3">
     <link rel="stylesheet" href="/css/umc-theme.css">
     <style>
         body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
@@ -174,7 +174,6 @@ use App\View\Components\Footer\Footer;
 <body>
 
 <?php Navbar::display(['active_page' => '']); ?>
-<?php renderNavbarAuthBadge(); ?>
 
 <?php HeroSection::display([
     'title'    => 'Política de Privacidade',

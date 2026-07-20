@@ -6,17 +6,17 @@
  * Endpoint para dashboards específicos dos coordenadores de PPG
  */
 
-require_once '../vendor/autoload.php';
+require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 // Include required services
 if (!class_exists('ElasticsearchService')) {
-    require_once '../src/Infrastructure/Elasticsearch/ElasticsearchService.php';
+    require_once dirname(__DIR__, 2) . '/src/Infrastructure/Elasticsearch/ElasticsearchService.php';
 }
 if (!class_exists('UmcProgramService')) {
-    require_once '../src/Domain/Services/UmcProgramService.php';
+    require_once dirname(__DIR__, 2) . '/src/Domain/Services/UmcProgramService.php';
 }
 if (!class_exists('CapesReportGenerator')) {
-    require_once '../src/Domain/Reports/CapesReportGenerator.php';
+    require_once dirname(__DIR__, 2) . '/src/Domain/Reports/CapesReportGenerator.php';
 }
 
 header('Content-Type: application/json');
@@ -30,13 +30,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 try {
     // Carregar configurações
-    $config = require '../config/config.php';
-    $umcConfig = require '../config/umc_config.php';
+    $config = require dirname(__DIR__, 2) . '/config/config.php';
+    $umcConfig = require dirname(__DIR__, 2) . '/config/umc_config.php';
     
     // Inicializar serviços
     $umcService = new UmcProgramService($config);
     $capesGenerator = new CapesReportGenerator($config);
-    $es = new ElasticsearchService($config);
+    $es = new ElasticsearchService($config['elasticsearch']);
     
     $action = $_GET['action'] ?? 'dashboard';
     $program = $_GET['program'] ?? '';

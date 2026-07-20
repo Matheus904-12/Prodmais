@@ -12,17 +12,17 @@ if (!class_exists('ElasticsearchService')) {
 $config = require dirname(__DIR__, 2) . '/config/config.php';
 
 // Sanitiza os inputs expandidos
-$program = filter_input(INPUT_GET, 'program', FILTER_SANITIZE_STRING);
-$type = filter_input(INPUT_GET, 'type', FILTER_SANITIZE_STRING);
-$subtype = filter_input(INPUT_GET, 'subtype', FILTER_SANITIZE_STRING);
+$program = trim(strip_tags((string) filter_input(INPUT_GET, 'program')));
+$type = trim(strip_tags((string) filter_input(INPUT_GET, 'type')));
+$subtype = trim(strip_tags((string) filter_input(INPUT_GET, 'subtype')));
 $year = filter_input(INPUT_GET, 'year', FILTER_VALIDATE_INT);
 $year_from = filter_input(INPUT_GET, 'year_from', FILTER_VALIDATE_INT);
 $year_to = filter_input(INPUT_GET, 'year_to', FILTER_VALIDATE_INT);
-$query = filter_input(INPUT_GET, 'q', FILTER_SANITIZE_STRING);
-$institution = filter_input(INPUT_GET, 'institution', FILTER_SANITIZE_STRING);
-$language = filter_input(INPUT_GET, 'language', FILTER_SANITIZE_STRING);
-$area = filter_input(INPUT_GET, 'area', FILTER_SANITIZE_STRING);
-$author = filter_input(INPUT_GET, 'author', FILTER_SANITIZE_STRING);
+$query = trim(strip_tags((string) filter_input(INPUT_GET, 'q')));
+$institution = trim(strip_tags((string) filter_input(INPUT_GET, 'institution')));
+$language = trim(strip_tags((string) filter_input(INPUT_GET, 'language')));
+$area = trim(strip_tags((string) filter_input(INPUT_GET, 'area')));
+$author = trim(strip_tags((string) filter_input(INPUT_GET, 'author')));
 $page = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT) ?: 1;
 $size = filter_input(INPUT_GET, 'size', FILTER_VALIDATE_INT) ?: 50;
 

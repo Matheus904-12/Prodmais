@@ -11,7 +11,7 @@ if (!class_exists('ElasticsearchService')) {
 
 $config = require dirname(__DIR__, 2) . '/config/config.php';
 
-$field = filter_input(INPUT_GET, 'field', FILTER_SANITIZE_STRING);
+$field = trim(strip_tags((string) filter_input(INPUT_GET, 'field')));
 $size = filter_input(INPUT_GET, 'size', FILTER_VALIDATE_INT) ?: 100;
 
 if (!$field) {

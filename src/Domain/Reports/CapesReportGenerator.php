@@ -27,7 +27,7 @@ class CapesReportGenerator
             require_once __DIR__ . '/../Services/UmcProgramService.php';
         }
         
-        $this->elasticsearch = new ElasticsearchService($config);
+        $this->elasticsearch = new ElasticsearchService($config['elasticsearch']);
         $this->umcService = new UmcProgramService($config);
     }
     

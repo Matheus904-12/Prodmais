@@ -15,14 +15,14 @@ class UmcProgramService
     public function __construct($config)
     {
         $this->config = $config;
-        $this->umcConfig = require __DIR__ . '/../config/umc_config.php';
-        
+        $this->umcConfig = require __DIR__ . '/../../../config/umc_config.php';
+
         // Include ElasticsearchService if not already loaded
         if (!class_exists('ElasticsearchService')) {
-            require_once __DIR__ . '/ElasticsearchService.php';
+            require_once __DIR__ . '/../../Infrastructure/Elasticsearch/ElasticsearchService.php';
         }
         
-        $this->elasticsearch = new ElasticsearchService($config);
+        $this->elasticsearch = new ElasticsearchService($config['elasticsearch']);
     }
     
     /**

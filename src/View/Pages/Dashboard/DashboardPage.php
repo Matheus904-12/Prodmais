@@ -206,7 +206,7 @@ if (!empty($producoes_por_qualis)) {
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     
     <!-- CSS Elegante Profissional -->
-    <link rel="stylesheet" href="/css/prodmais-elegant.css">
+    <link rel="stylesheet" href="/css/prodmais-elegant.css?v=3">
     <link rel="stylesheet" href="/css/umc-theme.css">
 
     <?php HookManager::doAction('app_head'); ?>
@@ -219,7 +219,6 @@ Navbar::display([
     'mostrar_link_dashboard' => true
 ]);
 ?>
-<?php renderNavbarAuthBadge(); ?>
 
 <?php HookManager::doAction('dashboard_header'); ?>
 
