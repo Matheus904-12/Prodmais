@@ -33,7 +33,6 @@ use App\View\Components\Footer\Footer;
             background: white;
             border-radius: 16px;
             border: 1px solid var(--gray-200);
-            border-left: 3px solid var(--blue-600, #1a56db);
             box-shadow: 0 2px 12px rgba(0,0,0,.06);
             padding: 1.5rem;
             position: sticky;
@@ -141,7 +140,7 @@ use App\View\Components\Footer\Footer;
         /* ── Highlight Box ── */
         .highlight-box {
             background: linear-gradient(135deg, rgba(26,86,219,.04), rgba(59,130,246,.06));
-            border-left: 4px solid var(--blue-600, #1a56db);
+            border: 1px solid rgba(26,86,219,.14);
             border-radius: 12px;
             padding: 1.25rem 1.5rem;
             margin: 1.5rem 0 .5rem;

@@ -162,7 +162,7 @@ $ppgs = getAllPPGs();
     .adm-card-header h5 { margin: 0; color: white; font-weight: 700; font-size: 1rem; }
     .adm-card-body { padding: 1.75rem; }
     /* ── Info box ── */
-    .adm-info-box { background: rgba(79,70,229,.06); border-left: 4px solid #6366f1; border-radius: 0 12px 12px 0; padding: 1.25rem 1.5rem; margin-bottom: 1.75rem; }
+    .adm-info-box { background: rgba(79,70,229,.06); border: 1px solid rgba(79,70,229,.16); border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1.75rem; }
     .adm-info-box h6 { color: #312e81; font-weight: 700; margin-bottom: .75rem; }
     .adm-info-box ol { margin: 0; padding-left: 1.25rem; color: #1e1b4b; }
     /* ── Upload zone ── */
@@ -173,7 +173,7 @@ $ppgs = getAllPPGs();
     .adm-upload-zone h5 { font-weight: 700; color: #1e293b; margin-bottom: .5rem; }
     .adm-upload-zone p { color: #64748b; font-size: .9rem; margin: 0; }
     /* ── Stat items (import result) ── */
-    .adm-stat-item { background: linear-gradient(135deg,#ede9fe,#ddd6fe); padding: 1.5rem; border-radius: 14px; border-left: 4px solid #6366f1; transition: transform .2s ease; }
+    .adm-stat-item { background: linear-gradient(135deg,#ede9fe,#ddd6fe); padding: 1.5rem; border-radius: 14px; transition: transform .2s ease; }
     .adm-stat-item:hover { transform: translateY(-3px); }
     .adm-stat-item .stat-number { font-size: 2rem; font-weight: 800; color: #312e81; margin: 0; }
     .adm-stat-item .stat-label { color: #4338ca; font-size: .875rem; margin: 0; }
@@ -385,7 +385,6 @@ $ppgs = getAllPPGs();
             background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
             padding: 1.5rem;
             border-radius: 12px;
-            border-left: 4px solid #f59e0b;
             transition: all 0.3s;
         }
 

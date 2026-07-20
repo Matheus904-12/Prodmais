@@ -32,7 +32,6 @@ use App\View\Components\Footer\Footer;
             background: white;
             border-radius: 16px;
             border: 1px solid var(--gray-200, #e2e8f0);
-            border-left: 3px solid #10b981;
             box-shadow: 0 2px 12px rgba(0,0,0,.06);
             padding: 1.5rem;
             position: sticky;
@@ -134,7 +133,7 @@ use App\View\Components\Footer\Footer;
         /* ── Highlight Box ── */
         .highlight-box {
             background: linear-gradient(135deg, rgba(16,185,129,.04), rgba(5,150,105,.06));
-            border-left: 4px solid #10b981;
+            border: 1px solid rgba(16,185,129,.16);
             border-radius: 12px;
             padding: 1.25rem 1.5rem;
             margin: 1.5rem 0 .5rem;
@@ -146,7 +145,7 @@ use App\View\Components\Footer\Footer;
         /* ── Warning Box ── */
         .warning-box {
             background: linear-gradient(135deg, rgba(245,158,11,.04), rgba(239,68,68,.04));
-            border-left: 4px solid #f59e0b;
+            border: 1px solid rgba(245,158,11,.2);
             border-radius: 12px;
             padding: 1.25rem 1.5rem;
             margin: 1.25rem 0 .5rem;
@@ -240,10 +239,10 @@ use App\View\Components\Footer\Footer;
 
 <section class="page-section page-section-gray">
     <div class="container">
-        <div class="row g-4 align-items-start">
+        <div class="row g-4">
 
             <!-- Sidebar TOC -->
-            <div class="col-lg-3" style="align-self:flex-start;">
+            <div class="col-lg-3">
                 <!-- Mobile accordion -->
                 <details class="d-lg-none mb-3">
                     <summary class="btn btn-outline-secondary w-100 text-start fw-600">

@@ -135,7 +135,6 @@ $ppgs = getAllPPGs();
             background: linear-gradient(135deg,#ede9fe,#ddd6fe);
             padding: 20px;
             border-radius: 14px;
-            border-left: 4px solid #6366f1;
             transition: transform .2s ease;
         }
         .stat-item:hover { transform: translateY(-3px); }
@@ -351,7 +350,7 @@ $ppgs = getAllPPGs();
                     <div class="card-body p-4">
 
                         <div class="mb-4">
-                            <div class="alert" style="background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-left: 4px solid #6366f1; border-radius: 8px;">
+                            <div class="alert" style="background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border: 1px solid rgba(99,102,241,.2); border-radius: 8px;">
                                 <h6 style="color: #312e81; font-weight: 600;">
                                     <i class="fas fa-info-circle me-2"></i>Como exportar seu currículo Lattes
                                 </h6>
@@ -364,7 +363,7 @@ $ppgs = getAllPPGs();
                                 </ol>
                             </div>
 
-                            <div class="alert alert-warning" style="border-left: 4px solid #ffc107;">
+                            <div class="alert alert-warning">
                                 <i class="fas fa-hourglass-half me-2"></i>
                                 <strong>Currículos extensos:</strong> O sistema processa currículos com milhares de publicações (até 50MB). O processamento pode levar alguns minutos, aguarde a conclusão.
                             </div>
