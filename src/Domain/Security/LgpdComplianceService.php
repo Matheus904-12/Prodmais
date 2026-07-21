@@ -16,11 +16,11 @@ class LgpdComplianceService
     public function __construct($config)
     {
         $this->config = $config;
-        $this->umcConfig = require __DIR__ . '/../config/umc_config.php';
-        
+        $this->umcConfig = require __DIR__ . '/../../../config/umc_config.php';
+
         // Include LogService if not already loaded
         if (!class_exists('LogService')) {
-            require_once __DIR__ . '/LogService.php';
+            require_once __DIR__ . '/../Services/LogService.php';
         }
         
         $this->logService = new LogService($config);

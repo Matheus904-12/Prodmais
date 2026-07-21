@@ -23,7 +23,7 @@ use App\View\Components\Footer\Footer;
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/prodmais-elegant.css">
+    <link rel="stylesheet" href="/css/prodmais-elegant.css?v=4">
     <link rel="stylesheet" href="/css/umc-theme.css">
     <style>
         body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
@@ -33,7 +33,6 @@ use App\View\Components\Footer\Footer;
             background: white;
             border-radius: 16px;
             border: 1px solid var(--gray-200);
-            border-left: 3px solid var(--blue-600, #1a56db);
             box-shadow: 0 2px 12px rgba(0,0,0,.06);
             padding: 1.5rem;
             position: sticky;
@@ -89,10 +88,13 @@ use App\View\Components\Footer\Footer;
             padding: 2.5rem;
             margin-bottom: 1.75rem;
             scroll-margin-top: 5.5rem;
-            transition: box-shadow .3s ease;
+            height: auto;
+            transform: none;
+            transition: none;
         }
         .content-card:hover {
-            box-shadow: 0 6px 24px rgba(0,0,0,.1);
+            transform: none;
+            box-shadow: 0 2px 12px rgba(0,0,0,.06);
         }
         .content-card .section-header {
             display: flex;
@@ -141,7 +143,7 @@ use App\View\Components\Footer\Footer;
         /* ── Highlight Box ── */
         .highlight-box {
             background: linear-gradient(135deg, rgba(26,86,219,.04), rgba(59,130,246,.06));
-            border-left: 4px solid var(--blue-600, #1a56db);
+            border: 1px solid rgba(26,86,219,.14);
             border-radius: 12px;
             padding: 1.25rem 1.5rem;
             margin: 1.5rem 0 .5rem;
@@ -174,7 +176,6 @@ use App\View\Components\Footer\Footer;
 <body>
 
 <?php Navbar::display(['active_page' => '']); ?>
-<?php renderNavbarAuthBadge(); ?>
 
 <?php HeroSection::display([
     'title'    => 'Política de Privacidade',

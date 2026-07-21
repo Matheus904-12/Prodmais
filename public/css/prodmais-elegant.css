@@ -426,6 +426,92 @@ body {
     flex-shrink: 0;
 }
 
+/* menu do usuário logado */
+.nav-user-toggle,
+.nav-user-toggle:link,
+.nav-user-toggle:visited {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem 0.75rem 0.3rem 0.3rem;
+    border-radius: 100px;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    text-decoration: none;
+    color: #111827;
+    margin-left: 0.5rem;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.nav-user-toggle:hover,
+.nav-user-toggle:focus {
+    background: var(--gray-100);
+    border-color: var(--primary);
+    color: #111827;
+    text-decoration: none;
+}
+
+.nav-user-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #111827;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
+}
+
+.nav-user-greeting {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    white-space: nowrap;
+    color: #111827;
+}
+
+.nav-user-caret {
+    font-size: 0.6875rem;
+    color: var(--gray-400);
+    transition: transform 0.2s ease;
+}
+
+.nav-user-toggle[aria-expanded="true"] .nav-user-caret {
+    transform: rotate(180deg);
+}
+
+.nav-user-menu {
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md, 0 8px 24px rgba(0,0,0,.12));
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    min-width: 220px;
+    inset-inline-end: 0 !important;
+    inset-inline-start: auto !important;
+    right: 0 !important;
+    left: auto !important;
+    transform: none !important;
+}
+
+.nav-user-menu .dropdown-item {
+    border-radius: 8px;
+    padding: 0.55rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.nav-user-menu .dropdown-item:hover {
+    background: var(--gray-50);
+}
+
+.nav-user-menu .dropdown-item.text-danger:hover {
+    background: #fef2f2;
+}
+
 /* toggler para fundo branco — só aparece no mobile */
 @media (min-width: 992px) {
     .navbar-elegant .navbar-toggler { display: none !important; }
@@ -795,15 +881,13 @@ img[loading="lazy"].loaded {
     z-index: 0;
 }
 
-.blob {
+.hero-dot-grid {
     position: absolute;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.07);
-    filter: blur(48px);
+    inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+    pointer-events: none;
 }
-
-.blob-1 { width: 420px; height: 420px; top: -160px; left: -80px; }
-.blob-2 { width: 300px; height: 300px; bottom: -80px; right: -40px; }
 
 .hero-content { position: relative; z-index: 1; }
 

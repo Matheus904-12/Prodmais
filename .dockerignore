@@ -12,3 +12,13 @@ docker-compose*.yml
 README.md
 ARCHITECTURE.md
 LICENSE
+
+# Testes e artefatos de dev (não vão para produção)
+cypress/
+cypress.config.js
+.specify/
+.agents/
+docs/superpowers/
+.env
+.env.production
+.env.production.example

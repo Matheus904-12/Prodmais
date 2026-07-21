@@ -6,12 +6,12 @@ require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 // Include required services
 if (!class_exists('ElasticsearchService')) {
-    require_once dirname(__DIR__, 2) . '/src/ElasticsearchService.php';
+    require_once dirname(__DIR__, 2) . '/src/Infrastructure/Elasticsearch/ElasticsearchService.php';
 }
 
 $config = require dirname(__DIR__, 2) . '/config/config.php';
 
-$field = filter_input(INPUT_GET, 'field', FILTER_SANITIZE_STRING);
+$field = trim(strip_tags((string) filter_input(INPUT_GET, 'field')));
 $size = filter_input(INPUT_GET, 'size', FILTER_VALIDATE_INT) ?: 100;
 
 if (!$field) {

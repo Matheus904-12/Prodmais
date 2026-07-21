@@ -1,5 +1,10 @@
 # 🚂 DEPLOY NO RAILWAY.APP - Guia Completo
 
+> **Atenção:** a rota recomendada atualmente é OCI Always Free com Docker
+> Compose (`deploy-oci.sh`), sem limite de uso. Este guia fica como alternativa
+> caso prefira uma plataforma gerenciada — o passo de banco de dados abaixo
+> já foi corrigido e é obrigatório antes do deploy funcionar de verdade.
+
 ## ✨ Por que Railway?
 
 - ✅ **$5 grátis todo mês** (sem cartão de crédito)
@@ -55,11 +60,34 @@ Start Command: bash start.sh
 
 ---
 
-### **4️⃣ Adicionar Variáveis de Ambiente (1 minuto)**
+### **4️⃣ Provisionar o banco de dados MySQL (2 minutos)**
 
-**Acesse:** Project → Variables
+Sem isso, o app sobe mas não salva nem lê nenhum dado. No mesmo projeto Railway:
 
-Clique em **"+ New Variable"** e adicione:
+1. Clique em **"+ New"** → **"Database"** → **"Add MySQL"**
+2. Railway cria o serviço e gera variáveis próprias (`MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD`, `MYSQLDATABASE`)
+3. No serviço **web** (não no MySQL), vá em **Variables** e adicione, referenciando os valores do serviço MySQL:
+   ```env
+   MYSQL_HOST=${{MySQL.MYSQLHOST}}
+   MYSQL_DB=${{MySQL.MYSQLDATABASE}}
+   MYSQL_USER=${{MySQL.MYSQLUSER}}
+   MYSQL_PASS=${{MySQL.MYSQLPASSWORD}}
+   ```
+4. Rode o schema uma única vez (aba **Deployments** → shell do serviço, ou `railway run`):
+   ```bash
+   railway run php bin/install.php
+   railway run php bin/criar_admin.php
+   ```
+   (`criar_admin.php` pede `ADMIN_USERNAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_NOME` via variável de ambiente — defina-as antes de rodar, ou exporte na linha de comando.)
+
+**Elasticsearch (opcional):** Railway não tem addon nativo de Elasticsearch. Sem configurar
+`ELASTICSEARCH_HOST`, o sistema funciona em modo fallback (busca via MySQL, mais limitada).
+Para busca completa, contrate um Elasticsearch externo (ex: Bonsai.io, tem free tier) e
+defina `ELASTICSEARCH_HOST=<host>:<porta>`.
+
+### **5️⃣ Adicionar Variáveis de Ambiente da Aplicação (1 minuto)**
+
+**Acesse:** Project → Variables (serviço web)
 
 ```env
 NIXPACKS_PHP_VERSION=8.2

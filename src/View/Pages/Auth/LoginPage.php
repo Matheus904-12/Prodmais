@@ -488,7 +488,10 @@ class LoginPage {
             .auth-shell { flex-direction: column; }
 
             .brand-panel {
+                position: static;
                 flex: 0 0 auto;
+                width: 100%;
+                height: auto;
                 padding: 1.75rem 1.5rem 1.5rem;
             }
 
@@ -500,7 +503,8 @@ class LoginPage {
             .brand-bottom { display: none; }
 
             .form-panel {
-                flex: 1;
+                flex: 1 1 auto;
+                width: 100%;
                 align-items: flex-start;
                 padding: 2rem 1.25rem 3rem;
             }

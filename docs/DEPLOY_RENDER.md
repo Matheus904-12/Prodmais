@@ -1,5 +1,11 @@
 # Instruções de Deploy no Render - Sistema Prodmais UMC
 
+> **Atenção:** o Render não tem MySQL gerenciado nativo (só Postgres) e este guia
+> não configura nenhum banco — o app subiria sem conseguir salvar dados. A rota
+> recomendada atualmente é OCI Always Free com Docker Compose (`deploy-oci.sh`).
+> Use este guia só se for provisionar um MySQL externo (ex: PlanetScale, Railway
+> MySQL) e apontar `MYSQL_HOST`/`MYSQL_DB`/`MYSQL_USER`/`MYSQL_PASS` pra ele.
+
 ## 🚀 Deploy Automático no Render
 
 ### 1. **Conectar Repositório GitHub**

@@ -44,7 +44,7 @@ if ($elasticsearch_available) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/prodmais-elegant.css">
+    <link rel="stylesheet" href="/css/prodmais-elegant.css?v=4">
     <link rel="stylesheet" href="/css/umc-theme.css">
     <?php HookManager::doAction('app_head'); ?>
 </head>
@@ -361,7 +361,7 @@ $ppg_colors = [
                     <!-- Footer -->
                     <div style="padding:1.25rem 1.75rem;border-top:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between;gap:1rem;">
                         <span style="font-size:.8rem;color:var(--gray-400);font-family:'Courier New',monospace;letter-spacing:.02em;"><?= htmlspecialchars($ppg['codigo_capes']) ?></span>
-                        <a href="/ppg.php?codigo=<?= urlencode($ppg['codigo_capes']) ?>" style="display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,<?= $c['from'] ?>,<?= $c['to'] ?>);color:white;font-size:.875rem;font-weight:700;padding:.6rem 1.25rem;border-radius:10px;text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,.15);transition:all .25s ease;white-space:nowrap;" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 18px rgba(0,0,0,.2)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 12px rgba(0,0,0,.15)'">
+                        <a href="/ppg.php?ppg=<?= urlencode($ppg['nome']) ?>" style="display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,<?= $c['from'] ?>,<?= $c['to'] ?>);color:white;font-size:.875rem;font-weight:700;padding:.6rem 1.25rem;border-radius:10px;text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,.15);transition:all .25s ease;white-space:nowrap;" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 18px rgba(0,0,0,.2)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 12px rgba(0,0,0,.15)'">
                             Ver Produções <i class="fas fa-arrow-right"></i>
                         </a>
                     </div>

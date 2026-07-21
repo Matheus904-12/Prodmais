@@ -11,11 +11,15 @@ use App\View\Components\Navbar\Navbar;
 use App\View\Components\Footer\Footer;
 
 if (!class_exists('LogService')) {
-    require_once __DIR__ . '/../../../../src/LogService.php';
+    require_once __DIR__ . '/../../../../src/Domain/Services/LogService.php';
 }
 
-if (!class_exists('LattesImporter')) {
-    require_once __DIR__ . '/../../../../src/LattesImporter.php';
+if (!class_exists('\ProdmaisUMC\LattesImporter')) {
+    require_once __DIR__ . '/../../../../src/Domain/Importers/LattesImporter.php';
+}
+
+if (!class_exists('LgpdComplianceService')) {
+    require_once __DIR__ . '/../../../../src/Domain/Security/LgpdComplianceService.php';
 }
 
 $config_legacy = [];
@@ -38,6 +42,10 @@ if (empty($_SESSION['user']) && !empty($_SESSION['username'])) {
 
 $log = new LogService($config_legacy);
 $log->log($_SESSION['user'], 'Acesso à área administrativa');
+
+$lgpdService = new LgpdComplianceService($config_legacy);
+$dpiaReport = $lgpdService->generateDpiaReport();
+$complianceStatus = $lgpdService->getComplianceStatus();
 
 if (isset($_POST['expunge'])) {
     $log->expungeOld(365);
@@ -162,7 +170,7 @@ $ppgs = getAllPPGs();
     .adm-card-header h5 { margin: 0; color: white; font-weight: 700; font-size: 1rem; }
     .adm-card-body { padding: 1.75rem; }
     /* ── Info box ── */
-    .adm-info-box { background: rgba(79,70,229,.06); border-left: 4px solid #6366f1; border-radius: 0 12px 12px 0; padding: 1.25rem 1.5rem; margin-bottom: 1.75rem; }
+    .adm-info-box { background: rgba(79,70,229,.06); border: 1px solid rgba(79,70,229,.16); border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1.75rem; }
     .adm-info-box h6 { color: #312e81; font-weight: 700; margin-bottom: .75rem; }
     .adm-info-box ol { margin: 0; padding-left: 1.25rem; color: #1e1b4b; }
     /* ── Upload zone ── */
@@ -173,7 +181,7 @@ $ppgs = getAllPPGs();
     .adm-upload-zone h5 { font-weight: 700; color: #1e293b; margin-bottom: .5rem; }
     .adm-upload-zone p { color: #64748b; font-size: .9rem; margin: 0; }
     /* ── Stat items (import result) ── */
-    .adm-stat-item { background: linear-gradient(135deg,#ede9fe,#ddd6fe); padding: 1.5rem; border-radius: 14px; border-left: 4px solid #6366f1; transition: transform .2s ease; }
+    .adm-stat-item { background: linear-gradient(135deg,#ede9fe,#ddd6fe); padding: 1.5rem; border-radius: 14px; transition: transform .2s ease; }
     .adm-stat-item:hover { transform: translateY(-3px); }
     .adm-stat-item .stat-number { font-size: 2rem; font-weight: 800; color: #312e81; margin: 0; }
     .adm-stat-item .stat-label { color: #4338ca; font-size: .875rem; margin: 0; }
@@ -213,7 +221,7 @@ $ppgs = getAllPPGs();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link href="/css/umc-theme.css" rel="stylesheet">
-    <link href="/css/prodmais-elegant.css" rel="stylesheet">
+    <link href="/css/prodmais-elegant.css?v=4" rel="stylesheet">
     
     <style>
         body {
@@ -385,7 +393,6 @@ $ppgs = getAllPPGs();
             background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
             padding: 1.5rem;
             border-radius: 12px;
-            border-left: 4px solid #f59e0b;
             transition: all 0.3s;
         }
 
@@ -413,7 +420,6 @@ $ppgs = getAllPPGs();
 <?php
 Navbar::display(['active_page' => 'admin', 'mostrar_link_dashboard' => $mostrar_link_dashboard ?? true]);
 ?>
-<?php renderNavbarAuthBadge(); ?>
 
 <!-- ══ Hero Admin ══ -->
 <section class="adm-hero">
@@ -460,6 +466,9 @@ Navbar::display(['active_page' => 'admin', 'mostrar_link_dashboard' => $mostrar_
                     </button>
                     <button class="adm-tab-btn" id="logs-tab" data-bs-toggle="tab" data-bs-target="#logs" type="button" role="tab">
                         <i class="fas fa-file-alt" aria-hidden="true"></i> Logs do Sistema
+                    </button>
+                    <button class="adm-tab-btn" id="lgpd-tab" data-bs-toggle="tab" data-bs-target="#lgpd" type="button" role="tab">
+                        <i class="fas fa-shield-alt" aria-hidden="true"></i> Conformidade LGPD
                     </button>
                 </div>
 
@@ -600,8 +609,8 @@ Navbar::display(['active_page' => 'admin', 'mostrar_link_dashboard' => $mostrar_
                             <div class="adm-card-body">
                                 <form action="api/upload_and_index.php" method="post" enctype="multipart/form-data" id="upload-form">
                                     <div class="mb-4">
-                                        <label for="lattes_files" class="adm-form-label">Selecione múltiplos arquivos (.xml ou .pdf)</label>
-                                        <input class="adm-form-select" type="file" id="lattes_files" name="lattes_files[]" multiple required accept=".xml,.pdf" style="padding:.55rem .875rem;">
+                                        <label for="lattes_files" class="adm-form-label">Selecione múltiplos arquivos XML do Lattes</label>
+                                        <input class="adm-form-select" type="file" id="lattes_files" name="lattes_files[]" multiple required accept=".xml" style="padding:.55rem .875rem;">
                                         <small style="color:#94a3b8;font-size:.8rem;display:block;margin-top:.375rem;">Você pode selecionar múltiplos arquivos de uma vez para processamento em lote.</small>
                                     </div>
                                     <button type="submit" class="adm-btn-bulk">
@@ -656,6 +665,66 @@ Navbar::display(['active_page' => 'admin', 'mostrar_link_dashboard' => $mostrar_
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Aba: Conformidade LGPD -->
+                    <div class="tab-pane fade" id="lgpd" role="tabpanel">
+                        <div class="adm-card">
+                            <div class="adm-card-header">
+                                <h5><i class="fas fa-shield-alt me-2" aria-hidden="true"></i>Status de Conformidade LGPD</h5>
+                            </div>
+                            <div class="adm-card-body">
+                                <p style="color:#64748b;margin-bottom:1.5rem;">
+                                    Última avaliação: <strong><?php echo htmlspecialchars($complianceStatus['last_assessment']); ?></strong>
+                                    &mdash; Status geral: <strong style="color:#059669;"><?php echo htmlspecialchars($complianceStatus['overall_status']); ?></strong>
+                                </p>
+                                <div class="row g-3">
+                                    <?php foreach ($complianceStatus['checks'] as $check): ?>
+                                    <div class="col-md-6">
+                                        <div class="adm-stat-item" style="display:flex;align-items:center;gap:.75rem;">
+                                            <i class="fas fa-check-circle" style="color:#059669;font-size:1.25rem;"></i>
+                                            <span style="color:#312e81;font-size:.875rem;"><?php echo htmlspecialchars($check['description']); ?></span>
+                                        </div>
+                                    </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="adm-card">
+                            <div class="adm-card-header">
+                                <h5><i class="fas fa-file-contract me-2" aria-hidden="true"></i>Relatório de Impacto à Proteção de Dados (DPIA)</h5>
+                                <a class="adm-btn-primary" style="width:auto;padding:.5rem 1.1rem;font-size:.8rem;text-decoration:none;"
+                                   download="dpia-prodmais-<?php echo htmlspecialchars($dpiaReport['metadata']['date']); ?>.json"
+                                   href="data:application/json;charset=utf-8,<?php echo rawurlencode(json_encode($dpiaReport, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)); ?>">
+                                    <i class="fas fa-download me-1" aria-hidden="true"></i>Baixar DPIA (JSON)
+                                </a>
+                            </div>
+                            <div class="adm-card-body">
+                                <p style="color:#64748b;"><?php echo htmlspecialchars($dpiaReport['project_description']['purpose'] ?? ''); ?></p>
+
+                                <h6 style="font-weight:700;color:#1e1b4b;margin-top:1.5rem;">Categorias de dados pessoais tratados</h6>
+                                <?php foreach ($dpiaReport['data_mapping']['personal_data_categories'] as $categoria): ?>
+                                <div class="adm-info-box" style="margin-bottom:.75rem;">
+                                    <strong><?php echo htmlspecialchars(implode(', ', $categoria['fields'])); ?></strong><br>
+                                    <span style="font-size:.85rem;color:#4338ca;">
+                                        Origem: <?php echo htmlspecialchars($categoria['source']); ?> &middot;
+                                        Base legal: <?php echo htmlspecialchars($categoria['legal_basis']); ?>
+                                    </span>
+                                </div>
+                                <?php endforeach; ?>
+
+                                <h6 style="font-weight:700;color:#1e1b4b;margin-top:1.5rem;">Recomendações</h6>
+                                <?php foreach ($dpiaReport['recommendations'] as $grupo => $itens): ?>
+                                <p style="margin-bottom:.375rem;"><strong style="color:#312e81;text-transform:capitalize;"><?php echo htmlspecialchars(str_replace('_', ' ', $grupo)); ?>:</strong></p>
+                                <ul style="color:#64748b;">
+                                    <?php foreach ($itens as $item): ?>
+                                    <li><?php echo htmlspecialchars($item); ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                                <?php endforeach; ?>
                             </div>
                         </div>
                     </div>

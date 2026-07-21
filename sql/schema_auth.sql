@@ -67,12 +67,10 @@ CREATE TABLE `log_login` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =====================================================
--- INSERIR USUARIO PADRAO (senha: Admin@2025)
--- ALTERE A SENHA APOS O PRIMEIRO LOGIN!
+-- Nenhum usuario e criado pelo schema.
+-- Crie o primeiro admin com: php bin/criar_admin.php
+-- (le ADMIN_USERNAME / ADMIN_EMAIL / ADMIN_PASSWORD / ADMIN_NOME de variaveis de ambiente)
 -- =====================================================
-INSERT INTO `usuarios_admin` (`username`, `email`, `password_hash`, `nome_completo`) VALUES
-('admin', 'admin@umc.br', '$2y$10$9XKvNZZr5VrE8Y/y1OYvDOC2P0h4.vZQB5rJ7pKjE4Qm5NZrE8Y0e', 'Administrador Sistema'),
-('matheus.lucindo', 'matheus.lucindo@umc.br', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Matheus Lucindo');
 
 -- =====================================================
 -- PROCEDIMENTO: Limpar tokens expirados (executar periodicamente)

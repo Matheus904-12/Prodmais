@@ -77,7 +77,7 @@ $total_pages = ceil($total / $limit);
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/prodmais-elegant.css">
+    <link rel="stylesheet" href="/css/prodmais-elegant.css?v=4">
     <link rel="stylesheet" href="/css/umc-theme.css">
 </head>
 <body>
@@ -128,11 +128,25 @@ Navbar::display([
     box-shadow: 0 2px 14px rgba(0,0,0,.07);
     overflow: hidden;
 }
-.proj-filter-header {
-    background: linear-gradient(135deg,#065f46,#0d9488);
-    padding: 1rem 1.25rem;
-    display: flex; align-items: center; gap: .5rem;
-    color: white; font-weight: 700; font-size: .9rem;
+@media (min-width: 992px) {
+    .proj-filter-panel {
+        position: sticky;
+        top: 1.5rem;
+        align-self: flex-start;
+        max-height: calc(100vh - 3rem);
+        overflow-y: auto;
+    }
+}
+.proj-filter-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--gray-400, #94a3b8);
+    margin: 0 0 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 .proj-filter-body { padding: 1.25rem; }
 .proj-filter-group { margin-bottom: 1.1rem; }
@@ -238,11 +252,11 @@ Navbar::display([
             <!-- Sidebar de Filtros -->
             <div class="col-lg-3">
                 <div class="proj-filter-panel">
-                    <div class="proj-filter-header">
-                        <i class="fas fa-filter" aria-hidden="true"></i>
-                        Filtros
-                    </div>
                     <div class="proj-filter-body">
+                        <p class="proj-filter-title">
+                            <i class="fas fa-filter" aria-hidden="true"></i>
+                            Filtros
+                        </p>
                     <form method="GET" action="/projetos.php" id="filterForm">
 
                         <div class="proj-filter-group">

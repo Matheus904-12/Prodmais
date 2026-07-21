@@ -24,7 +24,18 @@ class LattesParser
     {
         $this->errors[] = $error;
     }
-    
+
+    // Rejeita DOCTYPE para evitar XXE/"billion laughs" em XML de upload
+    private function loadXmlSafely(string $xmlFilePath)
+    {
+        $head = file_get_contents($xmlFilePath, false, null, 0, 1024);
+        if ($head !== false && stripos($head, '<!DOCTYPE') !== false) {
+            return false;
+        }
+        return simplexml_load_file($xmlFilePath, 'SimpleXMLElement', LIBXML_NONET);
+    }
+
+
     public function parse(string $xmlFilePath): array
     {
         if (!file_exists($xmlFilePath)) {
@@ -33,7 +44,7 @@ class LattesParser
             throw new \Exception($error);
         }
 
-        $xml = simplexml_load_file($xmlFilePath);
+        $xml = $this->loadXmlSafely($xmlFilePath);
         if ($xml === false) {
             $error = "Erro ao carregar o arquivo XML.";
             $this->addError($error);
@@ -66,7 +77,7 @@ class LattesParser
             throw new \Exception("Arquivo XML não encontrado: {$xmlFilePath}");
         }
 
-        $xml = simplexml_load_file($xmlFilePath);
+        $xml = $this->loadXmlSafely($xmlFilePath);
         if ($xml === false) {
             throw new \Exception("Erro ao carregar o arquivo XML.");
         }

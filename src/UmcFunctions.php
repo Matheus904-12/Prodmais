@@ -5,6 +5,10 @@
  * Conformidade LGPD e CAPES
  */
 
+if (php_sapi_name() !== 'cli' && session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 /* Load libraries for PHP composer */
 require(__DIR__ . '/../vendor/autoload.php');
 

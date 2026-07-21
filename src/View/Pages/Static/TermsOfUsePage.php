@@ -22,7 +22,7 @@ use App\View\Components\Footer\Footer;
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/prodmais-elegant.css">
+    <link rel="stylesheet" href="/css/prodmais-elegant.css?v=4">
     <link rel="stylesheet" href="/css/umc-theme.css">
     <style>
         body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
@@ -32,7 +32,6 @@ use App\View\Components\Footer\Footer;
             background: white;
             border-radius: 16px;
             border: 1px solid var(--gray-200, #e2e8f0);
-            border-left: 3px solid #10b981;
             box-shadow: 0 2px 12px rgba(0,0,0,.06);
             padding: 1.5rem;
             position: sticky;
@@ -88,9 +87,14 @@ use App\View\Components\Footer\Footer;
             padding: 2.5rem;
             margin-bottom: 1.75rem;
             scroll-margin-top: 5.5rem;
-            transition: box-shadow .3s ease;
+            height: auto;
+            transform: none;
+            transition: none;
         }
-        .content-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,.1); }
+        .content-card:hover {
+            transform: none;
+            box-shadow: 0 2px 12px rgba(0,0,0,.06);
+        }
         .content-card .section-header {
             display: flex;
             align-items: center;
@@ -134,7 +138,7 @@ use App\View\Components\Footer\Footer;
         /* ── Highlight Box ── */
         .highlight-box {
             background: linear-gradient(135deg, rgba(16,185,129,.04), rgba(5,150,105,.06));
-            border-left: 4px solid #10b981;
+            border: 1px solid rgba(16,185,129,.16);
             border-radius: 12px;
             padding: 1.25rem 1.5rem;
             margin: 1.5rem 0 .5rem;
@@ -146,7 +150,7 @@ use App\View\Components\Footer\Footer;
         /* ── Warning Box ── */
         .warning-box {
             background: linear-gradient(135deg, rgba(245,158,11,.04), rgba(239,68,68,.04));
-            border-left: 4px solid #f59e0b;
+            border: 1px solid rgba(245,158,11,.2);
             border-radius: 12px;
             padding: 1.25rem 1.5rem;
             margin: 1.25rem 0 .5rem;
@@ -229,7 +233,6 @@ use App\View\Components\Footer\Footer;
 <body>
 
 <?php Navbar::display(['active_page' => '']); ?>
-<?php renderNavbarAuthBadge(); ?>
 
 <?php HeroSection::display([
     'title'      => 'Termos de Uso',

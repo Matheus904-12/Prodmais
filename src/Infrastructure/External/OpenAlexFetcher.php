@@ -20,7 +20,7 @@ class OpenAlexFetcher
     private function initCache()
     {
         try {
-            $cachePath = dirname(__DIR__) . '/data/cache_openalex.sqlite';
+            $cachePath = dirname(__DIR__, 3) . '/data/cache_openalex.sqlite';
             $this->cacheDb = new \SQLite3($cachePath);
             $this->cacheDb->exec("CREATE TABLE IF NOT EXISTS doi_cache (doi TEXT PRIMARY KEY, json_data TEXT, created_at DATETIME)");
         } catch (\Exception $e) {
