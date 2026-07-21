@@ -250,6 +250,20 @@ docs/<nome>   ← apenas documentação
 
 Nunca commitar direto em `main`. Squash merge preferido para manter histórico limpo.
 
+### Versionamento (tags Git)
+
+Cada PR mergeado em `main` recebe uma tag SemVer (`vMAJOR.MINOR.PATCH`):
+- `PATCH` — correção de bug
+- `MINOR` — nova funcionalidade
+- `MAJOR` — mudança que quebra compatibilidade
+
+```bash
+git tag -a vX.Y.Z -m "descrição da entrega"
+git push origin vX.Y.Z
+```
+
+Rollback: `git checkout vX.Y.Z` ou apontar o deploy da plataforma para a tag.
+
 ### Estilo de código PHP
 
 - Classes em CamelCase: `AuthManager`, `LattesImporter`
