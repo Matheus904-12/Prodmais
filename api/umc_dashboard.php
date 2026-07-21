@@ -38,8 +38,8 @@ try {
     $capesGenerator = new CapesReportGenerator($config);
     $es = new ElasticsearchService($config['elasticsearch']);
     
-    $action = $_GET['action'] ?? 'dashboard';
-    $program = $_GET['program'] ?? '';
+    $action = trim(strip_tags((string) filter_input(INPUT_GET, 'action'))) ?: 'dashboard';
+    $program = trim(strip_tags((string) filter_input(INPUT_GET, 'program')));
     
     switch ($action) {
         case 'dashboard':

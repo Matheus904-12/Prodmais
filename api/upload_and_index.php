@@ -18,8 +18,22 @@ error_reporting(E_ALL);
 header('Content-Type: application/json; charset=utf-8');
 
 try {
-    // Autenticação básica ou sessão (opcional, dependendo do sistema)
-    // require_once dirname(__DIR__, 2) . '/src/Auth.php';
+    // Autenticação e checagem de papel — apenas admin e pesquisador podem importar/indexar em lote
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    if (empty($_SESSION['user_id']) && empty($_SESSION['user'])) {
+        ob_end_clean();
+        http_response_code(401);
+        echo json_encode(['status' => 'error', 'message' => 'Não autenticado. Faça login para importar currículos.']);
+        exit;
+    }
+    if (!in_array($_SESSION['papel'] ?? '', ['admin', 'pesquisador'], true)) {
+        ob_end_clean();
+        http_response_code(403);
+        echo json_encode(['status' => 'error', 'message' => 'Acesso negado. Apenas administradores e pesquisadores podem importar currículos.']);
+        exit;
+    }
 
     require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
     
