@@ -11,6 +11,16 @@ require_once __DIR__ . '/../../../../src/Domain/Importers/LattesImporter.php';
 use App\View\Components\Navbar\Navbar;
 use App\View\Components\Footer\Footer;
 
+// Importação de currículos é restrita a usuários autenticados com papel admin ou pesquisador
+if (empty($_SESSION['user_id']) && empty($_SESSION['user'])) {
+    header('Location: /login.php');
+    exit;
+}
+if (!in_array($_SESSION['papel'] ?? '', ['admin', 'pesquisador'], true)) {
+    header('Location: /dashboard.php');
+    exit;
+}
+
 $message = '';
 $error = '';
 $result = null;

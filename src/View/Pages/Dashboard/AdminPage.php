@@ -35,6 +35,11 @@ if (empty($_SESSION['user_id']) && empty($_SESSION['user'])) {
     header('Location: /login.php');
     exit;
 }
+// Painel administrativo é restrito a admin e pesquisador — visualizador não tem permissão
+if (!in_array($_SESSION['papel'] ?? '', ['admin', 'pesquisador'], true)) {
+    header('Location: /dashboard.php');
+    exit;
+}
 // Compatibilidade: garante que $_SESSION['user'] existe para código legado abaixo
 if (empty($_SESSION['user']) && !empty($_SESSION['username'])) {
     $_SESSION['user'] = $_SESSION['username'];
