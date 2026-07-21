@@ -6,16 +6,7 @@
   "directories": {
     "doc": "docs"
   },
-  "scripts": {
-    "test": "cypress run",
-    "test:open": "cypress open",
-    "test:headed": "cypress run --headed --browser chrome",
-    "test:screenshots": "cypress run --spec 'cypress/e2e/**/*.cy.js' --config video=false"
-  },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "cypress": "^15.5.0"
-  }
+  "license": "ISC"
 }

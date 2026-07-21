@@ -20,7 +20,7 @@ O sistema é totalmente dockerizado para facilitar o ambiente de desenvolvimento
 
 ```powershell
 # Iniciar o ecossistema completo
-.\INICIAR.ps1
+.\scripts\INICIAR.ps1
 
 # Acessar a aplicação
 http://localhost:8000

@@ -40,6 +40,25 @@ MySQL, sobe todos os containers (`web`, `db`, `elasticsearch`, `caddy`) e cria
 o primeiro usuário admin — a senha gerada aparece **uma única vez** no final
 da execução, anote imediatamente.
 
+### Banco de dados gerenciado externo (recomendado para produção real)
+
+Por padrão o script sobe um MySQL local em container — bom pra testar rápido,
+mas sem backup automático nem alta disponibilidade. Para produção com dados
+reais de pesquisadores, use um banco gerenciado (ex: OCI MySQL Database
+Service, PlanetScale, DigitalOcean Managed MySQL) e passe as credenciais
+antes de rodar o script — o container local de MySQL nem sobe:
+
+```bash
+sudo EXTERNAL_DB_HOST=seu-host.mysql.dbaas.com.br \
+     EXTERNAL_DB_USER=prodmais \
+     EXTERNAL_DB_PASS=sua_senha_segura \
+     EXTERNAL_DB_NAME=prodmais_umc \
+     bash deploy-oci.sh seu-dominio.com.br
+```
+
+O script importa `sql/schema.sql` e `sql/schema_auth.sql` direto no host
+externo antes de criar o admin.
+
 ## 4. Apontar o domínio (opcional, recomendado)
 
 No provedor de DNS do seu domínio, crie um registro **A** apontando para o IP

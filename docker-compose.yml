@@ -88,7 +88,7 @@ services:
       - /var/www/html/vendor
     environment:
       - ELASTICSEARCH_HOST=elasticsearch:9200
-      - MYSQL_HOST=db
+      - MYSQL_HOST=${MYSQL_HOST:-db}
       - MYSQL_DB=${MYSQL_DB:-prodmais_umc}
       - MYSQL_USER=${MYSQL_USER:-prodmais}
       - MYSQL_PASS=${MYSQL_PASS:-prodmais123}

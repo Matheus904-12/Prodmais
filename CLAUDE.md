@@ -12,7 +12,6 @@ Sistema de gestão de produção científica da Universidade de Mogi das Cruzes 
 | Banco principal | MySQL | 8.0 |
 | Busca full-text | Elasticsearch | 8.10.4 |
 | Frontend | HTML + CSS + Vanilla JS | — |
-| Testes E2E | Cypress | 15.5.0 |
 | Containerização | Docker + Docker Compose | — |
 | Dependências PHP | Composer | — |
 
@@ -33,7 +32,6 @@ Prodmais/
 ├── bin/              # Scripts CLI (indexer.php, install.php, migrate_es_to_mysql.php)
 ├── plugins/          # Plugins estilo WordPress (HookManager + PluginLoader)
 ├── data/             # Runtime — NÃO versionar conteúdo (logs, uploads, cache)
-├── cypress/          # Testes E2E
 ├── docs/             # Documentação técnica e guias de deploy
 └── .specify/         # Specs locais — nunca sobe para produção
 ```
@@ -110,11 +108,11 @@ return ['sucesso' => bool, 'mensagem' => string, 'dados' => mixed];
 ### Docker (stack completo)
 
 ```powershell
-.\INICIAR.ps1          # Sobe MySQL + ES + Kibana + phpMyAdmin + PHP/Apache
-.\PARAR.ps1            # Para todos os containers
-.\VERIFICAR.ps1        # Verifica saúde dos serviços
-.\REBUILD.ps1          # Rebuild forçado das imagens
-.\INICIAR_LOCAL.ps1    # Desenvolvimento sem Docker
+.\scripts\INICIAR.ps1          # Sobe MySQL + ES + Kibana + phpMyAdmin + PHP/Apache
+.\scripts\PARAR.ps1            # Para todos os containers
+.\scripts\VERIFICAR.ps1        # Verifica saúde dos serviços
+.\scripts\REBUILD.ps1          # Rebuild forçado das imagens
+.\scripts\INICIAR_LOCAL.ps1    # Desenvolvimento sem Docker
 ```
 
 ```bash
@@ -227,7 +225,7 @@ Body obrigatório:
 - [ ] security — correção de segurança
 
 ## Como testar
-1. Subir stack: `.\INICIAR.ps1`
+1. Subir stack: `.\scripts\INICIAR.ps1`
 2. Acessar http://localhost:8080/...
 3. Realizar ação X e verificar Y
 
@@ -290,7 +288,7 @@ Rollback: `git checkout vX.Y.Z` ou apontar o deploy da plataforma para a tag.
 
 ## Deploy Gratuito
 
-### Opção 1: OCI Always Free (recomendada)
+### OCI Always Free
 
 Oracle Cloud oferece permanentemente (não é trial):
 - 4 vCPU ARM Ampere A1 + 24GB RAM
@@ -306,14 +304,9 @@ docker-compose -f docker-compose.prod.yml up -d
 
 Guias detalhados: `docs/OCI_DEPLOY_GUIDE.md` e `docs/DEPLOY_OCI.md`
 
-### Opção 2: Railway
-
-`nixpacks.toml` já configurado. Conectar repositório no painel Railway → deploy automático.
-Guia: `docs/DEPLOY_RAILWAY.md`
-
-### Opção 3: Render
-
-Guia: `docs/DEPLOY_RENDER.md`
+Railway e Render foram avaliados e descartados como opção — hospedagem é feita
+exclusivamente na OCI Always Free (VM sempre gratuita, sem os limites de uso
+de plataformas PaaS gratuitas).
 
 ### Variáveis de ambiente obrigatórias em produção
 
