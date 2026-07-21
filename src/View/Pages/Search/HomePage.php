@@ -51,6 +51,7 @@ if ($elasticsearch_available) {
 <body>
 
 <?php Navbar::display(['active_page' => 'home', 'mostrar_link_dashboard' => $mostrar_link_dashboard]); ?>
+<?php renderNavbarAuthBadge(); ?>
 
 <!-- ══ Hero Customizado ══ -->
 <style>

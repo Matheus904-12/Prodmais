@@ -219,6 +219,7 @@ Navbar::display([
     'mostrar_link_dashboard' => true
 ]);
 ?>
+<?php renderNavbarAuthBadge(); ?>
 
 <?php HookManager::doAction('dashboard_header'); ?>
 

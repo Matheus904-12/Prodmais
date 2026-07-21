@@ -424,6 +424,42 @@ if (php_sapi_name() !== 'cli') {
 }
 
 /**
+ * Renderiza badge de usuário logado após o Navbar.
+ * Injeta JS que modifica o botão "Área Admin" dinamicamente.
+ */
+function renderNavbarAuthBadge(): void {
+    if (session_status() === PHP_SESSION_NONE) {
+        return;
+    }
+    $user_id  = $_SESSION['user_id']       ?? null;
+    $username = htmlspecialchars($_SESSION['username']      ?? '', ENT_QUOTES);
+    $nome     = htmlspecialchars($_SESSION['nome_completo'] ?? $username, ENT_QUOTES);
+    $papel    = $_SESSION['papel']          ?? '';
+
+    if (!$user_id) {
+        return;
+    }
+
+    $admin_href = in_array($papel, ['admin', 'pesquisador']) ? '/admin.php' : '/dashboard.php';
+    echo <<<HTML
+<script>
+(function(){
+  document.addEventListener('DOMContentLoaded', function() {
+    var btn = document.querySelector('.nav-cta-admin');
+    if (!btn) return;
+    btn.href = '{$admin_href}';
+    btn.innerHTML = '<i class="fas fa-user-circle" aria-hidden="true"></i> {$nome}';
+    btn.title = 'Logado como {$username}';
+    btn.insertAdjacentHTML('afterend',
+      '<a href="/logout.php" class="nav-cta-admin" style="margin-left:.375rem;background:rgba(239,68,68,.15);color:#fca5a5;border-color:rgba(239,68,68,.3);" title="Sair"><i class=\"fas fa-sign-out-alt\"></i></a>'
+    );
+  });
+})();
+</script>
+HTML;
+}
+
+/**
  * Log de acesso (LGPD)
  */
 if (($lgpd_log_access ?? false) && class_exists('LogService')) {

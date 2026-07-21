@@ -136,6 +136,7 @@ Navbar::display([
     'mostrar_link_dashboard' => $mostrar_link_dashboard ?? true,
 ]);
 ?>
+<?php renderNavbarAuthBadge(); ?>
 
 <?php
 HeroSection::display([
