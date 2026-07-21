@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fundamentos — Prodmais Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="ds-topnav">
+    <div class="ds-topnav-inner">
+        <a class="ds-topnav-brand" href="index.html"><span class="ds-topnav-mark"></span> Cerne</a>
+        <nav class="ds-topnav-links" aria-label="Navegação principal">
+            <a href="fundamentos.html">Fundamentos</a>
+            <a href="components.html">Componentes</a>
+            <a href="backend.html">Arquitetura</a>
+        </nav>
+        <form class="ds-topnav-search" onsubmit="return false;">
+            <span class="ds-topnav-search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
+            <input type="text" placeholder="Buscar (alert, ícones, api...)" aria-label="Buscar no Cerne" data-ds-search>
+        </form>
+    </div>
+</header>
+
+<div class="ds-shell">
+    <aside class="ds-sidebar" aria-label="Sidebar de documentação">
+        <a class="ds-sidebar-brand" href="index.html">Prod<span>mais</span><small>Cerne — Design System</small></a>
+        <nav aria-label="Navegação da documentação">
+            <a href="index.html" class="ds-side-link">Visão geral</a>
+            <p class="ds-side-group">Fundamentos</p>
+            <a href="fundamentos.html" class="ds-side-link is-active">Cores &amp; Tipografia</a>
+            <a href="icons.html" class="ds-side-link">Ícones</a>
+            <p class="ds-side-group">Componentes</p>
+            <a href="components.html" class="ds-side-link">Todos os componentes</a>
+            <a href="alert.html" class="ds-side-link">Alert</a>
+            <a href="card.html" class="ds-side-link">Card</a>
+            <a href="button.html" class="ds-side-link">Botão</a>
+            <a href="badge.html" class="ds-side-link">Badge</a>
+            <a href="navbar.html" class="ds-side-link">Navbar</a>
+            <a href="footer.html" class="ds-side-link">Footer</a>
+            <a href="hero.html" class="ds-side-link">Hero</a>
+            <p class="ds-side-group">Arquitetura</p>
+            <a href="backend.html" class="ds-side-link">Backend</a>
+            <a href="frontend.html" class="ds-side-link">Frontend</a>
+            <a href="api.html" class="ds-side-link">API</a>
+            <a href="extracao-dados.html" class="ds-side-link">Extração de Dados</a>
+        </nav>
+    </aside>
+
+    <div class="ds-shell-main">
+        <header class="ds-topbar">
+            <span class="ds-topbar-title">Fundamentos</span>
+            <span class="ds-topbar-sub">Cores, tipografia e espaçamento</span>
+        </header>
+
+        <main class="ds-page">
+            <p class="ds-lead">Todo o visual do sistema é dark navy premium com acentos coloridos por contexto. Os tokens abaixo vivem em <code>public/css/prodmais-elegant.css</code> (bloco <code>:root</code>).</p>
+
+            <h3>Cor base (fundo de hero/seções escuras)</h3>
+            <div class="ds-swatch-row">
+                <div class="ds-swatch" style="background:#070d1f;color:#fff;"><span>#070d1f</span><small>base navy</small></div>
+                <div class="ds-swatch" style="background:#0d1b4a;color:#fff;"><span>#0d1b4a</span><small>navy mid</small></div>
+                <div class="ds-swatch" style="background:#0a1535;color:#fff;"><span>#0a1535</span><small>navy deep</small></div>
+            </div>
+
+            <h3>Acentos por contexto</h3>
+            <div class="ds-swatch-row">
+                <div class="ds-swatch" style="background:#1a56db;color:#fff;"><span>#1a56db</span><small>azul — busca/institucional</small></div>
+                <div class="ds-swatch" style="background:#4f46e5;color:#fff;"><span>#4f46e5</span><small>índigo — admin/LGPD</small></div>
+                <div class="ds-swatch" style="background:#059669;color:#fff;"><span>#059669</span><small>verde — projetos/termos</small></div>
+                <div class="ds-swatch" style="background:#7c3aed;color:#fff;"><span>#7c3aed</span><small>roxo — ciência/saúde</small></div>
+                <div class="ds-swatch" style="background:#d97706;color:#fff;"><span>#d97706</span><small>âmbar — avisos</small></div>
+            </div>
+
+            <h3>Escala de cinza (texto e superfícies claras)</h3>
+            <div class="ds-swatch-row ds-swatch-row-small">
+                <div class="ds-swatch" style="background:#f9fafb;color:#111;"><span>gray-50</span></div>
+                <div class="ds-swatch" style="background:#f1f5f9;color:#111;"><span>gray-100</span></div>
+                <div class="ds-swatch" style="background:#e5e7eb;color:#111;"><span>gray-200</span></div>
+                <div class="ds-swatch" style="background:#94a3b8;color:#fff;"><span>gray-400</span></div>
+                <div class="ds-swatch" style="background:#334155;color:#fff;"><span>gray-700</span></div>
+                <div class="ds-swatch" style="background:#0f172a;color:#fff;"><span>gray-900</span></div>
+            </div>
+
+            <h3>Tipografia</h3>
+            <div class="ds-type-sample">
+                <p style="font-size:2.5rem;font-weight:900;letter-spacing:-1.5px;">Inter 900 — títulos de hero</p>
+                <p style="font-size:1.25rem;font-weight:800;">Inter 800 — títulos de card / h2</p>
+                <p style="font-size:1rem;font-weight:600;">Inter 600 — labels, botões</p>
+                <p style="font-size:1rem;font-weight:400;">Inter 400 — corpo de texto, parágrafos</p>
+                <p style="font-family:'JetBrains Mono',monospace;font-size:.9rem;">JetBrains Mono — código, IDs, valores técnicos</p>
+            </div>
+
+            <h3>Espaçamento e raio</h3>
+            <div class="ds-table-wrap"><table class="ds-table">
+                <tr><th>Token</th><th>Valor</th><th>Uso</th></tr>
+                <tr><td><code>--radius-md</code></td><td>10–12px</td><td>botões, inputs</td></tr>
+                <tr><td><code>--radius-lg</code></td><td>14–16px</td><td>cards de conteúdo</td></tr>
+                <tr><td><code>--radius-xl</code></td><td>18–22px</td><td>cards de destaque, painéis</td></tr>
+                <tr><td>sombra padrão</td><td><code>0 2px 12px rgba(0,0,0,.06)</code></td><td>cards em repouso</td></tr>
+                <tr><td>sombra hover</td><td><code>0 12px 32px rgba(0,0,0,.15)</code></td><td>cards interativos (não usar em cards de texto estático)</td></tr>
+            </table></div>
+            <div class="ds-feedback">
+                <span>Essa página foi útil?</span>
+                <div class="ds-feedback-btns">
+                    <button type="button" class="ds-feedback-btn" data-feedback="up">👍 Sim</button>
+                    <button type="button" class="ds-feedback-btn" data-feedback="down">👎 Não</button>
+                </div>
+                <span class="ds-feedback-thanks">Obrigado pelo feedback!</span>
+                <a class="ds-feedback-comment" href="https://github.com/Matheus904-12/Prodmais/issues/new?title=Feedback%3A%20Cerne%20-%20Fundamentos&labels=design-system&body=Coment%C3%A1rio%20sobre%20a%20p%C3%A1gina%20%22Fundamentos%22%20do%20Cerne%3A%0A%0A" target="_blank" rel="noopener">💬 Comentar / relatar problema</a>
+            </div>
+        </main>
+
+        <footer class="ds-footer">
+            <div class="ds-footer-inner">
+                <div class="ds-footer-brand"><span class="ds-footer-mark"></span> Cerne é o design system do Prodmais UMC.</div>
+                <hr class="ds-footer-rule">
+                <div class="ds-footer-row">
+                    <div class="ds-footer-links">
+                        <a href="https://github.com/Matheus904-12/Prodmais" target="_blank" rel="noopener">Repositório ↗</a>
+                        <a href="https://github.com/Matheus904-12/Prodmais/releases" target="_blank" rel="noopener">Versões ↗</a>
+                    </div>
+                    <div class="ds-footer-copy">Por <strong>Matheus Lucindo</strong> — Dev Principal · © Prodmais UMC 2026</div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<script src="shell.js"></script>
+</body>
+</html>

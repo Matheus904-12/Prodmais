@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Extração de Dados — Prodmais Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js" integrity="sha384-WmdflGW9aGfoBdHc4rRyWzYuAjEmDwMdGdiPNacbwfGKxBW/SO6guzuQ76qjnSlr" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<header class="ds-topnav">
+    <div class="ds-topnav-inner">
+        <a class="ds-topnav-brand" href="index.html"><span class="ds-topnav-mark"></span> Cerne</a>
+        <nav class="ds-topnav-links" aria-label="Navegação principal">
+            <a href="fundamentos.html">Fundamentos</a>
+            <a href="components.html">Componentes</a>
+            <a href="backend.html">Arquitetura</a>
+        </nav>
+        <form class="ds-topnav-search" onsubmit="return false;">
+            <span class="ds-topnav-search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
+            <input type="text" placeholder="Buscar (alert, ícones, api...)" aria-label="Buscar no Cerne" data-ds-search>
+        </form>
+    </div>
+</header>
+
+<div class="ds-shell">
+    <aside class="ds-sidebar" aria-label="Sidebar de documentação">
+        <a class="ds-sidebar-brand" href="index.html">Prod<span>mais</span><small>Cerne — Design System</small></a>
+        <nav aria-label="Navegação da documentação">
+            <a href="index.html" class="ds-side-link">Visão geral</a>
+            <p class="ds-side-group">Fundamentos</p>
+            <a href="fundamentos.html" class="ds-side-link">Cores &amp; Tipografia</a>
+            <a href="icons.html" class="ds-side-link">Ícones</a>
+            <p class="ds-side-group">Componentes</p>
+            <a href="components.html" class="ds-side-link">Todos os componentes</a>
+            <a href="alert.html" class="ds-side-link">Alert</a>
+            <a href="card.html" class="ds-side-link">Card</a>
+            <a href="button.html" class="ds-side-link">Botão</a>
+            <a href="badge.html" class="ds-side-link">Badge</a>
+            <a href="navbar.html" class="ds-side-link">Navbar</a>
+            <a href="footer.html" class="ds-side-link">Footer</a>
+            <a href="hero.html" class="ds-side-link">Hero</a>
+            <p class="ds-side-group">Arquitetura</p>
+            <a href="backend.html" class="ds-side-link">Backend</a>
+            <a href="frontend.html" class="ds-side-link">Frontend</a>
+            <a href="api.html" class="ds-side-link">API</a>
+            <a href="extracao-dados.html" class="ds-side-link is-active">Extração de Dados</a>
+        </nav>
+    </aside>
+
+    <div class="ds-shell-main">
+        <header class="ds-topbar">
+            <span class="ds-topbar-title">Arquitetura — Extração de Dados</span>
+            <span class="ds-topbar-sub">Os motores que alimentam o Prodmais: Lattes, OpenAlex, ORCID, BrCris</span>
+        </header>
+
+        <main class="ds-page has-toc">
+          <div class="ds-page-content">
+            <p class="ds-lead">O sistema consome dados de quatro fontes externas, cada uma com um motor (classe) e uma forma de acesso diferente. Nenhuma delas roda "magicamente" — cada uma tem um gatilho específico, documentado abaixo.</p>
+
+            <h3 id="motores">Os quatro motores</h3>
+            <div class="ds-table-wrap"><table class="ds-table">
+                <tr><th>Motor</th><th>Classe</th><th>Acesso</th><th>O que traz</th><th>Quando roda</th></tr>
+                <tr>
+                    <td><strong>Lattes (CNPq)</strong></td>
+                    <td><code>LattesImporter</code> + <code>LattesParser</code></td>
+                    <td>Upload manual de XML</td>
+                    <td>Pesquisador, produções, projetos, orientações</td>
+                    <td>Admin faz upload, ou em lote via <code>bin/indexer.php</code></td>
+                </tr>
+                <tr>
+                    <td><strong>OpenAlex</strong></td>
+                    <td><code>OpenAlexFetcher</code></td>
+                    <td>REST público (sem chave, e-mail por cortesia)</td>
+                    <td>Citações, DOI, conceitos — enriquece a produção já indexada</td>
+                    <td>Automático após indexação em lote, com cache local por DOI</td>
+                </tr>
+                <tr>
+                    <td><strong>ORCID</strong></td>
+                    <td><code>OrcidFetcher</code></td>
+                    <td>REST (Consórcio CAPES-ORCID)</td>
+                    <td>Perfil, obras, formação, vínculos empregatícios</td>
+                    <td>Sob demanda — não roda em lote automaticamente</td>
+                </tr>
+                <tr>
+                    <td><strong>BrCris</strong></td>
+                    <td><code>BrCrisIntegration</code></td>
+                    <td>REST institucional</td>
+                    <td>Sincronização de dados de programa com a plataforma nacional</td>
+                    <td>⚠️ Implementada, mas ainda não conectada a nenhum endpoint/rota</td>
+                </tr>
+            </table></div>
+
+            <div class="ds-callout">
+                <strong>Gap conhecido:</strong> <code>BrCrisIntegration</code> existe e funciona isoladamente (tem <code>syncInstitutionData()</code>, <code>validateRecord()</code>, etc.), mas nenhuma página ou endpoint a instancia hoje. Antes de expor essa integração, alguém precisa decidir o gatilho (manual? agendado?) e criar a rota.
+            </div>
+
+            <h3 id="lattes">Upload de Lattes — passo a passo</h3>
+            <div class="ds-example">
+                <div class="ds-example-preview is-dark">
+                    <pre class="mermaid">
+flowchart TD
+    ADM["Admin: upload de XML (.xml)"] --> UP["upload_and_index.php"]
+    UP --> LI["LattesImporter::importFromXML()"]
+    LI --> VAL["Validação anti-XXE: bloqueia DOCTYPE, LIBXML_NONET"]
+    VAL --> EXT["extractPesquisadorData / extractProducoes / extractProjetos"]
+    EXT --> IDX["indexPesquisador / indexProducoes / indexProjetos"]
+    IDX --> ES["Elasticsearch"]
+                    </pre>
+                </div>
+            </div>
+
+            <h3 id="enriquecimento">Enriquecimento em lote — OpenAlex</h3>
+            <div class="ds-example">
+                <div class="ds-example-preview is-dark">
+                    <pre class="mermaid">
+flowchart TD
+    BATCH["bin/indexer.php (lote)"] --> LP["LattesParser::parse()"]
+    LP --> OA["OpenAlexFetcher::enrichProduction()"]
+    OA --> CACHE{"Já existe cache local do DOI?"}
+    CACHE -- sim --> ENR["Produção enriquecida"]
+    CACHE -- não --> REQ["Chamada à API OpenAlex"] --> SAVE["Salva no cache local"] --> ENR
+    ENR --> ES2["Elasticsearch"]
+                    </pre>
+                </div>
+            </div>
+
+            <h3 id="orcid">Perfil ORCID — sob demanda</h3>
+            <div class="ds-example">
+                <div class="ds-example-preview is-dark">
+                    <pre class="mermaid">
+flowchart LR
+    REQ2["Requisição sob demanda"] --> OF["OrcidFetcher::getCompleteProfile()"]
+    OF --> P["getProfile()"]
+    OF --> W["getWorks()"]
+    OF --> E["getEducation()"]
+    OF --> EMP["getEmployments()"]
+    P --> N["normalizeProfileData()"] --> OUT["Perfil normalizado"]
+    W --> OUT
+    E --> OUT
+    EMP --> OUT
+                    </pre>
+                </div>
+            </div>
+
+            <div class="ds-feedback">
+                <span>Essa página foi útil?</span>
+                <div class="ds-feedback-btns">
+                    <button type="button" class="ds-feedback-btn" data-feedback="up">👍 Sim</button>
+                    <button type="button" class="ds-feedback-btn" data-feedback="down">👎 Não</button>
+                </div>
+                <span class="ds-feedback-thanks">Obrigado pelo feedback!</span>
+                <a class="ds-feedback-comment" href="https://github.com/Matheus904-12/Prodmais/issues/new?title=Feedback%3A%20Cerne%20-%20Extra%C3%A7%C3%A3o%20de%20Dados&labels=design-system&body=Coment%C3%A1rio%20sobre%20a%20p%C3%A1gina%20%22Extra%C3%A7%C3%A3o%20de%20Dados%22%20do%20Cerne%3A%0A%0A" target="_blank" rel="noopener">💬 Comentar / relatar problema</a>
+            </div>
+          </div>
+          <aside class="ds-toc" aria-label="Sumário desta página">
+              <span class="ds-toc-title">Nesta página</span>
+              <a href="#motores">Os 4 motores</a>
+              <a href="#lattes">Upload Lattes</a>
+              <a href="#enriquecimento">Enriquecimento OpenAlex</a>
+              <a href="#orcid">Perfil ORCID</a>
+          </aside>
+        </main>
+
+        <footer class="ds-footer">
+            <div class="ds-footer-inner">
+                <div class="ds-footer-brand"><span class="ds-footer-mark"></span> Cerne é o design system do Prodmais UMC.</div>
+                <hr class="ds-footer-rule">
+                <div class="ds-footer-row">
+                    <div class="ds-footer-links">
+                        <a href="https://github.com/Matheus904-12/Prodmais" target="_blank" rel="noopener">Repositório ↗</a>
+                        <a href="https://github.com/Matheus904-12/Prodmais/releases" target="_blank" rel="noopener">Versões ↗</a>
+                    </div>
+                    <div class="ds-footer-copy">Por <strong>Matheus Lucindo</strong> — Dev Principal · © Prodmais UMC 2026</div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<script src="shell.js"></script>
+</body>
+</html>

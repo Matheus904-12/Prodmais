@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hero — Prodmais Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="ds-topnav">
+    <div class="ds-topnav-inner">
+        <a class="ds-topnav-brand" href="index.html"><span class="ds-topnav-mark"></span> Cerne</a>
+        <nav class="ds-topnav-links" aria-label="Navegação principal">
+            <a href="fundamentos.html">Fundamentos</a>
+            <a href="components.html">Componentes</a>
+            <a href="backend.html">Arquitetura</a>
+        </nav>
+        <form class="ds-topnav-search" onsubmit="return false;">
+            <span class="ds-topnav-search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
+            <input type="text" placeholder="Buscar (alert, ícones, api...)" aria-label="Buscar no Cerne" data-ds-search>
+        </form>
+    </div>
+</header>
+
+<div class="ds-shell">
+    <aside class="ds-sidebar" aria-label="Sidebar de documentação">
+        <a class="ds-sidebar-brand" href="index.html">Prod<span>mais</span><small>Cerne — Design System</small></a>
+        <nav aria-label="Navegação da documentação">
+            <a href="index.html" class="ds-side-link">Visão geral</a>
+            <p class="ds-side-group">Fundamentos</p>
+            <a href="fundamentos.html" class="ds-side-link">Cores &amp; Tipografia</a>
+            <a href="icons.html" class="ds-side-link">Ícones</a>
+            <p class="ds-side-group">Componentes</p>
+            <a href="components.html" class="ds-side-link">Todos os componentes</a>
+            <a href="alert.html" class="ds-side-link">Alert</a>
+            <a href="card.html" class="ds-side-link">Card</a>
+            <a href="button.html" class="ds-side-link">Botão</a>
+            <a href="badge.html" class="ds-side-link">Badge</a>
+            <a href="navbar.html" class="ds-side-link">Navbar</a>
+            <a href="footer.html" class="ds-side-link">Footer</a>
+            <a href="hero.html" class="ds-side-link is-active">Hero</a>
+            <p class="ds-side-group">Arquitetura</p>
+            <a href="backend.html" class="ds-side-link">Backend</a>
+            <a href="frontend.html" class="ds-side-link">Frontend</a>
+            <a href="api.html" class="ds-side-link">API</a>
+            <a href="extracao-dados.html" class="ds-side-link">Extração de Dados</a>
+        </nav>
+    </aside>
+
+    <div class="ds-shell-main">
+        <header class="ds-topbar">
+            <span class="ds-topbar-title">Componente — Hero</span>
+            <span class="ds-topbar-sub">src/View/Components/HeroSection</span>
+        </header>
+
+        <main class="ds-page has-toc">
+          <div class="ds-page-content">
+            <p class="ds-lead">Cabeçalho escuro padrão de toda página pública. Fundo fixo <code>#070d1f</code> + dois brilhos radiais (<code>glowA</code>/<code>glowB</code>) que mudam de cor por <code>variant</code>.</p>
+
+            <h3 id="primary">variant="primary" (padrão)</h3>
+            <div class="ds-example">
+                <div class="ds-example-preview">
+                    <div class="ds-hero-mini" style="background-image:radial-gradient(ellipse 55% 65% at 12% 20%, rgba(59,130,246,.16), transparent), radial-gradient(ellipse 45% 55% at 88% 85%, rgba(3,105,161,.12), transparent);">
+                        <span class="hero-badge">GESTÃO CIENTÍFICA · CAPES · UMC</span>
+                        <h2>Pesquisadores</h2>
+                        <p>Explore os perfis de pesquisadores da UMC e suas produções.</p>
+                    </div>
+                </div>
+                <div class="ds-example-toolbar">
+                    <button class="ds-example-toggle" type="button" data-toggle-code>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                        <span>Ver código</span>
+                    </button>
+                </div>
+                <div class="ds-example-code">
+                    <button class="ds-copy-btn" type="button" data-copy>Copiar</button>
+                    <pre><code>&lt;?php (new HeroSection([
+    'title'    =&gt; 'Pesquisadores',
+    'subtitle' =&gt; 'Explore os perfis de pesquisadores da UMC e suas produções.',
+    'badge'    =&gt; 'Gestão científica · CAPES · UMC',
+    'variant'  =&gt; 'primary',
+]))-&gt;render(); ?&gt;</code></pre>
+                </div>
+            </div>
+
+            <h3 id="variantes">Demais variantes (cor do brilho)</h3>
+            <div class="ds-table-wrap"><table class="ds-table">
+                <tr><th>variant</th><th>glowA</th><th>glowB</th><th>Uso típico</th></tr>
+                <tr><td><code>primary</code></td><td><code>rgba(59,130,246,.16)</code> azul</td><td><code>rgba(3,105,161,.12)</code> azul petróleo</td><td>Home, busca, pesquisadores</td></tr>
+                <tr><td><code>success</code></td><td><code>rgba(5,150,105,.16)</code> verde</td><td><code>rgba(13,148,136,.12)</code> teal</td><td>Projetos, termos de uso</td></tr>
+                <tr><td><code>info</code></td><td><code>rgba(37,99,235,.16)</code> azul forte</td><td><code>rgba(8,145,178,.12)</code> ciano</td><td>PPGs</td></tr>
+                <tr><td><code>lavender</code></td><td><code>rgba(99,102,241,.16)</code> índigo</td><td><code>rgba(139,92,246,.12)</code> roxo</td><td>Admin, LGPD</td></tr>
+            </table></div>
+
+            <div class="ds-callout">
+                <strong>Regra:</strong> nunca usar gradiente sólido chapado no hero — sempre fundo <code>#070d1f</code> + 2 <code>radial-gradient</code> + grid de pontos decorativo (<code>.hero-dot-grid</code>).
+            </div>
+
+            <div class="ds-feedback">
+                <span>Essa página foi útil?</span>
+                <div class="ds-feedback-btns">
+                    <button type="button" class="ds-feedback-btn" data-feedback="up">👍 Sim</button>
+                    <button type="button" class="ds-feedback-btn" data-feedback="down">👎 Não</button>
+                </div>
+                <span class="ds-feedback-thanks">Obrigado pelo feedback!</span>
+                <a class="ds-feedback-comment" href="https://github.com/Matheus904-12/Prodmais/issues/new?title=Feedback%3A%20Cerne%20-%20Hero&labels=design-system&body=Coment%C3%A1rio%20sobre%20a%20p%C3%A1gina%20%22Hero%22%20do%20Cerne%3A%0A%0A" target="_blank" rel="noopener">💬 Comentar / relatar problema</a>
+            </div>
+          </div>
+          <aside class="ds-toc" aria-label="Sumário desta página">
+              <span class="ds-toc-title">Nesta página</span>
+              <a href="#primary">Primary</a>
+              <a href="#variantes">Variantes</a>
+          </aside>
+        </main>
+
+        <footer class="ds-footer">
+            <div class="ds-footer-inner">
+                <div class="ds-footer-brand"><span class="ds-footer-mark"></span> Cerne é o design system do Prodmais UMC.</div>
+                <hr class="ds-footer-rule">
+                <div class="ds-footer-row">
+                    <div class="ds-footer-links">
+                        <a href="https://github.com/Matheus904-12/Prodmais" target="_blank" rel="noopener">Repositório ↗</a>
+                        <a href="https://github.com/Matheus904-12/Prodmais/releases" target="_blank" rel="noopener">Versões ↗</a>
+                    </div>
+                    <div class="ds-footer-copy">Por <strong>Matheus Lucindo</strong> — Dev Principal · © Prodmais UMC 2026</div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<script src="shell.js"></script>
+</body>
+</html>

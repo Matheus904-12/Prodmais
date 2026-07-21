@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cerne — Design System Prodmais UMC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="ds-topnav">
+    <div class="ds-topnav-inner">
+        <a class="ds-topnav-brand" href="index.html"><span class="ds-topnav-mark"></span> Cerne</a>
+        <nav class="ds-topnav-links" aria-label="Navegação principal">
+            <a href="fundamentos.html">Fundamentos</a>
+            <a href="components.html">Componentes</a>
+            <a href="backend.html">Arquitetura</a>
+        </nav>
+        <form class="ds-topnav-search" onsubmit="return false;">
+            <span class="ds-topnav-search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
+            <input type="text" placeholder="Buscar (alert, ícones, api...)" aria-label="Buscar no Cerne" data-ds-search>
+        </form>
+    </div>
+</header>
+
+<section class="ds-welcome">
+    <div class="ds-welcome-inner">
+        <div class="ds-hero-visual">
+            <div class="ds-hero-blob ds-hero-blob-1"></div>
+            <div class="ds-hero-blob ds-hero-blob-2"></div>
+            <div class="ds-hero-blob ds-hero-blob-3"></div>
+            <div class="ds-hero-core"></div>
+        </div>
+        <div class="ds-welcome-copy">
+            <h1>Bem-vindo ao Cerne</h1>
+            <p>A fonte de verdade para tokens, componentes e arquitetura ao construir produtos no <strong>Prodmais UMC</strong>.</p>
+            <div class="ds-welcome-search">
+                <span class="ds-welcome-search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
+                <input type="text" placeholder="ex: como usar o componente Alert" aria-label="Buscar no Cerne" data-ds-search>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ds-foundation">
+    <div class="ds-foundation-inner">
+        <div class="ds-foundation-copy">
+            <span class="ds-foundation-eyebrow">Fundação</span>
+            <h2>As bases para construir com o Cerne</h2>
+            <p>Este site é a biblioteca viva de padrões visuais e decisões técnicas do Prodmais UMC — cobre tokens de design, componentes prontos pra copiar e a arquitetura completa de backend e frontend.</p>
+        </div>
+        <div class="ds-foundation-cards">
+            <a class="ds-foundation-card is-teal" href="fundamentos.html"><span>Fundamentos</span></a>
+            <a class="ds-foundation-card is-indigo" href="components.html"><span>Componentes</span></a>
+            <a class="ds-foundation-card is-amber" href="backend.html"><span>Arquitetura</span></a>
+        </div>
+    </div>
+</section>
+
+<main class="ds-page" style="max-width:1100px;">
+    <h2 style="margin-top:1rem;">Comece por aqui</h2>
+    <div class="ds-overview-grid">
+        <a class="ds-overview-card" href="fundamentos.html">
+            <strong>Fundamentos</strong>
+            <p>Cores, tipografia, espaçamento e raio — os tokens que todo componente usa.</p>
+        </a>
+        <a class="ds-overview-card" href="icons.html">
+            <strong>Ícones</strong>
+            <p>Bootstrap Icons 1.11.0, os ícones já usados no projeto e os tamanhos de container padrão.</p>
+        </a>
+        <a class="ds-overview-card" href="alert.html">
+            <strong>Componente Alert</strong>
+            <p>Variações institucionais (info, aviso) e o alerta sobre fundo escuro do hero — com código pra copiar.</p>
+        </a>
+        <a class="ds-overview-card" href="card.html">
+            <strong>Componente Card</strong>
+            <p>Card elegante, card de conteúdo e stat card — com código pra copiar.</p>
+        </a>
+        <a class="ds-overview-card" href="backend.html">
+            <strong>Arquitetura — Backend</strong>
+            <p>Camadas PHP (Core/Domain/Infrastructure/View), fluxogramas de dependência e as classes críticas do sistema.</p>
+        </a>
+        <a class="ds-overview-card" href="frontend.html">
+            <strong>Arquitetura — Frontend</strong>
+            <p>Organização de CSS/JS vanilla, fluxo de carregamento de assets e onde cada estilo deve viver.</p>
+        </a>
+        <a class="ds-overview-card" href="api.html">
+            <strong>Endpoints da API</strong>
+            <p>Todas as rotas REST em <code>public/api/</code>, método, o que cada uma faz e o fluxo de uma requisição.</p>
+        </a>
+    </div>
+
+    <h2 style="margin-top:3rem;">Regras de UI aprendidas na prática</h2>
+    <ul class="ds-rules">
+        <li>Sidebar de filtro fixa ao rolar precisa de <code>position:sticky</code> no elemento <strong>e</strong> a coluna-pai <strong>não pode</strong> ter <code>align-self:flex-start</code> nem <code>align-items-start</code> na row — isso remove o "espaço" que o sticky precisa pra funcionar.</li>
+        <li>Callout/highlight boxes usam fundo tintado + <code>border: 1px solid</code> uniforme — nunca <code>border-left</code> grosso (visual datado, evitar reintroduzir em cards novos).</li>
+        <li>Todo link de navegação entre páginas precisa usar o <strong>mesmo nome de parâmetro</strong> que a página de destino espera (ex: <code>ppg.php</code> só lê <code>?ppg=&lt;nome&gt;</code>, nunca <code>?codigo=</code>) — já causou bug de "botão que só recarrega a tela".</li>
+        <li>Menu de usuário logado (avatar + iniciais + dropdown) vive no <code>Navbar</code> component e lê <code>$_SESSION</code> diretamente — funciona em qualquer página que chame <code>Navbar::display()</code>, sem precisar de função extra por página.</li>
+        <li><code>&lt;code&gt;</code> inline sempre com fundo cinza-claro fixo — por isso <strong>sempre</strong> defina uma cor de texto explícita nele, nunca deixe herdar do parágrafo pai (parágrafos sobre fundo escuro têm texto claro, que fica ilegível num fundo claro).</li>
+    </ul>
+</main>
+
+<footer class="ds-footer">
+    <div class="ds-footer-inner">
+        <div class="ds-footer-brand"><span class="ds-footer-mark"></span> Cerne é o design system do Prodmais UMC.</div>
+        <hr class="ds-footer-rule">
+        <div class="ds-footer-row">
+            <div class="ds-footer-links">
+                <a href="https://github.com/Matheus904-12/Prodmais" target="_blank" rel="noopener">Repositório ↗</a>
+                <a href="https://github.com/Matheus904-12/Prodmais/releases" target="_blank" rel="noopener">Versões ↗</a>
+            </div>
+            <div class="ds-footer-copy">Por <strong>Matheus Lucindo</strong> — Dev Principal · © Prodmais UMC 2026</div>
+        </div>
+    </div>
+</footer>
+
+<script src="shell.js"></script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Card — Prodmais Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="ds-topnav">
+    <div class="ds-topnav-inner">
+        <a class="ds-topnav-brand" href="index.html"><span class="ds-topnav-mark"></span> Cerne</a>
+        <nav class="ds-topnav-links" aria-label="Navegação principal">
+            <a href="fundamentos.html">Fundamentos</a>
+            <a href="components.html">Componentes</a>
+            <a href="backend.html">Arquitetura</a>
+        </nav>
+        <form class="ds-topnav-search" onsubmit="return false;">
+            <span class="ds-topnav-search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
+            <input type="text" placeholder="Buscar (alert, ícones, api...)" aria-label="Buscar no Cerne" data-ds-search>
+        </form>
+    </div>
+</header>
+
+<div class="ds-shell">
+    <aside class="ds-sidebar" aria-label="Sidebar de documentação">
+        <a class="ds-sidebar-brand" href="index.html">Prod<span>mais</span><small>Cerne — Design System</small></a>
+        <nav aria-label="Navegação da documentação">
+            <a href="index.html" class="ds-side-link">Visão geral</a>
+            <p class="ds-side-group">Fundamentos</p>
+            <a href="fundamentos.html" class="ds-side-link">Cores &amp; Tipografia</a>
+            <a href="icons.html" class="ds-side-link">Ícones</a>
+            <p class="ds-side-group">Componentes</p>
+            <a href="components.html" class="ds-side-link">Todos os componentes</a>
+            <a href="alert.html" class="ds-side-link">Alert</a>
+            <a href="card.html" class="ds-side-link is-active">Card</a>
+            <a href="button.html" class="ds-side-link">Botão</a>
+            <a href="badge.html" class="ds-side-link">Badge</a>
+            <a href="navbar.html" class="ds-side-link">Navbar</a>
+            <a href="footer.html" class="ds-side-link">Footer</a>
+            <a href="hero.html" class="ds-side-link">Hero</a>
+            <p class="ds-side-group">Arquitetura</p>
+            <a href="backend.html" class="ds-side-link">Backend</a>
+            <a href="frontend.html" class="ds-side-link">Frontend</a>
+            <a href="api.html" class="ds-side-link">API</a>
+            <a href="extracao-dados.html" class="ds-side-link">Extração de Dados</a>
+        </nav>
+    </aside>
+
+    <div class="ds-shell-main">
+        <header class="ds-topbar">
+            <span class="ds-topbar-title">Componente — Card</span>
+            <span class="ds-topbar-sub">public/css/prodmais-elegant.css · src/View/Components/StatCard</span>
+        </header>
+
+        <main class="ds-page has-toc">
+          <div class="ds-page-content">
+            <p class="ds-lead">Três variações de card. Escolha pelo contexto: <code>.card-elegant</code> para feature/dashboard, <code>.content-card</code> para grades de conteúdo (política, termos), <code>StatCard</code> para estatísticas em destaque.</p>
+
+            <h3 id="elegante">Card elegante — .card-elegant</h3>
+            <div class="ds-example ds-real">
+                <div class="ds-example-preview">
+                    <div class="card-elegant">
+                        <div class="card-elegant-header">
+                            <div class="card-icon">◆</div>
+                            <h3>Busca inteligente</h3>
+                        </div>
+                        <p>Full-text via Elasticsearch com fallback automático para MySQL quando o serviço está indisponível.</p>
+                    </div>
+                </div>
+                <div class="ds-example-toolbar">
+                    <button class="ds-example-toggle" type="button" data-toggle-code>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                        <span>Ver código</span>
+                    </button>
+                </div>
+                <div class="ds-example-code">
+                    <button class="ds-copy-btn" type="button" data-copy>Copiar</button>
+                    <pre><code>&lt;div class="card-elegant"&gt;
+  &lt;div class="card-elegant-header"&gt;
+    &lt;div class="card-icon"&gt;&lt;i class="bi bi-search"&gt;&lt;/i&gt;&lt;/div&gt;
+    &lt;h3&gt;Busca inteligente&lt;/h3&gt;
+  &lt;/div&gt;
+  &lt;p&gt;Full-text via Elasticsearch com fallback automático para MySQL quando o serviço está indisponível.&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+                </div>
+            </div>
+
+            <h3 id="conteudo">Card de conteúdo — .content-card</h3>
+            <div class="ds-example ds-real">
+                <div class="ds-example-preview">
+                    <div class="content-card">
+                        <div class="content-card-header">
+                            <div class="content-card-icon">◆</div>
+                            <div class="content-card-title">Uso dos dados</div>
+                        </div>
+                        <p class="content-card-body">Dados pessoais de pesquisadores passam pelo <code>LgpdComplianceService</code> antes de qualquer exportação.</p>
+                    </div>
+                </div>
+                <div class="ds-example-toolbar">
+                    <button class="ds-example-toggle" type="button" data-toggle-code>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                        <span>Ver código</span>
+                    </button>
+                </div>
+                <div class="ds-example-code">
+                    <button class="ds-copy-btn" type="button" data-copy>Copiar</button>
+                    <pre><code>&lt;div class="content-card"&gt;
+  &lt;div class="content-card-header"&gt;
+    &lt;div class="content-card-icon"&gt;&lt;i class="bi bi-shield-check"&gt;&lt;/i&gt;&lt;/div&gt;
+    &lt;div class="content-card-title"&gt;Uso dos dados&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;p class="content-card-body"&gt;Dados pessoais de pesquisadores passam pelo LgpdComplianceService antes de qualquer exportação.&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+                </div>
+            </div>
+
+            <h3 id="stat-moderno">Stat card moderno — .stat-card-modern</h3>
+            <div class="ds-example ds-real">
+                <div class="ds-example-preview">
+                    <div class="stat-card-modern">
+                        <div class="stat-number">1.204</div>
+                        <div class="stat-label">Produções indexadas</div>
+                    </div>
+                </div>
+                <div class="ds-example-toolbar">
+                    <button class="ds-example-toggle" type="button" data-toggle-code>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                        <span>Ver código</span>
+                    </button>
+                </div>
+                <div class="ds-example-code">
+                    <button class="ds-copy-btn" type="button" data-copy>Copiar</button>
+                    <pre><code>&lt;div class="stat-card-modern"&gt;
+  &lt;div class="stat-number"&gt;1.204&lt;/div&gt;
+  &lt;div class="stat-label"&gt;Produções indexadas&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+                </div>
+            </div>
+
+            <p class="ds-variant-label">Stat card colorido — componente StatCard (PHP)</p>
+            <div class="ds-example">
+                <div class="ds-example-preview">
+                    <div style="width:220px; padding:2rem; border-radius:16px; color:#fff; background:linear-gradient(135deg,#1a56db,#1e429f); position:relative; overflow:hidden;">
+                        <div style="width:60px;height:60px;background:rgba(255,255,255,.2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.75rem;margin-bottom:1rem;">◆</div>
+                        <div style="font-size:2.5rem;font-weight:800;line-height:1;margin-bottom:.5rem;">312</div>
+                        <div style="font-size:.938rem;opacity:.9;font-weight:600;">Pesquisadores ativos</div>
+                    </div>
+                </div>
+                <div class="ds-example-toolbar">
+                    <button class="ds-example-toggle" type="button" data-toggle-code>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                        <span>Ver código</span>
+                    </button>
+                </div>
+                <div class="ds-example-code">
+                    <button class="ds-copy-btn" type="button" data-copy>Copiar</button>
+                    <pre><code>&lt;?php (new StatCard([
+    'value'  =&gt; 312,
+    'label'  =&gt; 'Pesquisadores ativos',
+    'icon'   =&gt; 'users',
+    'colors' =&gt; ['#1a56db', '#1e429f'],
+    'link'   =&gt; '/pesquisadores.php',
+]))-&gt;render(); ?&gt;</code></pre>
+                </div>
+            </div>
+
+            <div class="ds-callout">
+                <strong>Regra:</strong> nenhum card novo deve ter <code>border-left</code> colorido ou faixa lateral — removido de toda a base (pedido explícito). Hover-lift (<code>translateY</code>) só em cards clicáveis/interativos, nunca em cards de texto estático como os da página de Política de Privacidade.
+            </div>
+
+            <div class="ds-feedback">
+                <span>Essa página foi útil?</span>
+                <div class="ds-feedback-btns">
+                    <button type="button" class="ds-feedback-btn" data-feedback="up">👍 Sim</button>
+                    <button type="button" class="ds-feedback-btn" data-feedback="down">👎 Não</button>
+                </div>
+                <span class="ds-feedback-thanks">Obrigado pelo feedback!</span>
+                <a class="ds-feedback-comment" href="https://github.com/Matheus904-12/Prodmais/issues/new?title=Feedback%3A%20Cerne%20-%20Card&labels=design-system&body=Coment%C3%A1rio%20sobre%20a%20p%C3%A1gina%20%22Card%22%20do%20Cerne%3A%0A%0A" target="_blank" rel="noopener">💬 Comentar / relatar problema</a>
+            </div>
+        </main>
+
+        <footer class="ds-footer">
+            <div class="ds-footer-inner">
+                <div class="ds-footer-brand"><span class="ds-footer-mark"></span> Cerne é o design system do Prodmais UMC.</div>
+                <hr class="ds-footer-rule">
+                <div class="ds-footer-row">
+                    <div class="ds-footer-links">
+                        <a href="https://github.com/Matheus904-12/Prodmais" target="_blank" rel="noopener">Repositório ↗</a>
+                        <a href="https://github.com/Matheus904-12/Prodmais/releases" target="_blank" rel="noopener">Versões ↗</a>
+                    </div>
+                    <div class="ds-footer-copy">Por <strong>Matheus Lucindo</strong> — Dev Principal · © Prodmais UMC 2026</div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<script src="shell.js"></script>
+</body>
+</html>
