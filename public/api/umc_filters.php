@@ -34,25 +34,25 @@ try {
     $umcService = new UmcProgramService($config);
     $es = new ElasticsearchService($config['elasticsearch']);
     
-    $action = $_GET['action'] ?? 'get_filters';
-    
+    $action = trim(strip_tags((string) filter_input(INPUT_GET, 'action'))) ?: 'get_filters';
+
     switch ($action) {
         case 'get_filters':
             echo json_encode(getCustomFilters($umcConfig, $es, $config));
             break;
-            
+
         case 'get_programs':
             echo json_encode(getPrograms($umcService));
             break;
-            
+
         case 'get_research_lines':
-            $program = $_GET['program'] ?? '';
+            $program = trim(strip_tags((string) filter_input(INPUT_GET, 'program')));
             echo json_encode(getResearchLines($umcService, $program));
             break;
-            
+
         case 'get_filter_values':
-            $field = $_GET['field'] ?? '';
-            $program = $_GET['program'] ?? '';
+            $field = trim(strip_tags((string) filter_input(INPUT_GET, 'field')));
+            $program = trim(strip_tags((string) filter_input(INPUT_GET, 'program')));
             echo json_encode(getFilterValues($es, $config, $field, $program));
             break;
             

@@ -13,13 +13,13 @@ use App\View\Components\Footer\Footer;
 
 $client = getElasticsearchClient();
 
-$limit       = isset($_GET['limit'])     ? (int)$_GET['limit']  : 20;
-$page        = isset($_GET['page'])      ? max(1, (int)$_GET['page']) : 1;
-$status      = $_GET['status']      ?? '';
-$ppg         = $_GET['ppg']         ?? '';
-$ano_inicio  = $_GET['ano_inicio']  ?? '';
-$ano_fim     = $_GET['ano_fim']     ?? '';
-$coordenador = $_GET['coordenador'] ?? '';
+$limit       = filter_input(INPUT_GET, 'limit', FILTER_VALIDATE_INT) ?: 20;
+$page        = max(1, filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT) ?: 1);
+$status      = trim(strip_tags((string) filter_input(INPUT_GET, 'status')));
+$ppg         = trim(strip_tags((string) filter_input(INPUT_GET, 'ppg')));
+$ano_inicio  = trim(strip_tags((string) filter_input(INPUT_GET, 'ano_inicio')));
+$ano_fim     = trim(strip_tags((string) filter_input(INPUT_GET, 'ano_fim')));
+$coordenador = trim(strip_tags((string) filter_input(INPUT_GET, 'coordenador')));
 
 $from = ($page - 1) * $limit;
 

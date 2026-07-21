@@ -12,7 +12,7 @@ use App\View\Components\Navbar\Navbar;
 use App\View\Components\HeroSection\HeroSection;
 use App\View\Components\Footer\Footer;
 
-$ppg_nome = $_GET['ppg'] ?? '';
+$ppg_nome = trim(strip_tags((string) filter_input(INPUT_GET, 'ppg')));
 
 if (empty($ppg_nome)) {
     header('Location: /ppgs.php');
@@ -36,12 +36,12 @@ $client    = getElasticsearchClient();
 $producoes = [];
 $total     = 0;
 
-$limit      = isset($_GET['limit']) ? (int)$_GET['limit'] : 20;
-$page       = isset($_GET['page'])  ? max(1, (int)$_GET['page']) : 1;
-$tipo       = $_GET['tipo']       ?? '';
-$qualis     = $_GET['qualis']     ?? '';
-$ano_inicio = $_GET['ano_inicio'] ?? '';
-$ano_fim    = $_GET['ano_fim']    ?? '';
+$limit      = filter_input(INPUT_GET, 'limit', FILTER_VALIDATE_INT) ?: 20;
+$page       = max(1, filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT) ?: 1);
+$tipo       = trim(strip_tags((string) filter_input(INPUT_GET, 'tipo')));
+$qualis     = trim(strip_tags((string) filter_input(INPUT_GET, 'qualis')));
+$ano_inicio = trim(strip_tags((string) filter_input(INPUT_GET, 'ano_inicio')));
+$ano_fim    = trim(strip_tags((string) filter_input(INPUT_GET, 'ano_fim')));
 
 $from = ($page - 1) * $limit;
 

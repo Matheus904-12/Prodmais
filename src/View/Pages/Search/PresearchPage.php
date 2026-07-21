@@ -13,7 +13,9 @@ use App\View\Components\HeroSection\HeroSection;
 use App\View\Components\Footer\Footer;
 
 // Processar busca
-$search_term = $_POST['search'] ?? $_GET['q'] ?? '';
+$post_search = trim(strip_tags((string) filter_input(INPUT_POST, 'search')));
+$get_q       = trim(strip_tags((string) filter_input(INPUT_GET, 'q')));
+$search_term = $post_search !== '' ? $post_search : $get_q;
 
 if (empty($search_term)) {
     header('Location: /index_umc.php');

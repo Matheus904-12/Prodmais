@@ -1,18 +1,44 @@
 <?php
 
+if (!class_exists('Anonymizer')) {
+    require_once __DIR__ . '/../../Core/Anonymizer.php';
+}
+
 class ExportService
 {
+    private Anonymizer $anonymizer;
+
+    public function __construct()
+    {
+        $this->anonymizer = new Anonymizer();
+    }
+
+    /**
+     * Remove dados pessoais sensíveis (CPF, RG, e-mail, telefone, endereço,
+     * data de nascimento) antes de montar qualquer saída exportada — LGPD.
+     * Mantém nome do pesquisador e identificadores acadêmicos, que são o
+     * próprio objeto da exportação bibliográfica.
+     */
+    private function anonymizePersonalData(array $productions): array
+    {
+        return array_map(
+            fn(array $production) => $this->anonymizer->anonymize($production, ['level' => 'minimal']),
+            $productions
+        );
+    }
+
     /**
      * Exporta dados em formato BibTeX
      */
     public function exportBibTeX(array $productions): string
     {
+        $productions = $this->anonymizePersonalData($productions);
         $bibtex = "";
-        
+
         foreach ($productions as $production) {
             $bibtex .= $this->formatBibTeXEntry($production) . "\n\n";
         }
-        
+
         return $bibtex;
     }
 
@@ -21,12 +47,13 @@ class ExportService
      */
     public function exportRIS(array $productions): string
     {
+        $productions = $this->anonymizePersonalData($productions);
         $ris = "";
-        
+
         foreach ($productions as $production) {
             $ris .= $this->formatRISEntry($production) . "\n";
         }
-        
+
         return $ris;
     }
 
@@ -39,6 +66,7 @@ class ExportService
             return '';
         }
 
+        $productions = $this->anonymizePersonalData($productions);
         $output = fopen('php://temp', 'r+');
         
         // Cabeçalhos
@@ -87,6 +115,7 @@ class ExportService
      */
     public function exportJSON(array $productions): string
     {
+        $productions = $this->anonymizePersonalData($productions);
         return json_encode($productions, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 
@@ -95,8 +124,9 @@ class ExportService
      */
     public function exportXML(array $productions): string
     {
+        $productions = $this->anonymizePersonalData($productions);
         $xml = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><productions></productions>');
-        
+
         foreach ($productions as $production) {
             $productionNode = $xml->addChild('production');
             $this->arrayToXML($production, $productionNode);
@@ -331,8 +361,9 @@ class ExportService
      */
     public function prepareForORCID(array $productions): array
     {
+        $productions = $this->anonymizePersonalData($productions);
         $orcidWorks = [];
-        
+
         foreach ($productions as $production) {
             $work = [
                 'title' => [

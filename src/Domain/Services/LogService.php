@@ -83,11 +83,15 @@ class LogService {
     
     public function expungeOld($days = 365) {
         $limit = date('c', strtotime("-$days days"));
-        $this->db->exec("DELETE FROM logs WHERE timestamp < '$limit'");
+        $stmt = $this->db->prepare("DELETE FROM logs WHERE timestamp < :limit");
+        $stmt->bindValue(':limit', $limit, SQLITE3_TEXT);
+        $stmt->execute();
     }
 
     public function getLogs($limit = 100) {
-        $results = $this->db->query("SELECT level, message, context, user, action, timestamp FROM logs ORDER BY timestamp DESC LIMIT $limit");
+        $stmt = $this->db->prepare("SELECT level, message, context, user, action, timestamp FROM logs ORDER BY timestamp DESC LIMIT :limit");
+        $stmt->bindValue(':limit', (int) $limit, SQLITE3_INTEGER);
+        $results = $stmt->execute();
         $logs = [];
         while ($row = $results->fetchArray(SQLITE3_ASSOC)) {
             if ($row['context']) {

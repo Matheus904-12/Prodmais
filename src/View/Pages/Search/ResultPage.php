@@ -12,22 +12,20 @@ use App\View\Components\HeroSection\HeroSection;
 use App\View\Components\Footer\Footer;
 
 // Capturar parâmetros de busca e filtros
-$search_term = $_POST['search'] ?? $_GET['q'] ?? $_GET['pesquisador'] ?? '';
-$page = isset($_POST['page']) ? (int)$_POST['page'] : (isset($_GET['page']) ? (int)$_GET['page'] : 1);
-$limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 20;
+$post_search = trim(strip_tags((string) filter_input(INPUT_POST, 'search')));
+$get_q       = trim(strip_tags((string) filter_input(INPUT_GET, 'q')));
+$get_pesquisador = trim(strip_tags((string) filter_input(INPUT_GET, 'pesquisador')));
+$search_term = $post_search !== '' ? $post_search : ($get_q !== '' ? $get_q : $get_pesquisador);
+$page = filter_input(INPUT_POST, 'page', FILTER_VALIDATE_INT) ?: (filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT) ?: 1);
+$limit = filter_input(INPUT_GET, 'limit', FILTER_VALIDATE_INT) ?: 20;
 $limit = min($limit, 100); // Máximo 100 por página
 
 // Filtros
-$filter_tipo       = $_GET['tipo']       ?? '';
-$filter_ano_inicio = $_GET['ano_inicio'] ?? '';
-$filter_ano_fim    = $_GET['ano_fim']    ?? '';
-$filter_qualis     = $_GET['qualis']     ?? '';
-$filter_ppg        = $_GET['ppg']        ?? '';
-
-// Se veio pesquisador via GET, simular POST para o processador
-if (isset($_GET['pesquisador']) && !empty($_GET['pesquisador'])) {
-    $_POST['search'] = $_GET['pesquisador'];
-}
+$filter_tipo       = trim(strip_tags((string) filter_input(INPUT_GET, 'tipo')));
+$filter_ano_inicio = trim(strip_tags((string) filter_input(INPUT_GET, 'ano_inicio')));
+$filter_ano_fim    = trim(strip_tags((string) filter_input(INPUT_GET, 'ano_fim')));
+$filter_qualis     = trim(strip_tags((string) filter_input(INPUT_GET, 'qualis')));
+$filter_ppg        = trim(strip_tags((string) filter_input(INPUT_GET, 'ppg')));
 
 // Construir query com filtros
 $must_queries   = [];

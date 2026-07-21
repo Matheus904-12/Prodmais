@@ -223,9 +223,16 @@ function handleValidationStatus($config)
  */
 function handleValidationReport($config)
 {
-    $filename = $_GET['filename'] ?? null;
+    $filename = trim(strip_tags((string) filter_input(INPUT_GET, 'filename')));
     $logsDir = $config['data_paths']['logs'] ?? __DIR__ . '/../../data/logs';
-    
+
+    // Só aceita o padrão de nome gerado por este sistema — bloqueia path traversal
+    if ($filename !== '' && !preg_match('/^validation_report_[\w.-]+\.json$/', $filename)) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Nome de arquivo inválido']);
+        return;
+    }
+
     if (!$filename) {
         // Buscar relatório mais recente
         $reports = glob($logsDir . '/validation_report_*.json');
