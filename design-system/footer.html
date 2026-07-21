@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Footer — Prodmais Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="ds-topnav">
+    <div class="ds-topnav-inner">
+        <a class="ds-topnav-brand" href="index.html"><span class="ds-topnav-mark"></span> Cerne</a>
+        <nav class="ds-topnav-links" aria-label="Navegação principal">
+            <a href="fundamentos.html">Fundamentos</a>
+            <a href="components.html">Componentes</a>
+            <a href="backend.html">Arquitetura</a>
+        </nav>
+        <form class="ds-topnav-search" onsubmit="return false;">
+            <span class="ds-topnav-search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
+            <input type="text" placeholder="Buscar (alert, ícones, api...)" aria-label="Buscar no Cerne" data-ds-search>
+        </form>
+    </div>
+</header>
+
+<div class="ds-shell">
+    <aside class="ds-sidebar" aria-label="Sidebar de documentação">
+        <a class="ds-sidebar-brand" href="index.html">Prod<span>mais</span><small>Cerne — Design System</small></a>
+        <nav aria-label="Navegação da documentação">
+            <a href="index.html" class="ds-side-link">Visão geral</a>
+            <p class="ds-side-group">Fundamentos</p>
+            <a href="fundamentos.html" class="ds-side-link">Cores &amp; Tipografia</a>
+            <a href="icons.html" class="ds-side-link">Ícones</a>
+            <p class="ds-side-group">Componentes</p>
+            <a href="components.html" class="ds-side-link">Todos os componentes</a>
+            <a href="alert.html" class="ds-side-link">Alert</a>
+            <a href="card.html" class="ds-side-link">Card</a>
+            <a href="button.html" class="ds-side-link">Botão</a>
+            <a href="badge.html" class="ds-side-link">Badge</a>
+            <a href="navbar.html" class="ds-side-link">Navbar</a>
+            <a href="footer.html" class="ds-side-link is-active">Footer</a>
+            <a href="hero.html" class="ds-side-link">Hero</a>
+            <p class="ds-side-group">Arquitetura</p>
+            <a href="backend.html" class="ds-side-link">Backend</a>
+            <a href="frontend.html" class="ds-side-link">Frontend</a>
+            <a href="api.html" class="ds-side-link">API</a>
+            <a href="extracao-dados.html" class="ds-side-link">Extração de Dados</a>
+        </nav>
+    </aside>
+
+    <div class="ds-shell-main">
+        <header class="ds-topbar">
+            <span class="ds-topbar-title">Componente — Footer</span>
+            <span class="ds-topbar-sub">src/View/Components/Footer</span>
+        </header>
+
+        <main class="ds-page has-toc">
+          <div class="ds-page-content">
+            <p class="ds-lead">Rodapé institucional renderizado por <code>Footer::display(['instituicao' =&gt; ...])</code>. Sempre no fim da página, fora do <code>.ds-page</code>/container principal.</p>
+
+            <h3 id="padrao">Padrão — .footer-elegant</h3>
+            <div class="ds-example ds-real">
+                <div class="ds-example-preview">
+                    <div class="footer-elegant">
+                        <div class="footer-title">Prodmais</div>
+                        <p class="footer-description">Sistema de gestão de produção científica da Universidade de Mogi das Cruzes.</p>
+                        <hr class="footer-divider">
+                        <ul class="footer-links" style="display:flex;gap:1.5rem;">
+                            <li><a href="#">Início</a></li>
+                            <li><a href="#">Pesquisadores</a></li>
+                            <li><a href="#">PPGs</a></li>
+                        </ul>
+                        <hr class="footer-divider">
+                        <div class="copyright">© 2026 Prodmais UMC. Todos os direitos reservados.</div>
+                        <div class="compliance">Dados pessoais tratados conforme a LGPD (Lei 13.709/2018).</div>
+                    </div>
+                </div>
+                <div class="ds-example-toolbar">
+                    <button class="ds-example-toggle" type="button" data-toggle-code>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                        <span>Ver código</span>
+                    </button>
+                </div>
+                <div class="ds-example-code">
+                    <button class="ds-copy-btn" type="button" data-copy>Copiar</button>
+                    <pre><code>&lt;?php (new Footer(['instituicao' =&gt; 'Prodmais UMC']))-&gt;render(); ?&gt;</code></pre>
+                </div>
+            </div>
+
+            <div class="ds-callout">
+                <strong>Regra:</strong> a linha de <code>.compliance</code> (LGPD) é obrigatória em toda página pública — nunca remover ao customizar o rodapé de uma tela nova.
+            </div>
+
+            <div class="ds-feedback">
+                <span>Essa página foi útil?</span>
+                <div class="ds-feedback-btns">
+                    <button type="button" class="ds-feedback-btn" data-feedback="up">👍 Sim</button>
+                    <button type="button" class="ds-feedback-btn" data-feedback="down">👎 Não</button>
+                </div>
+                <span class="ds-feedback-thanks">Obrigado pelo feedback!</span>
+                <a class="ds-feedback-comment" href="https://github.com/Matheus904-12/Prodmais/issues/new?title=Feedback%3A%20Cerne%20-%20Footer&labels=design-system&body=Coment%C3%A1rio%20sobre%20a%20p%C3%A1gina%20%22Footer%22%20do%20Cerne%3A%0A%0A" target="_blank" rel="noopener">💬 Comentar / relatar problema</a>
+            </div>
+          </div>
+          <aside class="ds-toc" aria-label="Sumário desta página">
+              <span class="ds-toc-title">Nesta página</span>
+              <a href="#padrao">Padrão</a>
+          </aside>
+        </main>
+
+        <footer class="ds-footer">
+            <div class="ds-footer-inner">
+                <div class="ds-footer-brand"><span class="ds-footer-mark"></span> Cerne é o design system do Prodmais UMC.</div>
+                <hr class="ds-footer-rule">
+                <div class="ds-footer-row">
+                    <div class="ds-footer-links">
+                        <a href="https://github.com/Matheus904-12/Prodmais" target="_blank" rel="noopener">Repositório ↗</a>
+                        <a href="https://github.com/Matheus904-12/Prodmais/releases" target="_blank" rel="noopener">Versões ↗</a>
+                    </div>
+                    <div class="ds-footer-copy">Por <strong>Matheus Lucindo</strong> — Dev Principal · © Prodmais UMC 2026</div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<script src="shell.js"></script>
+</body>
+</html>

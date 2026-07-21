@@ -1,4 +1,8 @@
 # public/.htaccess
+
+# Disable directory listing (não expor estrutura de pastas via URL)
+Options -Indexes
+
 RewriteEngine On
 
 # Force HTTPS

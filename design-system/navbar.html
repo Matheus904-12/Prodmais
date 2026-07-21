@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Navbar — Prodmais Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="ds-topnav">
+    <div class="ds-topnav-inner">
+        <a class="ds-topnav-brand" href="index.html"><span class="ds-topnav-mark"></span> Cerne</a>
+        <nav class="ds-topnav-links" aria-label="Navegação principal">
+            <a href="fundamentos.html">Fundamentos</a>
+            <a href="components.html">Componentes</a>
+            <a href="backend.html">Arquitetura</a>
+        </nav>
+        <form class="ds-topnav-search" onsubmit="return false;">
+            <span class="ds-topnav-search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
+            <input type="text" placeholder="Buscar (alert, ícones, api...)" aria-label="Buscar no Cerne" data-ds-search>
+        </form>
+    </div>
+</header>
+
+<div class="ds-shell">
+    <aside class="ds-sidebar" aria-label="Sidebar de documentação">
+        <a class="ds-sidebar-brand" href="index.html">Prod<span>mais</span><small>Cerne — Design System</small></a>
+        <nav aria-label="Navegação da documentação">
+            <a href="index.html" class="ds-side-link">Visão geral</a>
+            <p class="ds-side-group">Fundamentos</p>
+            <a href="fundamentos.html" class="ds-side-link">Cores &amp; Tipografia</a>
+            <a href="icons.html" class="ds-side-link">Ícones</a>
+            <p class="ds-side-group">Componentes</p>
+            <a href="components.html" class="ds-side-link">Todos os componentes</a>
+            <a href="alert.html" class="ds-side-link">Alert</a>
+            <a href="card.html" class="ds-side-link">Card</a>
+            <a href="button.html" class="ds-side-link">Botão</a>
+            <a href="badge.html" class="ds-side-link">Badge</a>
+            <a href="navbar.html" class="ds-side-link is-active">Navbar</a>
+            <a href="footer.html" class="ds-side-link">Footer</a>
+            <a href="hero.html" class="ds-side-link">Hero</a>
+            <p class="ds-side-group">Arquitetura</p>
+            <a href="backend.html" class="ds-side-link">Backend</a>
+            <a href="frontend.html" class="ds-side-link">Frontend</a>
+            <a href="api.html" class="ds-side-link">API</a>
+            <a href="extracao-dados.html" class="ds-side-link">Extração de Dados</a>
+        </nav>
+    </aside>
+
+    <div class="ds-shell-main">
+        <header class="ds-topbar">
+            <span class="ds-topbar-title">Componente — Navbar</span>
+            <span class="ds-topbar-sub">src/View/Components/Navbar</span>
+        </header>
+
+        <main class="ds-page has-toc">
+          <div class="ds-page-content">
+            <p class="ds-lead">Barra de navegação renderizada por <code>Navbar::display()</code>. Lê <code>$_SESSION</code> diretamente — funciona em qualquer página sem código extra.</p>
+
+            <h3 id="deslogado">Deslogado</h3>
+            <div class="ds-example ds-real">
+                <div class="ds-example-preview">
+                    <nav class="navbar-elegant">
+                        <div class="brand-text">Prod<span class="highlight">mais</span></div>
+                        <div style="display:flex;gap:.25rem;">
+                            <a class="nav-link-elegant active" href="#">Início</a>
+                            <a class="nav-link-elegant" href="#">Pesquisadores</a>
+                            <a class="nav-link-elegant" href="#">PPGs</a>
+                        </div>
+                    </nav>
+                </div>
+                <div class="ds-example-toolbar">
+                    <button class="ds-example-toggle" type="button" data-toggle-code>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                        <span>Ver código</span>
+                    </button>
+                </div>
+                <div class="ds-example-code">
+                    <button class="ds-copy-btn" type="button" data-copy>Copiar</button>
+                    <pre><code>&lt;?php (new Navbar(['active_page' =&gt; 'home']))-&gt;render(); ?&gt;</code></pre>
+                </div>
+            </div>
+
+            <h3 id="logado">Logado — menu de usuário</h3>
+            <p class="ds-lead">Quando <code>$_SESSION['user_id']</code> existe, o link "Área Admin" vira um menu com iniciais do nome, saudação e dropdown.</p>
+            <div class="ds-example ds-real">
+                <div class="ds-example-preview">
+                    <a class="nav-user-toggle" href="#">
+                        <span class="nav-user-avatar">ML</span>
+                        <span class="nav-user-greeting">Bem-vindo!</span>
+                        <span class="nav-user-caret">▾</span>
+                    </a>
+                </div>
+                <div class="ds-example-toolbar">
+                    <button class="ds-example-toggle" type="button" data-toggle-code>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                        <span>Ver código</span>
+                    </button>
+                </div>
+                <div class="ds-example-code">
+                    <button class="ds-copy-btn" type="button" data-copy>Copiar</button>
+                    <pre><code>&lt;a class="nav-user-toggle" href="#" data-bs-toggle="dropdown"&gt;
+  &lt;span class="nav-user-avatar"&gt;ML&lt;/span&gt;
+  &lt;span class="nav-user-greeting"&gt;Bem-vindo!&lt;/span&gt;
+  &lt;i class="fas fa-chevron-down nav-user-caret"&gt;&lt;/i&gt;
+&lt;/a&gt;</code></pre>
+                </div>
+            </div>
+
+            <div class="ds-callout">
+                <strong>Regra:</strong> as iniciais vêm de <code>mb_substr</code> na primeira e última palavra do nome completo — nunca hardcode um nome no template, sempre leia de <code>$_SESSION['nome_completo']</code>.
+            </div>
+
+            <div class="ds-feedback">
+                <span>Essa página foi útil?</span>
+                <div class="ds-feedback-btns">
+                    <button type="button" class="ds-feedback-btn" data-feedback="up">👍 Sim</button>
+                    <button type="button" class="ds-feedback-btn" data-feedback="down">👎 Não</button>
+                </div>
+                <span class="ds-feedback-thanks">Obrigado pelo feedback!</span>
+                <a class="ds-feedback-comment" href="https://github.com/Matheus904-12/Prodmais/issues/new?title=Feedback%3A%20Cerne%20-%20Navbar&labels=design-system&body=Coment%C3%A1rio%20sobre%20a%20p%C3%A1gina%20%22Navbar%22%20do%20Cerne%3A%0A%0A" target="_blank" rel="noopener">💬 Comentar / relatar problema</a>
+            </div>
+          </div>
+          <aside class="ds-toc" aria-label="Sumário desta página">
+              <span class="ds-toc-title">Nesta página</span>
+              <a href="#deslogado">Deslogado</a>
+              <a href="#logado">Logado</a>
+          </aside>
+        </main>
+
+        <footer class="ds-footer">
+            <div class="ds-footer-inner">
+                <div class="ds-footer-brand"><span class="ds-footer-mark"></span> Cerne é o design system do Prodmais UMC.</div>
+                <hr class="ds-footer-rule">
+                <div class="ds-footer-row">
+                    <div class="ds-footer-links">
+                        <a href="https://github.com/Matheus904-12/Prodmais" target="_blank" rel="noopener">Repositório ↗</a>
+                        <a href="https://github.com/Matheus904-12/Prodmais/releases" target="_blank" rel="noopener">Versões ↗</a>
+                    </div>
+                    <div class="ds-footer-copy">Por <strong>Matheus Lucindo</strong> — Dev Principal · © Prodmais UMC 2026</div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<script src="shell.js"></script>
+</body>
+</html>

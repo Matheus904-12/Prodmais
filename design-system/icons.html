@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ícones — Prodmais Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" integrity="sha384-QuGBSgV5Im3DzL2z+8Ko9/hqNy/N0O7zwvXAtfd1MvPKWa/UbeLV65cfm4BV5Wgq" crossorigin="anonymous">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="ds-topnav">
+    <div class="ds-topnav-inner">
+        <a class="ds-topnav-brand" href="index.html"><span class="ds-topnav-mark"></span> Cerne</a>
+        <nav class="ds-topnav-links" aria-label="Navegação principal">
+            <a href="fundamentos.html">Fundamentos</a>
+            <a href="components.html">Componentes</a>
+            <a href="backend.html">Arquitetura</a>
+        </nav>
+        <form class="ds-topnav-search" onsubmit="return false;">
+            <span class="ds-topnav-search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
+            <input type="text" placeholder="Buscar (alert, ícones, api...)" aria-label="Buscar no Cerne" data-ds-search>
+        </form>
+    </div>
+</header>
+
+<div class="ds-shell">
+    <aside class="ds-sidebar" aria-label="Sidebar de documentação">
+        <a class="ds-sidebar-brand" href="index.html">Prod<span>mais</span><small>Cerne — Design System</small></a>
+        <nav aria-label="Navegação da documentação">
+            <a href="index.html" class="ds-side-link">Visão geral</a>
+            <p class="ds-side-group">Fundamentos</p>
+            <a href="fundamentos.html" class="ds-side-link">Cores &amp; Tipografia</a>
+            <a href="icons.html" class="ds-side-link is-active">Ícones</a>
+            <p class="ds-side-group">Componentes</p>
+            <a href="components.html" class="ds-side-link">Todos os componentes</a>
+            <a href="alert.html" class="ds-side-link">Alert</a>
+            <a href="card.html" class="ds-side-link">Card</a>
+            <a href="button.html" class="ds-side-link">Botão</a>
+            <a href="badge.html" class="ds-side-link">Badge</a>
+            <a href="navbar.html" class="ds-side-link">Navbar</a>
+            <a href="footer.html" class="ds-side-link">Footer</a>
+            <a href="hero.html" class="ds-side-link">Hero</a>
+            <p class="ds-side-group">Arquitetura</p>
+            <a href="backend.html" class="ds-side-link">Backend</a>
+            <a href="frontend.html" class="ds-side-link">Frontend</a>
+            <a href="api.html" class="ds-side-link">API</a>
+            <a href="extracao-dados.html" class="ds-side-link">Extração de Dados</a>
+        </nav>
+    </aside>
+
+    <div class="ds-shell-main">
+        <header class="ds-topbar">
+            <span class="ds-topbar-title">Ícones</span>
+            <span class="ds-topbar-sub">Biblioteca, ícones em uso e tamanhos de container</span>
+        </header>
+
+        <main class="ds-page">
+            <p class="ds-lead">O projeto usa <strong>Bootstrap Icons 1.11.0</strong> via CDN — carregado só nas páginas que exibem ícone (ex: <code>AdminPage</code>, <code>ImportLattesPage</code>), não no <code>&lt;head&gt;</code> global.</p>
+
+            <div class="ds-example">
+                <div class="ds-example-code">
+                    <button class="ds-copy-btn" type="button" data-copy>Copiar</button>
+                    <pre><code>&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"&gt;</code></pre>
+                </div>
+            </div>
+
+            <h3>Ícones já usados no projeto</h3>
+            <p class="ds-lead">Todo ícone novo deve, na medida do possível, vir desta mesma lista antes de introduzir um nome novo — mantém o conjunto pequeno e consistente.</p>
+            <div class="ds-icon-grid">
+                <div class="ds-icon-sample"><i class="bi bi-cloud-upload"></i>bi-cloud-upload</div>
+                <div class="ds-icon-sample"><i class="bi bi-check-circle"></i>bi-check-circle</div>
+                <div class="ds-icon-sample"><i class="bi bi-check-circle-fill"></i>bi-check-circle-fill</div>
+                <div class="ds-icon-sample"><i class="bi bi-x-circle"></i>bi-x-circle</div>
+                <div class="ds-icon-sample"><i class="bi bi-exclamation-triangle"></i>bi-exclamation-triangle</div>
+                <div class="ds-icon-sample"><i class="bi bi-file-earmark-check"></i>bi-file-earmark-check</div>
+            </div>
+
+            <div class="ds-example" style="margin-top:1.25rem;">
+                <div class="ds-example-code">
+                    <button class="ds-copy-btn" type="button" data-copy>Copiar</button>
+                    <pre><code>&lt;i class="bi bi-cloud-upload"&gt;&lt;/i&gt;</code></pre>
+                </div>
+            </div>
+
+            <h3>Tamanhos de container por componente</h3>
+            <p class="ds-lead">Ícone sempre dentro de um container quadrado com gradiente/cor de fundo — nunca solto sem fundo em cards. O tamanho do container e o <code>font-size</code> do ícone variam por contexto:</p>
+            <div class="ds-table-wrap"><table class="ds-table">
+                <tr><th>Classe</th><th>Container</th><th>Ícone</th><th>Uso</th></tr>
+                <tr><td><code>.content-card-icon</code></td><td>44×44px</td><td>1.1rem</td><td>cards de conteúdo (política, termos)</td></tr>
+                <tr><td><code>.card-icon</code></td><td>48×48px</td><td>1.5rem</td><td><code>.card-elegant</code> (dashboards/feature cards)</td></tr>
+                <tr><td><code>.quick-card-icon</code></td><td>48×48px</td><td>1.2rem</td><td>acesso rápido / atalhos</td></tr>
+                <tr><td><code>.stat-card-icon</code></td><td>46×46px</td><td>1.1rem</td><td>cards de estatística</td></tr>
+                <tr><td><code>.ppg-card-icon</code></td><td>52×52px</td><td>—</td><td>cards de programa de pós-graduação</td></tr>
+                <tr><td><code>.card-umc-icon</code></td><td>60×60px</td><td>2rem</td><td>cards do tema institucional UMC (legado)</td></tr>
+            </table></div>
+
+            <div class="ds-icon-size-row">
+                <div class="ds-icon-box" style="width:44px;height:44px;border-radius:14px;"><i class="bi bi-check-circle" style="font-size:1.1rem;"></i></div>
+                <div class="ds-icon-box" style="width:48px;height:48px;border-radius:14px;"><i class="bi bi-check-circle" style="font-size:1.5rem;"></i></div>
+                <div class="ds-icon-box" style="width:52px;height:52px;border-radius:14px;"><i class="bi bi-check-circle" style="font-size:1.5rem;"></i></div>
+                <div class="ds-icon-box" style="width:60px;height:60px;border-radius:16px;"><i class="bi bi-check-circle" style="font-size:2rem;"></i></div>
+                <small>44px → 60px, da esquerda pra direita</small>
+            </div>
+
+            <div class="ds-example" style="margin-top:1.25rem;">
+                <div class="ds-example-code">
+                    <button class="ds-copy-btn" type="button" data-copy>Copiar</button>
+                    <pre><code>&lt;div class="card-icon"&gt;
+  &lt;i class="bi bi-check-circle"&gt;&lt;/i&gt;
+&lt;/div&gt;</code></pre>
+                </div>
+            </div>
+            <div class="ds-feedback">
+                <span>Essa página foi útil?</span>
+                <div class="ds-feedback-btns">
+                    <button type="button" class="ds-feedback-btn" data-feedback="up">👍 Sim</button>
+                    <button type="button" class="ds-feedback-btn" data-feedback="down">👎 Não</button>
+                </div>
+                <span class="ds-feedback-thanks">Obrigado pelo feedback!</span>
+                <a class="ds-feedback-comment" href="https://github.com/Matheus904-12/Prodmais/issues/new?title=Feedback%3A%20Cerne%20-%20%C3%8Dcones&labels=design-system&body=Coment%C3%A1rio%20sobre%20a%20p%C3%A1gina%20%22%C3%8Dcones%22%20do%20Cerne%3A%0A%0A" target="_blank" rel="noopener">💬 Comentar / relatar problema</a>
+            </div>
+        </main>
+
+        <footer class="ds-footer">
+            <div class="ds-footer-inner">
+                <div class="ds-footer-brand"><span class="ds-footer-mark"></span> Cerne é o design system do Prodmais UMC.</div>
+                <hr class="ds-footer-rule">
+                <div class="ds-footer-row">
+                    <div class="ds-footer-links">
+                        <a href="https://github.com/Matheus904-12/Prodmais" target="_blank" rel="noopener">Repositório ↗</a>
+                        <a href="https://github.com/Matheus904-12/Prodmais/releases" target="_blank" rel="noopener">Versões ↗</a>
+                    </div>
+                    <div class="ds-footer-copy">Por <strong>Matheus Lucindo</strong> — Dev Principal · © Prodmais UMC 2026</div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<script src="shell.js"></script>
+</body>
+</html>

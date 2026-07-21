@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Backend — Prodmais Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js" integrity="sha384-WmdflGW9aGfoBdHc4rRyWzYuAjEmDwMdGdiPNacbwfGKxBW/SO6guzuQ76qjnSlr" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<header class="ds-topnav">
+    <div class="ds-topnav-inner">
+        <a class="ds-topnav-brand" href="index.html"><span class="ds-topnav-mark"></span> Cerne</a>
+        <nav class="ds-topnav-links" aria-label="Navegação principal">
+            <a href="fundamentos.html">Fundamentos</a>
+            <a href="components.html">Componentes</a>
+            <a href="backend.html">Arquitetura</a>
+        </nav>
+        <form class="ds-topnav-search" onsubmit="return false;">
+            <span class="ds-topnav-search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
+            <input type="text" placeholder="Buscar (alert, ícones, api...)" aria-label="Buscar no Cerne" data-ds-search>
+        </form>
+    </div>
+</header>
+
+<div class="ds-shell">
+    <aside class="ds-sidebar" aria-label="Sidebar de documentação">
+        <a class="ds-sidebar-brand" href="index.html">Prod<span>mais</span><small>Cerne — Design System</small></a>
+        <nav aria-label="Navegação da documentação">
+            <a href="index.html" class="ds-side-link">Visão geral</a>
+            <p class="ds-side-group">Fundamentos</p>
+            <a href="fundamentos.html" class="ds-side-link">Cores &amp; Tipografia</a>
+            <a href="icons.html" class="ds-side-link">Ícones</a>
+            <p class="ds-side-group">Componentes</p>
+            <a href="components.html" class="ds-side-link">Todos os componentes</a>
+            <a href="alert.html" class="ds-side-link">Alert</a>
+            <a href="card.html" class="ds-side-link">Card</a>
+            <a href="button.html" class="ds-side-link">Botão</a>
+            <a href="badge.html" class="ds-side-link">Badge</a>
+            <a href="navbar.html" class="ds-side-link">Navbar</a>
+            <a href="footer.html" class="ds-side-link">Footer</a>
+            <a href="hero.html" class="ds-side-link">Hero</a>
+            <p class="ds-side-group">Arquitetura</p>
+            <a href="backend.html" class="ds-side-link is-active">Backend</a>
+            <a href="frontend.html" class="ds-side-link">Frontend</a>
+            <a href="api.html" class="ds-side-link">API</a>
+            <a href="extracao-dados.html" class="ds-side-link">Extração de Dados</a>
+        </nav>
+    </aside>
+
+    <div class="ds-shell-main">
+        <header class="ds-topbar">
+            <span class="ds-topbar-title">Arquitetura — Backend</span>
+            <span class="ds-topbar-sub">PHP 8.2 · PSR-4 manual (namespace App\ → src/)</span>
+        </header>
+
+        <main class="ds-page has-toc">
+          <div class="ds-page-content">
+            <div class="ds-arch-badge">
+                <div class="ds-arch-badge-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                </div>
+                <div class="ds-arch-badge-body">
+                    <span class="ds-arch-badge-label">Estilo arquitetural</span>
+                    <div class="ds-arch-badge-title">Clean Architecture <span style="font-weight:600;color:var(--gray-500);">(adaptada)</span></div>
+                    <p class="ds-arch-badge-desc">Sem framework, sem container de injeção de dependência — as camadas são separadas por pasta em vez de por pacote/módulo.</p>
+                </div>
+            </div>
+            <p class="ds-lead">PHP 8.2 sem framework, dividido em quatro camadas. A dependência flui numa direção só: <code>View</code> chama <code>Domain</code>, <code>Domain</code> chama <code>Infrastructure</code>. <code>Core</code> é transversal e pode ser usado por qualquer camada.</p>
+
+            <h3 id="camadas">Camadas e fluxo de dependência</h3>
+            <div class="ds-example">
+                <div class="ds-example-preview is-dark">
+                    <pre class="mermaid">
+flowchart TD
+    V["View — Pages &amp; Components"] --> D["Domain — Importers · Reports · Security · Services · Validation"]
+    D --> I["Infrastructure — Database · Elasticsearch · External · Storage"]
+    C["Core — HookManager · PluginLoader · Anonymizer"] -.-> V
+    C -.-> D
+    C -.-> I
+                    </pre>
+                </div>
+            </div>
+
+            <div class="ds-table-wrap"><table class="ds-table">
+                <tr><th>Camada</th><th>Pasta</th><th>Responsabilidade</th></tr>
+                <tr><td><strong>Core</strong></td><td><code>src/Core/</code></td><td>Infraestrutura transversal: <code>Anonymizer</code>, <code>HookManager</code>, <code>PluginLoader</code></td></tr>
+                <tr><td><strong>Domain</strong></td><td><code>src/Domain/</code></td><td>Regras de negócio: <code>Importers</code> (Lattes), <code>Reports</code> (CAPES), <code>Security</code> (Auth, LGPD), <code>Services</code>, <code>Validation</code></td></tr>
+                <tr><td><strong>Infrastructure</strong></td><td><code>src/Infrastructure/</code></td><td>Adaptadores externos: <code>Database</code>, <code>Elasticsearch</code>, <code>External</code> (ORCID/OpenAlex/BrCris), <code>Storage</code></td></tr>
+                <tr><td><strong>View</strong></td><td><code>src/View/</code></td><td>Componentes (Navbar, Footer, HeroSection) e páginas (Auth, Dashboard, Search, Static)</td></tr>
+            </table></div>
+
+            <h3 id="classes">Classes críticas</h3>
+            <div class="ds-table-wrap"><table class="ds-table">
+                <tr><th>Classe</th><th>Caminho</th><th>Papel</th></tr>
+                <tr><td><code>AuthManager</code></td><td><code>Domain/Security/</code></td><td>Login, BCrypt, brute-force, sessão segura</td></tr>
+                <tr><td><code>LattesImporter</code></td><td><code>Domain/Importers/</code></td><td>Importação de XML do Lattes, com validação anti-XXE</td></tr>
+                <tr><td><code>ElasticsearchService</code></td><td><code>Infrastructure/Elasticsearch/</code></td><td>Cliente ES 8.x, com fallback automático para MySQL</td></tr>
+                <tr><td><code>LgpdComplianceService</code></td><td><code>Domain/Security/</code></td><td>DPIA, status de conformidade — exposto em <code>admin.php</code></td></tr>
+                <tr><td><code>ExportService</code></td><td><code>Domain/Services/</code></td><td>BibTeX, RIS, CSV, JSON, XML</td></tr>
+            </table></div>
+
+            <h3 id="login">Fluxo de autenticação</h3>
+            <div class="ds-example">
+                <div class="ds-example-preview is-dark">
+                    <pre class="mermaid">
+flowchart TD
+    L["LoginPage: usuário + senha"] --> AM["AuthManager::login()"]
+    AM --> CHK{"Senha confere e conta não bloqueada?"}
+    CHK -- sim --> SESS["iniciarSessaoSegura(): regenera ID, timeout 2h"]
+    SESS --> OK["Redireciona ao painel"]
+    CHK -- não --> CNT["Incrementa tentativas em log_login"]
+    CNT --> BLK{"5 tentativas?"}
+    BLK -- sim --> LOCK["Bloqueio de 15min"]
+    BLK -- não --> RETRY["Retorna erro, permite nova tentativa"]
+                    </pre>
+                </div>
+            </div>
+
+            <div class="ds-callout">
+                <strong>Convenção obrigatória:</strong> todo método de serviço retorna <code>['sucesso' => bool, 'mensagem' => string, 'dados' => mixed]</code>. Prepared statements sempre; nunca concatenar SQL. <code>filter_input()</code> em toda entrada externa.
+            </div>
+
+            <div class="ds-feedback">
+                <span>Essa página foi útil?</span>
+                <div class="ds-feedback-btns">
+                    <button type="button" class="ds-feedback-btn" data-feedback="up">👍 Sim</button>
+                    <button type="button" class="ds-feedback-btn" data-feedback="down">👎 Não</button>
+                </div>
+                <span class="ds-feedback-thanks">Obrigado pelo feedback!</span>
+                <a class="ds-feedback-comment" href="https://github.com/Matheus904-12/Prodmais/issues/new?title=Feedback%3A%20Cerne%20-%20Backend&labels=design-system&body=Coment%C3%A1rio%20sobre%20a%20p%C3%A1gina%20%22Backend%22%20do%20Cerne%3A%0A%0A" target="_blank" rel="noopener">💬 Comentar / relatar problema</a>
+            </div>
+          </div>
+          <aside class="ds-toc" aria-label="Sumário desta página">
+              <span class="ds-toc-title">Nesta página</span>
+              <a href="#camadas">Camadas</a>
+              <a href="#classes">Classes críticas</a>
+              <a href="#login">Fluxo de login</a>
+          </aside>
+        </main>
+
+        <footer class="ds-footer">
+            <div class="ds-footer-inner">
+                <div class="ds-footer-brand"><span class="ds-footer-mark"></span> Cerne é o design system do Prodmais UMC.</div>
+                <hr class="ds-footer-rule">
+                <div class="ds-footer-row">
+                    <div class="ds-footer-links">
+                        <a href="https://github.com/Matheus904-12/Prodmais" target="_blank" rel="noopener">Repositório ↗</a>
+                        <a href="https://github.com/Matheus904-12/Prodmais/releases" target="_blank" rel="noopener">Versões ↗</a>
+                    </div>
+                    <div class="ds-footer-copy">Por <strong>Matheus Lucindo</strong> — Dev Principal · © Prodmais UMC 2026</div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<script src="shell.js"></script>
+</body>
+</html>
