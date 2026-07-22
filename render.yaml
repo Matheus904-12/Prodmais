@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: prodmais-umc
+    runtime: docker
+    dockerfilePath: ./Dockerfile.render
+    plan: free
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: ES_USE
+        value: "true"
+      - key: ELASTICSEARCH_HOST
+        sync: false # preencher no dashboard: endpoint HTTPS do domínio AWS OpenSearch
+      - key: ELASTICSEARCH_USER
+        sync: false # master user do domínio OpenSearch
+      - key: ELASTICSEARCH_PASS
+        sync: false # senha do master user do domínio OpenSearch
+      - key: MYSQL_HOST
+        sync: false # preencher no dashboard: host do banco MySQL externo (ex: Aiven)
+      - key: MYSQL_DB
+        sync: false
+      - key: MYSQL_USER
+        sync: false
+      - key: MYSQL_PASS
+        sync: false
+      - key: SESSION_SECURE
+        value: "true"
