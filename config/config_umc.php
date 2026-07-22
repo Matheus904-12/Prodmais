@@ -13,9 +13,9 @@ error_reporting(E_ALL);
 // ============== ELASTICSEARCH ============== //
 
 /* Configuração do Elasticsearch */
-$hosts = ['elasticsearch:9200'];
-// $elasticsearch_user = "elastic";
-// $elasticsearch_password = "";
+$hosts = [getenv('ELASTICSEARCH_HOST') ?: 'elasticsearch:9200'];
+$elasticsearch_user = getenv('ELASTICSEARCH_USER') ?: null;
+$elasticsearch_password = getenv('ELASTICSEARCH_PASS') ?: null;
 
 /* Índices do Elasticsearch */
 $index = "prodmais_umc";              // Produções científicas
@@ -27,12 +27,6 @@ $index_projetos = "prodmais_umc_projetos";  // Projetos de Pesquisa
 
 /* Endereço base (ajustar conforme servidor) */
 $url_base = "http://localhost:8000";
-
-// ============== AUTENTICAÇÃO ============== //
-
-/* Login administrativo */
-$login_user = "admin";
-$login_password = "Admin@2025";
 
 // ============== INSTITUIÇÃO UMC ============== //
 

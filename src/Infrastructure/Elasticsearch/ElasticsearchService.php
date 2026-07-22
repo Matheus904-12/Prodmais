@@ -10,14 +10,22 @@ class ElasticsearchService
     public function __construct(array $esConfig)
     {
         try {
-            $this->client = ClientBuilder::create()
+            $builder = ClientBuilder::create()
                 ->setHosts($esConfig['hosts'])
                 ->setRetries(0)
                 ->setHttpClientOptions([
                     'timeout'         => $esConfig['timeout'] ?? 3,
                     'connect_timeout' => 2,
-                ])
-                ->build();
+                ]);
+
+            // Autenticação básica — necessária para clusters gerenciados
+            // externos (ex: AWS OpenSearch com master user), que não usam
+            // o Elasticsearch local sem autenticação do docker-compose.
+            if (!empty($esConfig['username']) && !empty($esConfig['password'])) {
+                $builder->setBasicAuthentication($esConfig['username'], $esConfig['password']);
+            }
+
+            $this->client = $builder->build();
 
             // Testa conexão com timeout curto
             $this->client->ping();

@@ -15,19 +15,19 @@ return [
     // CONFIGURAÇÕES DO BANCO DE DADOS
     // ================================
     'database' => [
-        'host' => 'localhost',
-        'name' => 'prodmais_umc',
-        'user' => 'root',
-        'password' => '',
+        'host' => getenv('MYSQL_HOST') ?: 'localhost',
+        'name' => getenv('MYSQL_DB') ?: 'prodmais_umc',
+        'user' => getenv('MYSQL_USER') ?: 'root',
+        'password' => getenv('MYSQL_PASS') ?: '',
         'charset' => 'utf8mb4'
     ],
 
     'elasticsearch' => [
         'hosts' => [
-            'http://elasticsearch:9200' // Endereço do servidor Elasticsearch (nome do serviço Docker)
+            getenv('ELASTICSEARCH_HOST') ?: 'http://elasticsearch:9200'
         ],
-        'username' => null, // Usuário (se autenticação habilitada)
-        'password' => null, // Senha (se autenticação habilitada)
+        'username' => getenv('ELASTICSEARCH_USER') ?: null, // Usuário (se autenticação habilitada)
+        'password' => getenv('ELASTICSEARCH_PASS') ?: null, // Senha (se autenticação habilitada)
         'timeout' => 3,     // Timeout em segundos (curto para fallback rápido)
         'retries' => 0      // Sem retry — fallback MySQL é mais rápido
     ],
