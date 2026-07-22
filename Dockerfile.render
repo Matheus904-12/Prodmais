@@ -1,0 +1,53 @@
+# Dockerfile específico pro Render — igual ao Dockerfile principal, mas o
+# Apache escuta na porta dinâmica $PORT que o Render injeta em runtime
+# (o Dockerfile principal usa porta 80 fixa, pensado pro Docker Compose/OCI).
+FROM php:8.2-apache
+
+RUN apt-get update && apt-get install -y \
+    libzip-dev \
+    zip \
+    unzip \
+    libxml2-dev \
+    libcurl4-openssl-dev \
+    libsqlite3-dev \
+    libonig-dev \
+    && docker-php-ext-install \
+    zip \
+    pdo \
+    pdo_mysql \
+    pdo_sqlite \
+    mysqli \
+    mbstring \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN a2enmod rewrite headers
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+
+COPY composer.json ./
+RUN if [ -f composer.json ]; then \
+    composer install --no-dev --no-interaction --no-autoloader --no-scripts || true; \
+    fi
+
+COPY . .
+
+RUN if [ -f composer.json ]; then \
+    composer dump-autoload --optimize --no-interaction || true; \
+    fi
+
+RUN mkdir -p data/uploads data/logs data/cache data/lattes_xml data/backups \
+    && chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html \
+    && chmod -R 777 /var/www/html/data
+
+EXPOSE 10000
+
+# Render injeta $PORT em runtime — reescreve o Listen do Apache pra essa
+# porta antes de subir (não dá pra fixar em build time, só é conhecida
+# quando o container inicia).
+CMD ["sh", "-c", "sed -ri \"s/Listen 80/Listen ${PORT:-10000}/g\" /etc/apache2/ports.conf && sed -ri \"s/:80>/:${PORT:-10000}>/g\" /etc/apache2/sites-available/*.conf && apache2-foreground"]
