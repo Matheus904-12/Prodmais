@@ -32,6 +32,10 @@ SUBNET_ID="ocid1.subnet.oc1.sa-saopaulo-1.SUBSTITUA_AQUI"
 
 INSTANCE_NAME="prodmais-prod"
 SHAPE="VM.Standard.A1.Flex"
+# Se estiver demorando pra conseguir capacidade, tente reduzir pra
+# OCPUS=1 / MEMORY_GB=6 — às vezes uma forma menor consegue capacidade
+# quando 2/12 não consegue. Dá pra aumentar depois direto no console
+# (Instance → Edit → Alterar forma), sem recriar a instância.
 OCPUS=2
 MEMORY_GB=12
 RETRY_INTERVAL_SECONDS=60
