@@ -340,7 +340,11 @@ class ExportService
      */
     private function escapeBibTeX(string $text): string
     {
+        // '\\' precisa ser o primeiro a ser processado — senão os backslashes
+        // inseridos pelos escapes seguintes (ex: '\&') seriam escapados de novo
+        // quando str_replace chegasse na entrada '\\', virando '\textbackslash{}&'.
         $replacements = [
+            '\\' => '\\textbackslash{}',
             '&' => '\\&',
             '%' => '\\%',
             '$' => '\\$',
@@ -350,9 +354,8 @@ class ExportService
             '{' => '\\{',
             '}' => '\\}',
             '~' => '\\textasciitilde{}',
-            '\\' => '\\textbackslash{}'
         ];
-        
+
         return str_replace(array_keys($replacements), array_values($replacements), $text);
     }
 
