@@ -43,14 +43,23 @@ function getElasticsearchClient() {
     
     try {
         $httpOptions = ['timeout' => 3, 'connect_timeout' => 2];
+        $caBundle = __DIR__ . '/http_ca.crt';
 
         if (isset($elasticsearch_user) && !empty($elasticsearch_user)) {
-            $client = ClientBuilder::create()
+            $builder = ClientBuilder::create()
                 ->setHosts($hosts)
                 ->setBasicAuthentication($elasticsearch_user, $elasticsearch_password)
-                ->setCABundle(__DIR__ . '/http_ca.crt')
-                ->setHttpClientOptions($httpOptions)
-                ->build();
+                ->setHttpClientOptions($httpOptions);
+
+            // CA bundle customizado só existe no Elasticsearch local do
+            // Docker Compose (certificado autoassinado). Em produção
+            // (ex: AWS OpenSearch) o certificado já é público e válido,
+            // então usamos o bundle de CA padrão do sistema.
+            if (file_exists($caBundle)) {
+                $builder->setCABundle($caBundle);
+            }
+
+            $client = $builder->build();
         } else {
             $client = ClientBuilder::create()
                 ->setHosts($hosts)
