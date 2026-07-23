@@ -58,6 +58,16 @@ O Prodmais foi reestruturado para seguir padrões de **Clean Architecture**, gar
 
 ---
 
+## 🎨 Design System
+
+A identidade visual do Prodmais (cores, tipografia, componentes, padrões de UI) está documentada e disponível para consulta em:
+
+**[design-system-fawn-three.vercel.app](https://design-system-fawn-three.vercel.app/)**
+
+Use essa referência antes de criar ou alterar qualquer tela do sistema, para manter consistência visual entre as páginas.
+
+---
+
 ## 📞 Suporte & Contato
 - **Universidade de Mogi das Cruzes**
 
