@@ -5,15 +5,10 @@
 
 require_once __DIR__ . '/../../../../config/config_umc.php';
 require_once __DIR__ . '/../../../../src/Domain/Security/AuthManager.php';
-
-$host    = getenv('MYSQL_HOST') ?: 'db';
-$db_name = getenv('MYSQL_DB')   ?: 'prodmais_umc';
-$db_user = getenv('MYSQL_USER') ?: 'prodmais';
-$db_pass = getenv('MYSQL_PASS') ?: 'prodmais123';
+require_once __DIR__ . '/../../../../src/Infrastructure/Database/MysqlConnectionFactory.php';
 
 try {
-    $db = new PDO("mysql:host=$host;dbname=$db_name;charset=utf8mb4", $db_user, $db_pass);
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $db = criarConexaoMysql();
 } catch (PDOException $e) {
     die("Erro de conexão: " . $e->getMessage());
 }

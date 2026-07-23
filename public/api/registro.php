@@ -56,15 +56,10 @@ if (!in_array($papel, ['pesquisador', 'visualizador'])) {
     exit;
 }
 
-// Conexão via variáveis de ambiente
-$host    = getenv('MYSQL_HOST') ?: 'localhost';
-$db_name = getenv('MYSQL_DB')   ?: 'prodmais_umc';
-$db_user = getenv('MYSQL_USER') ?: 'root';
-$db_pass = getenv('MYSQL_PASS') ?: '';
+require_once __DIR__ . '/../../src/Infrastructure/Database/MysqlConnectionFactory.php';
 
 try {
-    $db = new PDO("mysql:host=$host;dbname=$db_name;charset=utf8mb4", $db_user, $db_pass);
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $db = criarConexaoMysql();
 
     // Verificar duplicatas
     $stmt = $db->prepare("SELECT id FROM usuarios_admin WHERE username = ? OR email = ?");
