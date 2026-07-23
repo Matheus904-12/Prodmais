@@ -1,0 +1,34 @@
+parameters:
+    level: 1
+    paths:
+        - src
+        - public
+        - bin
+    excludePaths:
+        - vendor
+        - dist
+    ignoreErrors:
+        # Variáveis como $branch, $index, $ppgs_umc vêm de config_umc.php via
+        # include/require nos arquivos de View e nos scripts de bin/ — o
+        # PHPStan não rastreia esse padrão de "config como variáveis globais
+        # injetadas por include". Não é bug, é a arquitetura do projeto.
+        -
+            identifier: variable.undefined
+            paths:
+                - src/View/Pages/*
+                - bin/migrate_es_to_mysql.php
+
+        # Guards defensivos sobre valores que o PHPStan provou sempre
+        # populados nesse ponto do código (não é bug, é defesa intencional
+        # contra mudanças futuras na lógica acima).
+        -
+            identifier: empty.variable
+            paths:
+                - src/UmcFunctions.php
+                - src/View/Pages/Dashboard/DashboardPage.php
+
+        # new static() é o padrão intencional do sistema de Components (View)
+        # pra permitir Component::display() funcionar em qualquer subclasse.
+        -
+            identifier: new.static
+            path: src/View/Component.php
