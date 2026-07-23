@@ -14,7 +14,12 @@ function criarConexaoMysql(): PDO
     $dbPass = getenv('MYSQL_PASS') ?: 'prodmais123';
     $sslCa  = getenv('MYSQL_SSL_CA') ?: null;
 
-    $options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
+    $options = [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        // Sem isso, uma falha de rede (ex: porta bloqueada pelo host) trava a
+        // requisição por dezenas de segundos até o timeout padrão do SO/TCP.
+        PDO::ATTR_TIMEOUT => 5,
+    ];
     if ($sslCa && file_exists($sslCa)) {
         $options[PDO::MYSQL_ATTR_SSL_CA] = $sslCa;
     }
