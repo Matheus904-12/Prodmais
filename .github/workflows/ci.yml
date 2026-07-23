@@ -38,7 +38,51 @@ jobs:
         run: composer install --no-dev --prefer-dist --no-interaction
 
   # ─────────────────────────────────────────────────────────────
-  # Job 2: Segurança — verificar segredos expostos
+  # Job 2: Testes automatizados (PHPUnit)
+  # ─────────────────────────────────────────────────────────────
+  phpunit-tests:
+    name: Testes PHPUnit
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo, pdo_mysql, pdo_sqlite, mbstring, xml, curl, zip
+
+      - name: Instalar dependências Composer (com dev)
+        run: composer install --prefer-dist --no-interaction
+
+      - name: Rodar suíte de testes
+        run: vendor/bin/phpunit --colors=never
+
+  # ─────────────────────────────────────────────────────────────
+  # Job 3: Análise estática (PHPStan)
+  # ─────────────────────────────────────────────────────────────
+  static-analysis:
+    name: Análise estática (PHPStan)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo, pdo_mysql, mbstring, xml, curl, zip
+
+      - name: Instalar dependências Composer (com dev)
+        run: composer install --prefer-dist --no-interaction
+
+      - name: Rodar PHPStan
+        run: vendor/bin/phpstan analyse --no-progress --error-format=github
+
+  # ─────────────────────────────────────────────────────────────
+  # Job 4: Segurança — verificar segredos expostos
   # ─────────────────────────────────────────────────────────────
   security-check:
     name: Verificar segredos expostos
@@ -68,5 +112,5 @@ jobs:
             echo "$FOUND"
           fi
 
-  # Job 3 (testes E2E Cypress) removido — cypress/ não é mais versionado
+  # Testes E2E Cypress não entram aqui — cypress/ não é mais versionado
   # (roda só localmente, veja CLAUDE.md).
