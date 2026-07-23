@@ -4,6 +4,9 @@
  * Verifica status do sistema e dependências
  */
 
+require_once __DIR__ . '/../../src/Infrastructure/Database/MysqlConnectionFactory.php';
+require_once __DIR__ . '/../../src/UmcFunctions.php';
+
 header('Content-Type: application/json');
 
 $health = [
@@ -58,6 +61,28 @@ $health['checks']['configuration'] = [
     'status' => file_exists($configFile) ? 'ok' : 'warning',
     'file' => file_exists($configFile)
 ];
+
+// Verificar conexão MySQL
+try {
+    $mysqlPdo = criarConexaoMysql();
+    $mysqlPdo->query('SELECT 1');
+    $health['checks']['mysql'] = ['status' => 'ok'];
+} catch (\Throwable $e) {
+    $health['checks']['mysql'] = ['status' => 'error', 'error' => $e->getMessage()];
+}
+
+// Verificar conexão Elasticsearch/OpenSearch
+try {
+    $esClient = getElasticsearchClient();
+    if ($esClient === null) {
+        throw new \RuntimeException('Cliente não inicializado');
+    }
+    $esClient->ping();
+    $health['checks']['elasticsearch'] = ['status' => 'ok'];
+} catch (\Throwable $e) {
+    // Aviso, não erro fatal — o sistema tem fallback via MySQL pra busca.
+    $health['checks']['elasticsearch'] = ['status' => 'warning', 'error' => $e->getMessage()];
+}
 
 // Status geral
 $hasErrors = false;
