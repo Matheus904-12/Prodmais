@@ -1,0 +1,44 @@
+name: Health-check pós-deploy (Render)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    # A cada 30 minutos — também ajuda a manter o serviço Free do Render
+    # "acordado", já que ele hiberna após inatividade.
+    - cron: '*/30 * * * *'
+
+jobs:
+  health-check:
+    name: Verificar saúde do Prodmais em produção
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Aguardar propagação do deploy
+        if: github.event_name == 'push'
+        run: sleep 90
+
+      - name: Checar /api/health.php
+        run: |
+          URL="${{ vars.RENDER_URL || 'https://prodmais-6g41.onrender.com' }}"
+          RESPONSE=$(curl -s -m 30 -o /tmp/health.json -w "%{http_code}" "$URL/api/health.php" || echo "000")
+          echo "Status HTTP: $RESPONSE"
+          echo "Corpo da resposta:"
+          cat /tmp/health.json 2>/dev/null || echo "(sem resposta)"
+
+          if [ "$RESPONSE" != "200" ]; then
+            echo "::error::Health-check falhou com status $RESPONSE"
+            exit 1
+          fi
+
+      - name: Checar homepage (sem loop de redirect)
+        run: |
+          URL="${{ vars.RENDER_URL || 'https://prodmais-6g41.onrender.com' }}"
+          STATUS=$(curl -s -m 30 -o /dev/null -w "%{http_code}" -L --max-redirs 3 "$URL/" || echo "000")
+          echo "Status HTTP: $STATUS"
+
+          if [ "$STATUS" != "200" ]; then
+            echo "::error::Homepage não respondeu 200 (status $STATUS) — possível loop de redirect ou app fora do ar"
+            exit 1
+          fi
