@@ -5,8 +5,12 @@ Options -Indexes
 
 RewriteEngine On
 
-# Force HTTPS
+# Force HTTPS — verifica também X-Forwarded-Proto, pois atrás de proxies
+# como o do Render o TLS é terminado no edge e o Apache só vê HTTP puro
+# internamente (sem esse check, %{HTTPS} off vira sempre verdadeiro e
+# causa loop infinito de redirect).
 RewriteCond %{HTTPS} off
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
 RewriteCond %{HTTP_HOST} !^localhost
 RewriteCond %{HTTP_HOST} !^localhost:
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
