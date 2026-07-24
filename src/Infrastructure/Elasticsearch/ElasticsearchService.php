@@ -14,8 +14,12 @@ class ElasticsearchService
                 ->setHosts($esConfig['hosts'])
                 ->setRetries(0)
                 ->setHttpClientOptions([
-                    'timeout'         => $esConfig['timeout'] ?? 3,
-                    'connect_timeout' => 2,
+                    // CPU limitada (ex: Render Free, 0.1 vCPU) pode levar
+                    // mais que 2-3s pra fechar o handshake TLS com um
+                    // cluster remoto — timeout curto demais fazia o cliente
+                    // reportar "no alive nodes" mesmo com o cluster saudável.
+                    'timeout'         => $esConfig['timeout'] ?? 10,
+                    'connect_timeout' => $esConfig['connect_timeout'] ?? 8,
                 ]);
 
             // Autenticação básica — necessária para clusters gerenciados

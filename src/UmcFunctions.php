@@ -42,7 +42,11 @@ function getElasticsearchClient() {
     global $hosts, $elasticsearch_user, $elasticsearch_password;
     
     try {
-        $httpOptions = ['timeout' => 3, 'connect_timeout' => 2];
+        // Timeout maior que o padrão — em CPU limitada (ex: Render Free,
+        // 0.1 vCPU) o handshake TLS com um cluster remoto pode facilmente
+        // passar de 2-3s, o que fazia o cliente reportar "no alive nodes"
+        // mesmo com o cluster saudável.
+        $httpOptions = ['timeout' => 10, 'connect_timeout' => 8];
         $caBundle = __DIR__ . '/http_ca.crt';
 
         if (isset($elasticsearch_user) && !empty($elasticsearch_user)) {

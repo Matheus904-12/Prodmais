@@ -28,8 +28,9 @@ return [
         ],
         'username' => getenv('ELASTICSEARCH_USER') ?: null, // Usuário (se autenticação habilitada)
         'password' => getenv('ELASTICSEARCH_PASS') ?: null, // Senha (se autenticação habilitada)
-        'timeout' => 3,     // Timeout em segundos (curto para fallback rápido)
-        'retries' => 0      // Sem retry — fallback MySQL é mais rápido
+        'timeout' => 10,         // Timeout em segundos
+        'connect_timeout' => 8,  // Timeout de conexão em segundos
+        'retries' => 0           // Sem retry — fallback MySQL é mais rápido
     ],
 
     // ================================
