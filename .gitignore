@@ -36,6 +36,9 @@ logs/
 *.temp
 .tmp/
 
+# Credenciais locais (nunca versionar)
+CREDENCIAIS*.html
+
 # Arquivos do sistema
 .DS_Store
 .DS_Store?
