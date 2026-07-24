@@ -13,13 +13,18 @@ class ElasticsearchService
             $builder = ClientBuilder::create()
                 ->setHosts($esConfig['hosts'])
                 ->setRetries(0)
-                ->setHttpClientOptions([
-                    // CPU limitada (ex: Render Free, 0.1 vCPU) pode levar
-                    // mais que 2-3s pra fechar o handshake TLS com um
-                    // cluster remoto — timeout curto demais fazia o cliente
-                    // reportar "no alive nodes" mesmo com o cluster saudável.
-                    'timeout'         => $esConfig['timeout'] ?? 10,
-                    'connect_timeout' => $esConfig['connect_timeout'] ?? 8,
+                ->setConnectionParams([
+                    'client' => [
+                        'curl' => [
+                            // CPU limitada (ex: Render Free, 0.1 vCPU) pode
+                            // levar mais que 2-3s pra fechar o handshake TLS
+                            // com um cluster remoto — timeout curto demais
+                            // fazia o cliente reportar "no alive nodes"
+                            // mesmo com o cluster saudável.
+                            CURLOPT_TIMEOUT        => $esConfig['timeout'] ?? 10,
+                            CURLOPT_CONNECTTIMEOUT => $esConfig['connect_timeout'] ?? 8,
+                        ],
+                    ],
                 ]);
 
             // Autenticação básica — necessária para clusters gerenciados

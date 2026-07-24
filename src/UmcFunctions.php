@@ -46,28 +46,35 @@ function getElasticsearchClient() {
         // 0.1 vCPU) o handshake TLS com um cluster remoto pode facilmente
         // passar de 2-3s, o que fazia o cliente reportar "no alive nodes"
         // mesmo com o cluster saudável.
-        $httpOptions = ['timeout' => 10, 'connect_timeout' => 8];
+        $connectionParams = [
+            'client' => [
+                'curl' => [
+                    CURLOPT_TIMEOUT => 10,
+                    CURLOPT_CONNECTTIMEOUT => 8,
+                ],
+            ],
+        ];
         $caBundle = __DIR__ . '/http_ca.crt';
 
         if (isset($elasticsearch_user) && !empty($elasticsearch_user)) {
             $builder = ClientBuilder::create()
                 ->setHosts($hosts)
                 ->setBasicAuthentication($elasticsearch_user, $elasticsearch_password)
-                ->setHttpClientOptions($httpOptions);
+                ->setConnectionParams($connectionParams);
 
             // CA bundle customizado só existe no Elasticsearch local do
             // Docker Compose (certificado autoassinado). Em produção
             // (ex: AWS OpenSearch) o certificado já é público e válido,
             // então usamos o bundle de CA padrão do sistema.
             if (file_exists($caBundle)) {
-                $builder->setCABundle($caBundle);
+                $builder->setSSLVerification($caBundle);
             }
 
             $client = $builder->build();
         } else {
             $client = ClientBuilder::create()
                 ->setHosts($hosts)
-                ->setHttpClientOptions($httpOptions)
+                ->setConnectionParams($connectionParams)
                 ->build();
         }
         return $client;
