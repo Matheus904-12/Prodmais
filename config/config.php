@@ -7,6 +7,14 @@
  * Copie este arquivo para config.php e ajuste conforme necessário.
  */
 
+// Sem porta explícita, o parser de host do opensearch-php assume 9200
+// mesmo quando o esquema é https:// (que deveria cair no 443 padrão) —
+// força a porta certa quando a URL não especifica nenhuma.
+$esHost = getenv('ELASTICSEARCH_HOST') ?: 'http://elasticsearch:9200';
+if (str_starts_with($esHost, 'https://') && !preg_match('/:\d+$/', $esHost)) {
+    $esHost .= ':443';
+}
+
 return [
     // ================================
     // CONFIGURAÇÕES ELASTICSEARCH
@@ -23,9 +31,7 @@ return [
     ],
 
     'elasticsearch' => [
-        'hosts' => [
-            getenv('ELASTICSEARCH_HOST') ?: 'http://elasticsearch:9200'
-        ],
+        'hosts' => [$esHost],
         'username' => getenv('ELASTICSEARCH_USER') ?: null, // Usuário (se autenticação habilitada)
         'password' => getenv('ELASTICSEARCH_PASS') ?: null, // Senha (se autenticação habilitada)
         'timeout' => 10,         // Timeout em segundos
