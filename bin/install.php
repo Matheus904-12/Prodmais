@@ -162,11 +162,12 @@ echo "\nVerificando conectividade com Elasticsearch...\n";
 require_once VENDOR_DIR . '/autoload.php';
 
 // Tentar conectar com Elasticsearch
+$config = [];
 try {
     // Carregar configuração
     $config = require $config_file;
     
-    $client = Elastic\Elasticsearch\ClientBuilder::create()
+    $client = OpenSearch\ClientBuilder::create()
         ->setHosts($config['elasticsearch']['hosts'])
         ->build();
     
@@ -184,8 +185,8 @@ try {
     
 } catch (Exception $e) {
     echo "⚠ Elasticsearch não está acessível: " . $e->getMessage() . "\n";
-    echo "Por favor, verifique se o Elasticsearch está rodando em: " . 
-         implode(', ', $config['elasticsearch']['hosts']) . "\n";
+    echo "Por favor, verifique se o Elasticsearch está rodando em: " .
+         implode(', ', $config['elasticsearch']['hosts'] ?? []) . "\n";
 }
 
 // Gerar salt aleatório para LGPD

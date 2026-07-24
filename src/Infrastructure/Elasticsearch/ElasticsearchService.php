@@ -1,6 +1,6 @@
 <?php
 
-use Elastic\Elasticsearch\ClientBuilder;
+use OpenSearch\ClientBuilder;
 
 class ElasticsearchService
 {

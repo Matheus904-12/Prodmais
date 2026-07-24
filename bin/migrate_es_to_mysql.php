@@ -15,7 +15,7 @@ set_time_limit(0);
 require_once __DIR__ . '/../config/config_umc.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Elastic\Elasticsearch\ClientBuilder;
+use OpenSearch\ClientBuilder;
 
 // =====================================================
 // CONFIGURAÇÃO

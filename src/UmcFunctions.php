@@ -33,7 +33,7 @@ PluginLoader::loadPlugins();
 require_once(__DIR__ . '/Infrastructure/Database/DatabaseService.php');
 
 /* Load Elasticsearch Client */
-use Elastic\Elasticsearch\ClientBuilder;
+use OpenSearch\ClientBuilder;
 
 /**
  * Criar cliente Elasticsearch
