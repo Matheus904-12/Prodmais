@@ -176,7 +176,15 @@ a { color: inherit; }
 @media (max-width: 780px) {
     .layout { grid-template-columns: 1fr; }
     .sidebar { display: none; }
-    .sidebar.open { display: block; }
+    .sidebar.open {
+        display: block;
+        /* No mobile o menu empurra o conteúdo pra baixo, em vez de ficar
+           sticky por cima dele (sticky é pensado pra coluna lateral do
+           desktop, que nunca "acaba" de rolar sobre o conteúdo ao lado). */
+        position: static;
+        height: auto;
+        overflow-y: visible;
+    }
 }
 
 /* ══ Sidebar ══ */
