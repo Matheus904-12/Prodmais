@@ -22,7 +22,16 @@ jobs:
       - name: Checar /api/health.php
         run: |
           URL="${{ vars.RENDER_URL || 'https://prodmais-6g41.onrender.com' }}"
-          RESPONSE=$(curl -s -m 30 -o /tmp/health.json -w "%{http_code}" "$URL/api/health.php" || echo "000")
+
+          # O plano Free do Render hiberna após inatividade e o cold-start
+          # pode passar de 30s — a 1ª tentativa costuma ser só isso "acordando"
+          # o serviço, não uma queda real. Só alertamos se as duas falharem.
+          for tentativa in 1 2; do
+            RESPONSE=$(curl -s -m 30 -o /tmp/health.json -w "%{http_code}" "$URL/api/health.php") && break
+            RESPONSE="000"
+            echo "Tentativa $tentativa sem resposta (possível cold-start do Render)."
+          done
+
           echo "Status HTTP: $RESPONSE"
           echo "Corpo da resposta:"
           cat /tmp/health.json 2>/dev/null || echo "(sem resposta)"
@@ -35,7 +44,13 @@ jobs:
       - name: Checar homepage (sem loop de redirect)
         run: |
           URL="${{ vars.RENDER_URL || 'https://prodmais-6g41.onrender.com' }}"
-          STATUS=$(curl -s -m 30 -o /dev/null -w "%{http_code}" -L --max-redirs 3 "$URL/" || echo "000")
+
+          for tentativa in 1 2; do
+            STATUS=$(curl -s -m 30 -o /dev/null -w "%{http_code}" -L --max-redirs 3 "$URL/") && break
+            STATUS="000"
+            echo "Tentativa $tentativa sem resposta (possível cold-start do Render)."
+          done
+
           echo "Status HTTP: $STATUS"
 
           if [ "$STATUS" != "200" ]; then

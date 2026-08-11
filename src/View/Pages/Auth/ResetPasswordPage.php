@@ -475,10 +475,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $token_valido) {
 
         @media (max-width: 767px) {
             .auth-shell { flex-direction: column; }
-            .brand-panel { position: static; height: auto; padding: 2rem 1.5rem; flex: none; }
-            .brand-headline { font-size: 1.4rem; }
+            .brand-panel { position: static; height: auto; flex: none; padding: 1.5rem 1.5rem 1.25rem; }
+            .brand-logo-row { margin-bottom: 1rem; }
+            .brand-icon-wrap { display: none; }
+            .brand-headline { font-size: 1.15rem; margin-bottom: 0; }
             .brand-sub, .brand-features, .brand-bottom { display: none; }
-            .form-panel { padding: 2rem 1.25rem; }
+            .form-panel { padding: 1.75rem 1.25rem 3rem; justify-content: flex-start; }
         }
     </style>
 </head>
