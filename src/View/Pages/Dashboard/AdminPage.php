@@ -563,6 +563,16 @@ $ppgs = getAllPPGs();
     .adm-card-header { background: linear-gradient(135deg,#4f46e5,#6366f1); padding: 1.25rem 1.75rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-radius: 0; }
     .adm-card-header h5 { margin: 0; color: white; font-weight: 700; font-size: 1rem; }
     .adm-card-body { padding: 1.75rem; }
+    /* Cabeçalhos com botão(ões) de ação ao lado do título ficavam espremidos
+       no mobile (título e botões disputando a mesma linha); empilha os dois
+       em telas estreitas, cada um ocupando a largura toda. */
+    @media (max-width: 575px) {
+        .adm-card-header {
+            flex-direction: column;
+            align-items: stretch;
+            gap: .75rem;
+        }
+    }
     /* ── Info box ── */
     .adm-info-box { background: rgba(79,70,229,.06); border: 1px solid rgba(79,70,229,.16); border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1.75rem; }
     .adm-info-box h6 { color: #312e81; font-weight: 700; margin-bottom: .75rem; }

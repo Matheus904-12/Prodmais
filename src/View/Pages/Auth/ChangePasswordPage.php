@@ -87,7 +87,7 @@ $nome_exibido = $usuario['nome_completo'] ?? $usuario['username'] ?? 'Usuário';
         html { overflow-x: clip; }
         body { font-family: var(--font); -webkit-font-smoothing: antialiased; overflow-x: clip; }
 
-        .auth-shell { display: flex; min-height: 100vh; }
+        .auth-shell { display: flex; min-height: 100vh; width: 100%; }
 
         /* ── BRAND PANEL ── */
         .brand-panel {
@@ -462,7 +462,7 @@ $nome_exibido = $usuario['nome_completo'] ?? $usuario['username'] ?? 'Usuário';
 
         @media (max-width: 767px) {
             .auth-shell { flex-direction: column; }
-            .brand-panel { position: static; height: auto; flex: none; padding: 1.5rem 1.5rem 1.25rem; }
+            .brand-panel { position: static; height: auto; flex: none; width: 100%; padding: 1.5rem 1.5rem 1.25rem; }
             .brand-logo-row { margin-bottom: 1rem; }
             .brand-user-chip { margin-bottom: 0.75rem; }
             .brand-icon-wrap { display: none; }
