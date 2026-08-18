@@ -449,6 +449,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 position: static;
                 height: auto;
                 flex: none;
+                width: 100%;
                 padding: 1.5rem 1.5rem 1.25rem;
             }
             .brand-logo-row { margin-bottom: 1rem; }
