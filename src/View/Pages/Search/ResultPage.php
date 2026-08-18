@@ -311,9 +311,6 @@ HeroSection::display([
         ?>
         <div class="result-card fade-in-up" style="animation-delay:<?php echo ($index * 0.05); ?>s">
             <div class="result-card-header">
-                <div class="result-card-icon">
-                    <i class="fas fa-file-alt" aria-hidden="true"></i>
-                </div>
                 <div class="result-card-content">
                     <h3 class="result-card-title"><?php echo htmlspecialchars($titulo); ?></h3>
                     <?php if (!empty($autores)): ?>
@@ -358,7 +355,7 @@ HeroSection::display([
             </div>
 
             <div class="result-card-actions">
-                <button class="btn-outline-ds btn-outline-ds--sm"
+                <button class="btn-primary-ds btn-primary-ds--sm"
                         data-bs-toggle="modal" data-bs-target="#<?php echo $unique_id; ?>">
                     <i class="fas fa-info-circle me-1" aria-hidden="true"></i>Ver Detalhes
                 </button>
