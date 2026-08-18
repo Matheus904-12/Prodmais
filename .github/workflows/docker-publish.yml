@@ -1,8 +1,16 @@
+# DESABILITADO: todo push falha com "denied: permission_denied: read_package"
+# (antes, "403 Forbidden") ao publicar em ghcr.io/prodmais-umc/prodmais. Causa:
+# política de criação de pacotes da organização Prodmais-UMC bloqueando o
+# GITHUB_TOKEN do workflow — só se ajusta pela interface web do GitHub
+# (Settings → Packages da organização), sem endpoint de API disponível.
+# Não afeta a produção: o Render builda direto do Dockerfile.render no push,
+# sem depender dessa imagem no GHCR.
+#
+# Pra reativar depois que a política for ajustada: devolva o "push:" nos
+# triggers abaixo.
 name: Publicar imagem Docker no GitHub Packages
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 env:
