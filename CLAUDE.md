@@ -289,7 +289,7 @@ Rollback: `git checkout vX.Y.Z` ou apontar o deploy da plataforma para a tag.
 4. **Sempre BCrypt** para senhas: `password_hash($senha, PASSWORD_BCRYPT)`
 5. **Nunca commitar `.env.production`** — use secrets do servidor ou variáveis de ambiente do Docker
 6. **LGPD**: dados pessoais de pesquisadores passam por `LgpdComplianceService` antes de qualquer export
-7. **Sessões**: regenerar ID a cada 30min, timeout de 2h de inatividade — já implementado em `AuthManager::iniciarSessaoSegura()`
+7. **Sessões**: regenerar ID a cada 30min, timeout de 8h de inatividade (configurável via `SESSION_LIFETIME`) — já implementado em `AuthManager::iniciarSessaoSegura()`
 8. **Brute-force**: 5 tentativas → bloqueio de 15min — já implementado em `AuthManager::login()`
 
 ---
