@@ -473,6 +473,11 @@ $ppgs = getAllPPGs();
         text-transform: uppercase; color: #94a3b8;
         padding: 0 .5rem .5rem;
     }
+    /* O off-canvas do Navbar (menu ☰ do topo, compartilhado em todo o site)
+       usa z-index:1045 do Bootstrap — menor que o FAB deste painel (1050),
+       então ele aparecia por cima do menu aberto. O menu do topo deve
+       sempre vencer qualquer botão flutuante da página. */
+    .offcanvas, .offcanvas-backdrop { z-index: 1060; }
 
     /* ── Responsive ── */
     @media (max-width: 767px) {
@@ -1045,7 +1050,6 @@ Navbar::display(['active_page' => 'admin', 'mostrar_link_dashboard' => $mostrar_
                             <?php $auProtegido = (int) $au['id'] === $meuId || !empty($au['conta_sistema']); ?>
                             <div class="pending-card<?= $auProtegido ? ' pending-card--protected' : '' ?>">
                                 <div class="pending-card-top">
-                                    <span class="pending-card-avatar" aria-hidden="true"><?= htmlspecialchars($auInicial) ?></span>
                                     <div class="pending-card-info">
                                         <span class="pending-card-name">
                                             <?= htmlspecialchars($auNome) ?>
@@ -1057,7 +1061,6 @@ Navbar::display(['active_page' => 'admin', 'mostrar_link_dashboard' => $mostrar_
                                             <i class="fas fa-at" aria-hidden="true"></i> <?= htmlspecialchars($au['username']) ?>
                                             &nbsp;·&nbsp; <?= htmlspecialchars($au['email']) ?>
                                             &nbsp;·&nbsp; cadastrado em <?= date('d/m/Y', strtotime($au['criado_em'])) ?>
-                                            <?php if (!empty($au['ultimo_login'])): ?>&nbsp;·&nbsp; último login <?= date('d/m/Y H:i', strtotime($au['ultimo_login'])) ?><?php endif; ?>
                                         </span>
                                     </div>
                                 </div>
@@ -1783,18 +1786,35 @@ Navbar::display(['active_page' => 'admin', 'mostrar_link_dashboard' => $mostrar_
             btn.addEventListener('click', function () {
                 const targetId = btn.getAttribute('data-bs-target'); // e.g. "#pending"
                 const desktopBtn = document.querySelector('#adminTabs [data-bs-target="' + targetId + '"]');
+                const main = document.querySelector('.adm-main');
+                function rolarParaTopo() {
+                    if (main) main.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
                 if (desktopBtn) {
+                    const jaEstavaAtiva = desktopBtn.classList.contains('active');
                     // Ativa via Bootstrap Tab API
                     const bsTab = bootstrap.Tab.getOrCreateInstance(desktopBtn);
+                    if (jaEstavaAtiva) {
+                        // Já é a aba atual: bsTab.show() não dispara "shown.bs.tab"
+                        // de novo, então rola direto (não tem transição pra esperar).
+                        rolarParaTopo();
+                    } else {
+                        // closeDrawer() (abaixo) restaura instantaneamente a posição
+                        // de scroll de antes do menu abrir, e a troca de aba do
+                        // Bootstrap tem uma transição de fade assíncrona — rolar
+                        // antes dela terminar mede a altura da aba ainda saindo,
+                        // não da que está entrando, e para no meio do 1º card.
+                        // "shown.bs.tab" só dispara depois da transição terminar.
+                        desktopBtn.addEventListener('shown.bs.tab', rolarParaTopo, { once: true });
+                    }
                     bsTab.show();
                     // Sincroniza classe active no drawer
                     drawer.querySelectorAll('.adm-tab-btn').forEach(function (b) { b.classList.remove('active'); });
                     btn.classList.add('active');
+                } else {
+                    rolarParaTopo();
                 }
                 closeDrawer();
-                // Rola suavemente pro início do conteúdo
-                const main = document.querySelector('.adm-main');
-                if (main) main.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
         });
 
