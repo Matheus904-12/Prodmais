@@ -9,6 +9,7 @@ class Navbar extends Component {
         $activePage = $this->getProp('active_page', 'home');
         
         ?>
+        <a href="#conteudo-principal" class="skip-to-content">Pular para o conteúdo</a>
         <nav class="navbar navbar-expand-lg navbar-elegant" aria-label="Navegação principal">
             <div class="container">
                 <!-- Brand -->
@@ -203,6 +204,8 @@ class Navbar extends Component {
                 </div>
             </div>
         </nav>
+
+        <span id="conteudo-principal" tabindex="-1"></span>
 
         <?php if (!empty($_SESSION['flash_welcome'])): ?>
         <div id="welcomeToast" class="welcome-toast" role="status" aria-live="polite">
