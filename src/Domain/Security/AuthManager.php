@@ -38,8 +38,9 @@ class AuthManager {
                 $_SESSION['criado_em'] = time();
             }
             
-            // Timeout de inatividade (2 horas)
-            if (isset($_SESSION['ultima_atividade']) && (time() - $_SESSION['ultima_atividade'] > 7200)) {
+            // Timeout de inatividade — padrão 8h (um dia de trabalho), configurável via SESSION_LIFETIME
+            $sessionLifetime = (int) (getenv('SESSION_LIFETIME') ?: 28800);
+            if (isset($_SESSION['ultima_atividade']) && (time() - $_SESSION['ultima_atividade'] > $sessionLifetime)) {
                 $this->logout();
             }
             $_SESSION['ultima_atividade'] = time();
