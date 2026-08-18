@@ -533,7 +533,15 @@ html {
 
 /* Micro-animação para links e botões */
 a, button {
-    outline: none !important;
+    outline: none;
+}
+
+/* Foco visível só quando vem do teclado (Tab), não no clique do mouse —
+   sem isso, quem navega por teclado não vê onde está o foco em nenhum
+   link/botão do site (WCAG 2.4.7). */
+a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--umc-azul-royal);
+    outline-offset: 2px;
 }
 
 .hover-lift {
