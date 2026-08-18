@@ -505,7 +505,25 @@ $ppgs = getAllPPGs();
     @media (max-width: 480px) {
         .pending-card-actions--manage { flex-direction: column; align-items: stretch; }
         .pending-card-actions--manage form { width: 100%; }
+        /* Reseta o flex:1 1 240px/0 0 auto de cima — pensados pra LARGURA
+           na linha horizontal, mas que aqui, com a coluna empilhada,
+           passam a valer como ALTURA e inflam o 1º form com espaço vazio.
+           Precisa repetir os mesmos seletores (:first-of-type/:last-of-type)
+           pra ter especificidade igual e realmente vencer a regra de cima. */
+        .pending-card-actions--manage form:first-of-type,
+        .pending-card-actions--manage form:last-of-type {
+            flex: none;
+        }
     }
+    .pending-card--protected { background: #f8fafc; }
+    .pending-card-name { display: flex; align-items: center; flex-wrap: wrap; gap: .4rem; }
+    .pending-protected-note {
+        display: flex; align-items: center; gap: .5rem;
+        width: 100%; align-self: center;
+        background: rgba(100,116,139,.08); border-radius: 10px;
+        padding: .65rem .85rem; font-size: .8125rem; color: #64748b;
+    }
+    .pending-protected-note i { color: #94a3b8; flex-shrink: 0; }
     .pending-btn-approve, .pending-btn-reject {
         width: 100%; display: flex; align-items: center; justify-content: center; gap: .4rem;
         border: none; border-radius: 10px; padding: .7rem 1rem;
@@ -540,10 +558,6 @@ $ppgs = getAllPPGs();
             box-shadow: 0 4px 10px rgba(79,70,229,.25);
         }
         .pending-card-name {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: .35rem;
             font-size: .9rem;
         }
         .pending-card-meta {
@@ -1028,15 +1042,16 @@ Navbar::display(['active_page' => 'admin', 'mostrar_link_dashboard' => $mostrar_
                                 $auNome    = $au['nome_completo'] ?: $au['username'];
                                 $auInicial = mb_strtoupper(mb_substr(trim($auNome), 0, 1));
                             ?>
-                            <div class="pending-card">
+                            <?php $auProtegido = (int) $au['id'] === $meuId || !empty($au['conta_sistema']); ?>
+                            <div class="pending-card<?= $auProtegido ? ' pending-card--protected' : '' ?>">
                                 <div class="pending-card-top">
                                     <span class="pending-card-avatar" aria-hidden="true"><?= htmlspecialchars($auInicial) ?></span>
                                     <div class="pending-card-info">
                                         <span class="pending-card-name">
                                             <?= htmlspecialchars($auNome) ?>
-                                            <?php if ((int) $au['id'] === $meuId): ?><span class="adm-badge adm-badge-info" style="margin-left:.5rem;">Você</span><?php endif; ?>
-                                            <?php if (!empty($au['conta_sistema'])): ?><span class="adm-badge adm-badge-info" style="margin-left:.5rem;"><i class="fas fa-shield-halved" aria-hidden="true"></i> Conta de Sistema</span><?php endif; ?>
-                                            <span class="adm-badge <?= $statusBadgeCls ?>" style="margin-left:.4rem;"><?= htmlspecialchars($au['status']) ?></span>
+                                            <?php if ((int) $au['id'] === $meuId): ?><span class="adm-badge adm-badge-info">Você</span><?php endif; ?>
+                                            <?php if (!empty($au['conta_sistema'])): ?><span class="adm-badge adm-badge-info"><i class="fas fa-shield-halved" aria-hidden="true"></i> Conta de Sistema</span><?php endif; ?>
+                                            <span class="adm-badge <?= $statusBadgeCls ?>"><?= htmlspecialchars($au['status']) ?></span>
                                         </span>
                                         <span class="pending-card-meta">
                                             <i class="fas fa-at" aria-hidden="true"></i> <?= htmlspecialchars($au['username']) ?>
@@ -1048,9 +1063,9 @@ Navbar::display(['active_page' => 'admin', 'mostrar_link_dashboard' => $mostrar_
                                 </div>
                                 <div class="pending-card-actions pending-card-actions--manage">
                                     <?php if ((int) $au['id'] === $meuId): ?>
-                                        <span class="pending-card-meta" style="align-self:center;">Gerencie sua própria conta em "Alterar senha"</span>
+                                        <span class="pending-protected-note"><i class="fas fa-circle-user" aria-hidden="true"></i> Gerencie sua própria conta em "Alterar senha"</span>
                                     <?php elseif (!empty($au['conta_sistema'])): ?>
-                                        <span class="pending-card-meta" style="align-self:center;"><i class="fas fa-lock" aria-hidden="true"></i> Conta protegida — não pode ser editada nem excluída por aqui</span>
+                                        <span class="pending-protected-note"><i class="fas fa-lock" aria-hidden="true"></i> Conta protegida — não pode ser editada nem excluída por aqui</span>
                                     <?php else: ?>
                                     <form method="post" style="display:flex;gap:.5rem;align-items:center;">
                                         <input type="hidden" name="account_id" value="<?= (int) $au['id'] ?>">

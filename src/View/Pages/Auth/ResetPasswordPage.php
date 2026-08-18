@@ -475,7 +475,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $token_valido) {
 
         @media (max-width: 767px) {
             .auth-shell { flex-direction: column; }
-            .brand-panel { position: static; height: auto; flex: none; padding: 1.5rem 1.5rem 1.25rem; }
+            .brand-panel { position: static; height: auto; flex: none; width: 100%; padding: 1.5rem 1.5rem 1.25rem; }
             .brand-logo-row { margin-bottom: 1rem; }
             .brand-icon-wrap { display: none; }
             .brand-headline { font-size: 1.15rem; margin-bottom: 0; }
