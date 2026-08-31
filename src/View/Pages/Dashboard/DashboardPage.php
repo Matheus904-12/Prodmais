@@ -300,7 +300,7 @@ $top_pesquisadores = agregarProducoesPorCampo($client, $index, 'pesquisador_nome
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     
     <!-- CSS Elegante Profissional -->
-    <link rel="stylesheet" href="/css/prodmais-elegant.css?v=5">
+    <link rel="stylesheet" href="/css/prodmais-elegant.css?v=6">
     <link rel="stylesheet" href="/css/umc-theme.css">
 
     <?php HookManager::doAction('app_head'); ?>
