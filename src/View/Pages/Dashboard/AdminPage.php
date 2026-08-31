@@ -1546,6 +1546,7 @@ Navbar::display(['active_page' => 'admin', 'mostrar_link_dashboard' => $mostrar_
         var body = document.getElementById('confirmModalBody');
         var okBtn = document.getElementById('confirmModalOk');
         var pendingForm = null;
+        var pendingSubmitter = null;
 
         document.querySelectorAll('form[data-confirm]').forEach(function (form) {
             form.addEventListener('submit', function (e) {
@@ -1554,6 +1555,12 @@ Navbar::display(['active_page' => 'admin', 'mostrar_link_dashboard' => $mostrar_
                 }
                 e.preventDefault();
                 pendingForm = form;
+                // form.submit() descarta qual botão disparou o envio, então
+                // name="delete_account"/"reject_user"/"expunge_all" nunca
+                // chegava no $_POST — o PHP não via a ação e não fazia nada,
+                // sem erro nenhum. requestSubmit(submitter) reenvia incluindo
+                // o botão certo, exatamente como um clique nativo faria.
+                pendingSubmitter = e.submitter || form.querySelector('button[type="submit"]');
                 body.textContent = form.dataset.confirm;
                 modal.show();
             });
@@ -1563,7 +1570,13 @@ Navbar::display(['active_page' => 'admin', 'mostrar_link_dashboard' => $mostrar_
             if (pendingForm) {
                 pendingForm.dataset.confirmed = '1';
                 modal.hide();
-                pendingForm.submit();
+                if (pendingForm.requestSubmit) {
+                    pendingForm.requestSubmit(pendingSubmitter);
+                } else {
+                    pendingForm.submit();
+                }
+                pendingForm = null;
+                pendingSubmitter = null;
             }
         });
     })();
@@ -1827,6 +1840,37 @@ Navbar::display(['active_page' => 'admin', 'mostrar_link_dashboard' => $mostrar_
                 });
             });
         });
+    }());
+    </script>
+
+    <script>
+    (function () {
+        // Todo formulário do painel dá reload da página inteira (POST normal,
+        // sem AJAX). Sem isso, depois de qualquer ação (Salvar papel, Excluir,
+        // Rejeitar, Limpar logs...) a aba sempre volta pro padrão do servidor
+        // — "Usuários Pendentes" se houver pendência, senão "Adicionar
+        // Pesquisador" — nunca fica na aba de onde a ação partiu.
+        var STORAGE_KEY = 'admActiveTab';
+        var tabContent = document.getElementById('adminTabContent');
+
+        if (tabContent) {
+            tabContent.addEventListener('submit', function (e) {
+                var pane = e.target.closest && e.target.closest('.tab-pane[id]');
+                if (pane) {
+                    try { sessionStorage.setItem(STORAGE_KEY, '#' + pane.id); } catch (err) {}
+                }
+            });
+        }
+
+        var abaSalva = null;
+        try { abaSalva = sessionStorage.getItem(STORAGE_KEY); } catch (err) {}
+        if (abaSalva) {
+            try { sessionStorage.removeItem(STORAGE_KEY); } catch (err) {}
+            var desktopBtn = document.querySelector('#adminTabs [data-bs-target="' + abaSalva + '"]');
+            if (desktopBtn && window.bootstrap) {
+                bootstrap.Tab.getOrCreateInstance(desktopBtn).show();
+            }
+        }
     }());
     </script>
 </body>
