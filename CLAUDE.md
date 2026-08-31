@@ -309,8 +309,11 @@ que resultou numa plataforma mais leve, rápida e fácil de manter. Os guias
 antigos (`docs/OCI_DEPLOY_GUIDE.md`, `docs/DEPLOY_OCI.md`) ficam só como
 referência histórica — **não é o caminho de deploy atual**.
 
-Guia de migração para infraestrutura institucional (quando a UMC assumir):
-`docs/GUIA_TRANSFERENCIA_INFRAESTRUTURA.md`.
+Guia de migração para infraestrutura institucional (quando a UMC assumir): o plano atual é
+hospedar na **Locaweb** — `docs/GUIA_TRANSFERENCIA_LOCAWEB.md` (hospedagem, MySQL e domínio
+oficial da UMC direto na Locaweb; Elasticsearch em aberto, com opções documentadas).
+`docs/GUIA_TRANSFERENCIA_INFRAESTRUTURA.md` cobre o caminho alternativo (conta AWS
+institucional), caso a decisão mude.
 
 ### Variáveis de ambiente obrigatórias em produção
 
