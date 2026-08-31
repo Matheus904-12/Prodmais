@@ -1,4 +1,8 @@
-# Guia de Transferência de Infraestrutura — Prodmais UMC
+# Guia de Transferência de Infraestrutura (caminho AWS) — Prodmais UMC
+
+> O plano atual é migrar para a **Locaweb** (hospedagem institucional da UMC), não para uma
+> conta AWS institucional — ver `docs/GUIA_TRANSFERENCIA_LOCAWEB.md`. Este documento fica
+> como referência para o caminho alternativo, caso a decisão mude para permanecer em AWS.
 
 Este guia existe porque a infraestrutura atual (AWS RDS + AWS OpenSearch + Render) está provisionada
 na conta pessoal do desenvolvedor. Quando a instituição decidir assumir os custos, este documento
